@@ -7,7 +7,7 @@
  */
 
 #include <assert.h>
-#include <Autonomous.h>
+//#include <Autonomous.h>
 #include <RhsRobotBase.h>			//For the local header file
 #include <RobotParams.h>			//For various robot parameters
 #include <sched.h>

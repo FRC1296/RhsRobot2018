@@ -11,6 +11,7 @@
 
 //Robot
 #include <JoystickLayouts.h>			//For joystick layouts
+#include <ctre/Phoenix.h>
 
 //Robot Params
 const char* const ROBOT_NAME =		"RhsRobot2018";	//Formal name
@@ -70,7 +71,12 @@ Add more as needed.
  \endverbatim
  */
 
+// TODO: Delegate TalonSRX numbers
+
 const int CAN_PDB = 19;
+const int CAN_DRIVETRAIN_LEFT = 1;
+const int CAN_DRIVETRAIN_RIGHT = 2;
+
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;
@@ -158,6 +164,11 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
+#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X)))
+#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X)))
+
+// TODO: Add Component Commands
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

@@ -62,6 +62,9 @@ enum MessageCommand {
 	COMMAND_AUTONOMOUS_RESPONSE_ERROR,	//!< Tells Autonomous that a command had a error while running
 	COMMAND_CHECKLIST_RUN,				//!< Tells CheckList to run
 
+	COMMAND_DRIVETRAIN_RUN,
+	COMMAND_DRIVETRAIN_RUN_ARCADE,		//!< Run drive train using arcade controls
+
 
 	//add new component messages here
 
@@ -102,6 +105,11 @@ struct TankDriveParams {
 	float right;
 };
 
+struct ArcadeDriveParams {
+	float left;
+	float right;
+};
+
 
 struct SystemParams {
 	float fBattery;
@@ -132,6 +140,7 @@ union MessageParams {
 	TimedMoveParams tmove;
 	TurnParams turn;
 	SystemParams system;
+	ArcadeDriveParams adrive;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

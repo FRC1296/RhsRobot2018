@@ -18,7 +18,8 @@
 RhsRobot::RhsRobot() {
 	
     // set new object pointers to NULL here
-
+	pController_1 = NULL;
+	pDrivetrain = NULL;
 	iLoop = 0;            // a helpful little loop counter
 }
 
@@ -43,13 +44,19 @@ void RhsRobot::Init() {
 	 * EXAMPLE:	drivetrain = NULL; (in constructor)
 	 * 			drivetrain = new Drivetrain(); (in RhsRobot::Init())
 	 */
-	
+
+	pController_1 = new Joystick(0);
+
+	pDrivetrain = new Drivetrain();
+
+
+
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
-	if()
+/*	if()
 	{
 		nextComponent = ComponentSet.insert(nextComponent, );
-	}
+	} */
 
 	
 	// instantiate our other objects here
@@ -91,10 +98,13 @@ void RhsRobot::Run() {
 
 		// send system health data to interested subsystems
 
-		/*if(pDrivetrain)
+		if(pDrivetrain)
 		{
+			robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
+			robotMessage.params.adrive.left = ARCADE_DRIVE_LEFT;
+			robotMessage.params.adrive.right = ARCADE_DRIVE_RIGHT;
 			pDrivetrain->SendMessage(&robotMessage);
-		}*/
+		}
 	}
 
 }

@@ -18,6 +18,10 @@ public:
 
 private:
 	
+	std::vector<ComponentBase *> ComponentSet;
+
+	Joystick* pController_1;
+	Drivetrain* pDrivetrain;
 	void Init();
 	void OnStateChange();
 	void Run();
