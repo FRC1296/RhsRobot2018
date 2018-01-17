@@ -7,8 +7,9 @@
 #ifndef RHS_ROBOT_H
 #define RHS_ROBOT_H
 
-#include <RhsRobotBase.h>
 #include "WPILib.h"
+#include "RhsRobotBase.h"
+#include "Drivetrain.h"
 
 class RhsRobot : public RhsRobotBase
 {

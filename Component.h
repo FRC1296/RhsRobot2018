@@ -11,12 +11,12 @@
 /**
 	A template class for creating new components
  */
-#include <ComponentBase.h>			//For ComponentBase class
 #include <pthread.h>
 #include <string>
 
 //Robot
 #include "WPILib.h"
+#include "ComponentBase.h"			//For ComponentBase class
 
 
 class Component : public ComponentBase

@@ -7,7 +7,7 @@
 #ifndef RHS_ROBOT_BASE_H
 #define RHS_ROBOT_BASE_H
 
-#include <RobotMessage.h>
+#include "RobotMessage.h"
 #include <unistd.h>
 
 //Robot

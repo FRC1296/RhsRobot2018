@@ -6,10 +6,12 @@
  * that implement behaviors for each part for the robot.
  */
 
-#include <ComponentBase.h>
-#include <RhsRobot.h>
-#include <RobotParams.h>
 #include "WPILib.h"
+
+#include "ComponentBase.h"
+#include "RhsRobot.h"
+#include "RobotParams.h"
+
 
 // The constructor sets the pointer to our objects to NULL.  We use pointers so we
 // can control when the objects are instantiated.  It looks kinda old school but is

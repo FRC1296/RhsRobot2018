@@ -9,17 +9,19 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <assert.h>
-#include <ComponentBase.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/select.h>
 #include <sys/types.h>
 
+#include "ComponentBase.h"
+
+
 //Local
 
 //Robot
 class RhsRobot;
-#include <RobotMessage.h>
+#include "RobotMessage.h"
 
 ComponentBase::ComponentBase(const char* newComponentName, const char *queueName, int priority)
 {	

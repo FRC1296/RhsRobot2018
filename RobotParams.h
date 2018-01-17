@@ -10,8 +10,8 @@
 #define ROBOT_PARAMS_H
 
 //Robot
-#include <JoystickLayouts.h>			//For joystick layouts
 #include <ctre/Phoenix.h>
+#include "JoystickLayouts.h"			//For joystick layouts
 
 //Robot Params
 const char* const ROBOT_NAME =		"RhsRobot2018";	//Formal name
