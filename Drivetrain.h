@@ -33,8 +33,8 @@ public:
 	}
 
 private:
-	TalonSRX* pLeftMotor;
-	TalonSRX* pRightMotor;
+	WPI_TalonSRX* pLeftMotor;
+	WPI_TalonSRX* pRightMotor;
 	void OnStateChange();
 	void Run();
 };

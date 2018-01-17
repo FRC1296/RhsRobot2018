@@ -53,9 +53,11 @@ void RhsRobot::Init() {
 
 
 
+
+/*
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
-/*	if()
+	if()
 	{
 		nextComponent = ComponentSet.insert(nextComponent, );
 	} */

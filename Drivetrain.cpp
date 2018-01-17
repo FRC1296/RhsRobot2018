@@ -21,8 +21,8 @@ Drivetrain::Drivetrain()
 : ComponentBase(DRIVETRAIN_TASKNAME, DRIVETRAIN_QUEUE, DRIVETRAIN_PRIORITY)
 {
 	//TODO: add member objects
-	pLeftMotor = new TalonSRX(CAN_DRIVETRAIN_LEFT);
-	pRightMotor = new TalonSRX(CAN_DRIVETRAIN_RIGHT);
+	pLeftMotor = new WPI_TalonSRX(CAN_DRIVETRAIN_LEFT);
+	pRightMotor = new WPI_TalonSRX(CAN_DRIVETRAIN_RIGHT);
 	pTask = new std::thread(&Drivetrain::StartTask, this, DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
 	wpi_assert(pTask);
 };
