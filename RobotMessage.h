@@ -64,7 +64,8 @@ enum MessageCommand {
 
 	COMMAND_DRIVETRAIN_RUN,
 	COMMAND_DRIVETRAIN_RUN_ARCADE,		//!< Run drive train using arcade controls
-
+	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
+	COMMAND_DRIVETRAIN_MTURN,			//!< Turns the robot a specified amount of degrees
 
 	//add new component messages here
 

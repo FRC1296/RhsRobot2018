@@ -26,7 +26,7 @@ using namespace std;
 #include "WPILib.h"
 
 //Robot
-#include <RobotMessage.h>			//For the RobotMessage struct
+#include "RobotMessage.h"			//For the RobotMessage struct
 
 class ComponentBase
 {

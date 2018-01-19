@@ -6,10 +6,11 @@
  * that implement behaviors for each part for the robot.
  */
 
-#include <ComponentBase.h>
-#include <RhsRobot.h>
-#include <RobotParams.h>
+#include "ComponentBase.h"
+#include "RhsRobot.h"
+#include "RobotParams.h"
 #include "WPILib.h"
+
 
 // The constructor sets the pointer to our objects to NULL.  We use pointers so we
 // can control when the objects are instantiated.  It looks kinda old school but is
@@ -51,16 +52,19 @@ void RhsRobot::Init() {
 
 
 
+
+/*
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
-/*	if()
+ if()
 	{
 		nextComponent = ComponentSet.insert(nextComponent, );
-	} */
-
+	}
+*/
 	
 	// instantiate our other objects here
 }
+
 
 // this method iterates through all our objects (in our message infrastructure) and sends
 // them a message, it is used mostly for telling every object the robot state has changed

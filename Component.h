@@ -11,7 +11,7 @@
 /**
 	A template class for creating new components
  */
-#include <ComponentBase.h>			//For ComponentBase class
+#include "ComponentBase.h"			//For ComponentBase class
 #include <pthread.h>
 #include <string>
 

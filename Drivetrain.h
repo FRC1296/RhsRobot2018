@@ -11,9 +11,11 @@
 /**
 	A template class for creating new components
  */
-#include <ComponentBase.h>			//For ComponentBase class
+#include "ComponentBase.h"			//For ComponentBase class
 #include <pthread.h>
 #include <string>
+#include "RhsRobotBase.h"
+#include "RobotMessage.h"
 
 //Robot
 #include "WPILib.h"
@@ -38,6 +40,10 @@ private:
 	TalonSRX* pRightMotor;
 	void OnStateChange();
 	void Run();
+
+	int iTicks;
+	int iFinalPosLeft;
+	int iFinalPosRight;
 };
 
 #endif			//COMPONENT_H

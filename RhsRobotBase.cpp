@@ -8,13 +8,13 @@
 
 #include <assert.h>
 //#include <Autonomous.h>
-#include <RhsRobotBase.h>			//For the local header file
-#include <RobotParams.h>			//For various robot parameters
+#include "RhsRobotBase.h"			//For the local header file
+#include "RobotParams.h"			//For various robot parameters
 #include <sched.h>
 
 //Built-In
 
-#include "WPILib.h"			//For the RobotBase class, the watchdog, SmartDashboard, and the DriverStationLCD class
+#include <WPILib.h>			//For the RobotBase class, the watchdog, SmartDashboard, and the DriverStationLCD class
 
 //Local
 
@@ -65,17 +65,15 @@ int RhsRobotBase::GetLoop()			//Returns the loop number
 void RhsRobotBase::StartCompetition()			//Robot's main function
 {
 	  DriverStation *pDS = &DriverStation::GetInstance();
-	  LiveWindow* lw = LiveWindow::GetInstance();
 
 	  HAL_Report(HALUsageReporting::kResourceType_Framework,
 	             HALUsageReporting::kFramework_Simple);
 
-	  NetworkTable::GetTable("LiveWindow")->GetSubTable("~STATUS~")->PutBoolean("LW Enabled", false);
-
       Init();		//Initialize the robot
 
 	  // Tell the DS that the robot is ready to be enabled
-	  HAL_ObserveUserProgramStarting();
+
+      HAL_ObserveUserProgramStarting();
 
 	while(true)
 	{
@@ -140,11 +138,6 @@ void RhsRobotBase::StartCompetition()			//Robot's main function
 					(currentRobotState == ROBOT_STATE_AUTONOMOUS))
 			{
 				Run();
-			}
-
-			if((currentRobotState == ROBOT_STATE_TEST))
-			{
-				lw->Run();
 			}
 		}
 

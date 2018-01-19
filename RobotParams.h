@@ -10,8 +10,8 @@
 #define ROBOT_PARAMS_H
 
 //Robot
-#include <JoystickLayouts.h>			//For joystick layouts
-#include <ctre/Phoenix.h>
+#include "JoystickLayouts.h"			//For joystick layouts
+#include "ctre/Phoenix.h"
 
 //Robot Params
 const char* const ROBOT_NAME =		"RhsRobot2018";	//Formal name
@@ -157,6 +157,10 @@ const int POV_STILL = -1;
  \endverbatim
  */
 #ifdef USE_L310_FOR_CONTROLLER_1
+
+#define DIAMETER					4
+#define PI							3.14159
+#define WIDTH						26
 
 #define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))

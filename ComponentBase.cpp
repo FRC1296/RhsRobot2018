@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <assert.h>
-#include <ComponentBase.h>
+#include "ComponentBase.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/select.h>
@@ -19,7 +19,7 @@
 
 //Robot
 class RhsRobot;
-#include <RobotMessage.h>
+#include "RobotMessage.h"
 
 ComponentBase::ComponentBase(const char* newComponentName, const char *queueName, int priority)
 {	
