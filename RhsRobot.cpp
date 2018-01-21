@@ -113,4 +113,4 @@ void RhsRobot::Run() {
 
 }
 
-START_ROBOT_CLASS(RhsRobot)
+START_ROBOT_CLASS(RhsRobot) // why is this errored Mr. B please fix :D

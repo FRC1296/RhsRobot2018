@@ -13,6 +13,8 @@
 #include "RobotParams.h"
 #include "WPILib.h"
 #include "Drivetrain.h"
+#include "RobotMessage.h"
+#include "RhsRobotBase.h"
 
 #define DISTANCE 5 //robotMessage.params.mmove.fDistance
 #define WIDTH 26
@@ -24,11 +26,31 @@ Drivetrain::Drivetrain()
 : ComponentBase(DRIVETRAIN_TASKNAME, DRIVETRAIN_QUEUE, DRIVETRAIN_PRIORITY)
 {
 	//TODO: add member objects
-	pLeftMotor = new TalonSRX(CAN_DRIVETRAIN_LEFT);
-	pRightMotor = new TalonSRX(CAN_DRIVETRAIN_RIGHT);
+	pLeftMotor = new TalonSRX(CAN_DRIVETRAIN_TALON_LEFT);
+	pRightMotor = new TalonSRX(CAN_DRIVETRAIN_TALON_RIGHT);
 
-	pLeftMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
-	pRightMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
+	pLeftSlave1 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_LEFT1);
+	pLeftSlave2 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_LEFT2);
+	pRightSlave1 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT1);
+	pRightSlave2 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT2);
+
+/*	pLeftMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
+	pRightMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0); */
+	pLeftMotor->Set(ControlMode::PercentOutput, 0);
+	pRightMotor->Set(ControlMode::PercentOutput, 0);
+	pLeftMotor->ConfigOpenloopRamp(.1,0);
+	pRightMotor->ConfigOpenloopRamp(.1,0);
+	pRightMotor->SetInverted(true);
+
+	pLeftMotor->SetNeutralMode(NeutralMode::Brake);
+	pRightMotor->SetNeutralMode(NeutralMode::Brake);
+
+	pLeftSlave1->Follow(*pLeftMotor);
+	pLeftSlave2->Follow(*pLeftMotor);
+	pRightSlave1->Follow(*pRightMotor);
+	pRightSlave2->Follow(*pRightMotor);
+	pRightSlave1->SetInverted(true);
+	pRightSlave2->SetInverted(true);
 
 	iTicks = 0;
 	iFinalPosLeft = 0;
@@ -58,7 +80,12 @@ void Drivetrain::Run()
 		case COMMAND_COMPONENT_TEST:
 			break;
 
-		case COMMAND_DRIVETRAIN_MMOVE:
+		case COMMAND_DRIVETRAIN_RUN_ARCADE:
+			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
+			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
+			break;
+
+/*		case COMMAND_DRIVETRAIN_MMOVE:
 			iTicks = (DISTANCE*4096)/(PI*DIAMETER);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
 			iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
@@ -78,7 +105,7 @@ void Drivetrain::Run()
 			}
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
-			break;
+			break; */
 
 		default:
 			break;

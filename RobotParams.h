@@ -74,8 +74,12 @@ Add more as needed.
 // TODO: Delegate TalonSRX numbers
 
 const int CAN_PDB = 19;
-const int CAN_DRIVETRAIN_LEFT = 1;
-const int CAN_DRIVETRAIN_RIGHT = 2;
+const int CAN_DRIVETRAIN_TALON_LEFT = 1;
+const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 2;
+const int CAN_DRIVETRAIN_VICTOR_LEFT2 = 3;
+const int CAN_DRIVETRAIN_TALON_RIGHT = 4;
+const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 5;
+const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 6;
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
@@ -169,8 +173,8 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X)))
-#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X)))
+#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
+#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 
 // TODO: Add Component Commands
 

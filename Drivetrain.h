@@ -38,6 +38,12 @@ public:
 private:
 	TalonSRX* pLeftMotor;
 	TalonSRX* pRightMotor;
+
+	VictorSPX* pLeftSlave1;
+	VictorSPX* pLeftSlave2;
+	VictorSPX* pRightSlave1;
+	VictorSPX* pRightSlave2;
+
 	void OnStateChange();
 	void Run();
 
