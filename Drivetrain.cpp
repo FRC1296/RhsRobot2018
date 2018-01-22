@@ -56,8 +56,6 @@ Drivetrain::Drivetrain()
 	iFinalPosLeft = 0;
 	iFinalPosRight = 0;
 
-
-
 	pTask = new std::thread(&Drivetrain::StartTask, this, DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
 	wpi_assert(pTask);
 };

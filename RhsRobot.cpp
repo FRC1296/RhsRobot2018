@@ -47,10 +47,7 @@ void RhsRobot::Init() {
 	 */
 
 	pController_1 = new Joystick(0);
-
 	pDrivetrain = new Drivetrain();
-
-
 
 
 /*
@@ -94,23 +91,21 @@ void RhsRobot::Run() {
 	 */
 
 
-	
-	if((iLoop++ % 50) == 0)
+	if(pDrivetrain)
 	{
-		robotMessage.command = COMMAND_SYSTEM_CONSTANTS;
-		robotMessage.params.system.fBattery = DriverStation::GetInstance().GetBatteryVoltage();
-
+		robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
+		robotMessage.params.adrive.left = ARCADE_DRIVE_LEFT;
+		robotMessage.params.adrive.right = ARCADE_DRIVE_RIGHT;
+		pDrivetrain->SendMessage(&robotMessage);
+	}
+	
+	if((iLoop++ % 50) == 0)  // once every second or so
+	{
 		// send system health data to interested subsystems
 
-		if(pDrivetrain)
-		{
-			robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
-			robotMessage.params.adrive.left = ARCADE_DRIVE_LEFT;
-			robotMessage.params.adrive.right = ARCADE_DRIVE_RIGHT;
-			pDrivetrain->SendMessage(&robotMessage);
-		}
+		robotMessage.command = COMMAND_SYSTEM_CONSTANTS;
+		robotMessage.params.system.fBattery = DriverStation::GetInstance().GetBatteryVoltage();
 	}
-
 }
 
 START_ROBOT_CLASS(RhsRobot) // why is this errored Mr. B please fix :D

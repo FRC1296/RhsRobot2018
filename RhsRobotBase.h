@@ -11,7 +11,8 @@
 #include <unistd.h>
 
 //Robot
-#include "WPILib.h"			//For the RobotBase class
+#include "WPILib.h"
+#include "RobotBase.h"
 
 
 typedef enum eRobotOpMode
@@ -26,26 +27,26 @@ typedef enum eRobotOpMode
 class RhsRobotBase : public RobotBase
 {
 public:
-	RhsRobotBase();				//Constructor
-	virtual ~RhsRobotBase();			//Destructor
+	RhsRobotBase();
+	virtual ~RhsRobotBase();
 
-	RobotOpMode GetCurrentRobotState();			//Returns the current robot state
-	RobotOpMode GetPreviousRobotState();			//Returns the previous robot state
-	bool HasStateChanged();			//Returns if the robot state has just changed
-	void StartCompetition();			//Robot's main function
+	RobotOpMode GetCurrentRobotState();
+	RobotOpMode GetPreviousRobotState();
+	bool HasStateChanged();
+	void StartCompetition();	//Robot's main function
 
-	int GetLoop();			//Returns the loop number
+	int GetLoop();				//Returns the loop number
 
 protected:
 	RobotMessage robotMessage;			//Message to be written and sent to components
 
 	virtual void Init() = 0;			//Abstract function: initializes the robot
-	virtual void OnStateChange() = 0;			//Abstract function: handles state changes
-	virtual void Run() = 0;			//Abstract function: robot logic
+	virtual void OnStateChange() = 0;	//Abstract function: handles state changes
+	virtual void Run() = 0;				//Abstract function: robot logic
 
 private:
-	RobotOpMode currentRobotState;			//Current robot state
-	RobotOpMode previousRobotState;			//Previous robot state
+	RobotOpMode currentRobotState;
+	RobotOpMode previousRobotState;
 
 	int loop;			//Loop counter
 
