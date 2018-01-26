@@ -33,6 +33,7 @@ const int PIXI_PRIORITY 	    = DEFAULT_PRIORITY;
 const int AUTONOMOUS_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOEXEC_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
+const int CLAW_PRIORITY = DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -41,7 +42,7 @@ const char* const DRIVETRAIN_TASKNAME	= "tDrive";
 const char* const AUTONOMOUS_TASKNAME	= "tAuto";
 const char* const AUTOEXEC_TASKNAME		= "tAutoEx";
 const char* const AUTOPARSER_TASKNAME	= "tParse";
-
+const char* const CLAW_TASKNAME ="tClaw";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
@@ -52,7 +53,7 @@ const char* const COMPONENT_QUEUE 	= "/tmp/qComp";
 const char* const DRIVETRAIN_QUEUE 	= "/tmp/qDrive";
 const char* const AUTONOMOUS_QUEUE 	= "/tmp/qAuto";
 const char* const AUTOPARSER_QUEUE 	= "/tmp/qParse";
-
+const char* const CLAW_QUEUE = "/tmp/qClaw";
 
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
@@ -80,7 +81,8 @@ const int CAN_DRIVETRAIN_VICTOR_LEFT2 = 3;
 const int CAN_DRIVETRAIN_TALON_RIGHT = 4;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 5;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 6;
-
+const int CAN_CLAW_TALON_LEFT = -1;
+const int CAN_CLAW_TALON_RIGHT = -1;
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
 //EXAMPLE: const int RLY_COMPRESSOR = 1;

@@ -10,6 +10,7 @@
 #include "RhsRobotBase.h"
 #include "WPILib.h"
 #include "Drivetrain.h"
+#include "Claw.h"
 
 class RhsRobot : public RhsRobotBase
 {
@@ -23,6 +24,7 @@ private:
 
 	Joystick* pController_1;
 	Drivetrain* pDrivetrain;
+	Claw* pClaw;
 	void Init();
 	void OnStateChange();
 	void Run();

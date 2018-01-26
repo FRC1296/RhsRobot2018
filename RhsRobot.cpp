@@ -11,7 +11,6 @@
 #include "RobotParams.h"
 #include "WPILib.h"
 
-
 // The constructor sets the pointer to our objects to NULL.  We use pointers so we
 // can control when the objects are instantiated.  It looks kinda old school but is
 // standard practice in embedded systems.
@@ -21,6 +20,7 @@ RhsRobot::RhsRobot() {
     // set new object pointers to NULL here
 	pController_1 = NULL;
 	pDrivetrain = NULL;
+	pClaw = NULL;
 	iLoop = 0;            // a helpful little loop counter
 }
 
@@ -48,6 +48,7 @@ void RhsRobot::Init() {
 
 	pController_1 = new Joystick(0);
 	pDrivetrain = new Drivetrain();
+	pClaw = new Claw();
 
 
 /*
@@ -94,11 +95,16 @@ void RhsRobot::Run() {
 	if(pDrivetrain)
 	{
 		robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
-		robotMessage.params.adrive.left = ARCADE_DRIVE_LEFT;
-		robotMessage.params.adrive.right = ARCADE_DRIVE_RIGHT;
+		robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
+		robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
 		pDrivetrain->SendMessage(&robotMessage);
 	}
 	
+	if(pClaw)
+	{
+
+	}
+
 	if((iLoop++ % 50) == 0)  // once every second or so
 	{
 		// send system health data to interested subsystems
@@ -108,4 +114,9 @@ void RhsRobot::Run() {
 	}
 }
 
-START_ROBOT_CLASS(RhsRobot) // why is this errored Mr. B please fix :D
+
+HAL_Bool HAL_Initialize(int32_t timeout, int32_t mode);
+
+
+START_ROBOT_CLASS(RhsRobot) // why is this giving an error Mr. B :(
+
