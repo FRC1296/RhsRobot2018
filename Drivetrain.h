@@ -15,6 +15,7 @@
 #include <pthread.h>
 #include <string>
 #include "RhsRobotBase.h"
+#include <math.h>
 #include "RobotMessage.h"
 
 //Robot
@@ -44,9 +45,14 @@ private:
 	VictorSPX* pRightSlave1;
 	VictorSPX* pRightSlave2;
 
+	PigeonIMU* pIdgey;
+
 	void OnStateChange();
 	void Run();
 
+	float fInitRotation;
+
+	int iTurnState;
 	int iTicks;
 	int iFinalPosLeft;
 	int iFinalPosRight;

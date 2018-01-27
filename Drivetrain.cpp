@@ -34,7 +34,7 @@ Drivetrain::Drivetrain()
 	pRightSlave1 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT1);
 	pRightSlave2 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT2);
 
-/*	pLeftMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
+	/*	pLeftMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
 	pRightMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0); */
 	pLeftMotor->Set(ControlMode::PercentOutput, 0);
 	pRightMotor->Set(ControlMode::PercentOutput, 0);
@@ -44,6 +44,8 @@ Drivetrain::Drivetrain()
 
 	pLeftMotor->SetNeutralMode(NeutralMode::Brake);
 	pRightMotor->SetNeutralMode(NeutralMode::Brake);
+	pIdgey = new PigeonIMU(pRightMotor);
+	pIdgey->SetFusedHeading(0.0,10);
 
 	pLeftSlave1->Follow(*pLeftMotor);
 	pLeftSlave2->Follow(*pLeftMotor);
@@ -52,6 +54,8 @@ Drivetrain::Drivetrain()
 	pRightSlave1->SetInverted(true);
 	pRightSlave2->SetInverted(true);
 
+	fInitRotation = 0;
+	iTurnState = -1;
 	iTicks = 0;
 	iFinalPosLeft = 0;
 	iFinalPosRight = 0;
@@ -72,18 +76,109 @@ void Drivetrain::OnStateChange()
 
 void Drivetrain::Run()
 {
+	static int x = 0;
+	double y;
+	double z;
+	double deg[3];
+
+	PigeonIMU::GeneralStatus genStatus;
+
+	pIdgey->GetGeneralStatus(genStatus);
+	pIdgey->GetAccumGyro(deg);
+
+	/*PigeonIMU::FusionStatus *stat = new PigeonIMU::FusionStatus();
+	pIdgey->GetFusedHeading(*stat);
+
+	SmartDashboard::PutString("Pigeon",stat->description);*/
+	SmartDashboard::PutNumber("X Rotation",deg[0]);
+	SmartDashboard::PutNumber("Y Rotation",deg[1]);
+	SmartDashboard::PutNumber("Z Rotation",deg[2]);
+	SmartDashboard::PutNumber("fInite",fInitRotation);
+
+	if (iTurnState == 2){
+		if (deg[2] < fInitRotation + 90.0) {
+			//pIdgey->GetAccumGyro(deg);
+			pLeftMotor->Set(ControlMode::PercentOutput,.2);
+			pRightMotor->Set(ControlMode::PercentOutput,-.2);
+			return;
+		}
+
+		else {
+			pLeftMotor->Set(ControlMode::PercentOutput,0);
+			pRightMotor->Set(ControlMode::PercentOutput,0);
+			iTurnState = -1;
+		}
+	}
+	if (iTurnState == -2){
+		if (deg[2] > fInitRotation - 90.0) {
+			pLeftMotor->Set(ControlMode::PercentOutput,-.2);
+			pRightMotor->Set(ControlMode::PercentOutput,.2);
+			return;
+		}
+
+		else {
+			pLeftMotor->Set(ControlMode::PercentOutput,0);
+			pRightMotor->Set(ControlMode::PercentOutput,0);
+			iTurnState = -1;
+		}
+	}
+	if (iTurnState == 5){
+		if (deg[2] < fInitRotation + 180.0) {
+			pLeftMotor->Set(ControlMode::PercentOutput,.2);
+			pRightMotor->Set(ControlMode::PercentOutput,-.2);
+			return;
+		}
+
+		else {
+			pLeftMotor->Set(ControlMode::PercentOutput,0);
+			pRightMotor->Set(ControlMode::PercentOutput,0);
+			iTurnState = -1;
+		}
+	}
+	/*if (iTurnState == -1){
+	fInitRotation = 0;
+	}*/
 	switch(localMessage.command)			//Reads the message command
 	{
-		//TODO add command cases for Component
-		case COMMAND_COMPONENT_TEST:
-			break;
+	//TODO add command cases for Component
+	case COMMAND_COMPONENT_TEST:
+		break;
 
-		case COMMAND_DRIVETRAIN_RUN_ARCADE:
-			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
-			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
-			break;
+	case COMMAND_DRIVETRAIN_RUN_ARCADE:
+		pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
+		pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
+		break;
 
-/*		case COMMAND_DRIVETRAIN_MMOVE:
+	case COMMAND_DRIVETRAIN_WAVE:
+		//y=10sin((3.14/50)+C_2)+50
+		y = (50*sin(PI/50 * x))/100.0;
+		z = (50*sin((PI/50 * x)-PI))/100.0;
+		pLeftMotor->Set(ControlMode::PercentOutput,y);
+		pRightMotor->Set(ControlMode::PercentOutput,z);
+		x++;
+		break;
+
+	case COMMAND_DRIVETRAIN_LEFT90:
+
+		//if (fInitRotation == 0) {
+		fInitRotation = deg[2];
+		iTurnState = 2;
+		//pIdgey->GetAccumGyro(deg);
+		//}
+
+		break;
+
+	case COMMAND_DRIVETRAIN_RIGHT90:
+		fInitRotation = deg[2];
+		iTurnState = -2;
+		break;
+
+	case COMMAND_DRIVETRAIN_180:
+		fInitRotation = deg[2];
+		iTurnState = 5;
+		break;
+
+		/*		case COMMAND_DRIVETRAIN_MMOVE:
 			iTicks = (DISTANCE*4096)/(PI*DIAMETER);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
 			iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
@@ -105,7 +200,7 @@ void Drivetrain::Run()
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
 			break; */
 
-		default:
-			break;
+	default:
+		break;
 	}
 };

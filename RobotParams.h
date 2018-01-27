@@ -185,6 +185,11 @@ const int POV_STILL = -1;
 #define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 #define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 
+#define PIDGEY_ROTATE_LEFT90		(pController_1->GetRawButton(1))
+#define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(3))
+#define PIDGEY_ROTATE_180			(pController_1->GetRawButton(4))
+
+
 // TODO: Add Component Commands
 
 #endif // USE_L310_FOR_CONTROLLER_1

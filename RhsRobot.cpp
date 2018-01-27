@@ -16,8 +16,8 @@
 // standard practice in embedded systems.
 
 RhsRobot::RhsRobot() {
-	
-    // set new object pointers to NULL here
+
+	// set new object pointers to NULL here
 	pController_1 = NULL;
 	pDrivetrain = NULL;
 	pClaw = NULL;
@@ -52,15 +52,15 @@ void RhsRobot::Init() {
 	pClaw = new Claw();
 
 
-/*
+	/*
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
  if()
 	{
 		nextComponent = ComponentSet.insert(nextComponent, );
 	}
-*/
-	
+	 */
+
 	// instantiate our other objects here
 }
 
@@ -95,12 +95,37 @@ void RhsRobot::Run() {
 
 	if(pDrivetrain)
 	{
-		robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
-		robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
-		robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
-		pDrivetrain->SendMessage(&robotMessage);
+		if(pController_1->GetRawButton(2))
+		{
+			robotMessage.command  = COMMAND_DRIVETRAIN_WAVE;
+			pDrivetrain->SendMessage(&robotMessage);
+
+		}
+		else if(PIDGEY_ROTATE_LEFT90)
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_LEFT90;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else if(PIDGEY_ROTATE_RIGHT90)
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_RIGHT90;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else if(PIDGEY_ROTATE_180)
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_180;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
+			robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
+			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+
 	}
-	
+
 	if(pClaw)
 	{
 

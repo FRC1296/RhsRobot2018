@@ -66,6 +66,11 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_RUN_ARCADE,		//!< Run drive train using arcade controls
 	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
 	COMMAND_DRIVETRAIN_MTURN,			//!< Turns the robot a specified amount of degrees
+	COMMAND_DRIVETRAIN_WAVE,			//!< Drive train test for sin wave for THE CLAW
+
+	COMMAND_DRIVETRAIN_LEFT90,			//!< Drive train test for rotating 90 degrees left
+	COMMAND_DRIVETRAIN_RIGHT90,			//!< Drive train test for rotating 90 degrees right
+	COMMAND_DRIVETRAIN_180,				//!< Drive train test for rotating 180 degrees
 
 	//add new component messages here
 
