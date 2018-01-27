@@ -5,8 +5,8 @@
  * initialization for the devices used to control a given subsystem.
  *
  */
-#ifndef CLAW_H
-#define CLAW_H
+#ifndef ELEVATOR_H
+#define ELEVATOR_H
 
 /**
 	A template class for creating new components
@@ -22,26 +22,24 @@
 #include "ctre\Phoenix.h"
 
 
-class Claw : public ComponentBase
+class Elevator : public ComponentBase
 {
 public:
-	Claw();
-	virtual ~Claw();
+	Elevator();
+	virtual ~Elevator();
 	static void *StartTask(void *pThis, const char* szComponentName, int iPriority)
 	{
 		pthread_setname_np(pthread_self(), szComponentName);
 		pthread_setschedprio(pthread_self(), iPriority);
-		((Claw *)pThis)->DoWork();
+		((Elevator *)pThis)->DoWork();
 		return(NULL);
 	}
 
 private:
-	VictorSPX* pClawVictorLeft;
-	VictorSPX* pClawVictorRight;
+	TalonSRX* pElevatorMotor;
 
 	void OnStateChange();
 	void Run();
 };
 
 #endif			//COMPONENT_H
-

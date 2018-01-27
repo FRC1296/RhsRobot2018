@@ -12,29 +12,32 @@
 #include "ComponentBase.h"
 #include "RobotParams.h"
 #include "WPILib.h"
+#include "Elevator.h"
 
 //Robot
 
-Component::Component()
-: ComponentBase(COMPONENT_TASKNAME, COMPONENT_QUEUE, COMPONENT_PRIORITY)
+Elevator::Elevator()
+: ComponentBase(ELEVATOR_TASKNAME, ELEVATOR_QUEUE, ELEVATOR_PRIORITY)
 {
 	//TODO: add member objects
-	pTask = new std::thread(&Component::StartTask, this, COMPONENT_TASKNAME, COMPONENT_PRIORITY);
+	pElevatorMotor = new TalonSRX(CAN_ELEVATOR_TALON);
+
+	pTask = new std::thread(&Elevator::StartTask, this, ELEVATOR_TASKNAME, ELEVATOR_PRIORITY);
 	wpi_assert(pTask);
 };
 
-Component::~Component()
+Elevator::~Elevator()
 {
 	//TODO delete member objects
 
 	delete(pTask);
 };
 
-void Component::OnStateChange()	
+void Elevator::OnStateChange()
 {
 };
 
-void Component::Run()
+void Elevator::Run()
 {
 	switch(localMessage.command)			//Reads the message command
 	{

@@ -21,6 +21,7 @@ RhsRobot::RhsRobot() {
 	pController_1 = NULL;
 	pDrivetrain = NULL;
 	pClaw = NULL;
+	pElevator = NULL;
 	iLoop = 0;            // a helpful little loop counter
 }
 

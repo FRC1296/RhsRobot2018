@@ -1,4 +1,3 @@
-
 /** \file
  * Example of subsystem task behavior.
  *
@@ -21,7 +20,9 @@ Claw::Claw()
 : ComponentBase(CLAW_TASKNAME, CLAW_QUEUE, CLAW_PRIORITY)
 {
 	//TODO: add member objects
-	//CLAW_TASKNAME,CLAW_QUEUE, CLAW_PRIORITY
+	pClawVictorLeft = new VictorSPX(CAN_CLAW_VICTOR_LEFT);
+	pClawVictorRight = new VictorSPX(CAN_CLAW_VICTOR_RIGHT);
+
 	pTask = new std::thread(&Component::StartTask, this, CLAW_TASKNAME, CLAW_PRIORITY);
 	wpi_assert(pTask);
 };
