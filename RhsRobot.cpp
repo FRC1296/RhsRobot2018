@@ -98,6 +98,7 @@ void RhsRobot::Run() {
 		if(pController_1->GetRawButton(2))
 		{
 			robotMessage.command  = COMMAND_DRIVETRAIN_WAVE;
+			SmartDashboard::PutString("Mode","WAVE DASH");
 			pDrivetrain->SendMessage(&robotMessage);
 
 		}
@@ -116,11 +117,17 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_DRIVETRAIN_180;
 			pDrivetrain->SendMessage(&robotMessage);
 		}
+		else if(PIDGEY_ROTATE_GPTURN)
+		{
+			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
 		else
 		{
 			robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
 			robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
 			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
+			SmartDashboard::PutString("Mode","ARCADEEEEEE");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 

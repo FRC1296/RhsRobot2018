@@ -174,6 +174,8 @@ const int POV_STILL = -1;
 #define DIAMETER					4
 #define PI							3.14159
 #define WIDTH						26
+#define DRIVETRAIN_CONST_KP			(1/90)
+#define DRIVETRAIN_CONST_KD			(1/180)
 
 #define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
@@ -189,6 +191,7 @@ const int POV_STILL = -1;
 #define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(3))
 #define PIDGEY_ROTATE_180			(pController_1->GetRawButton(4))
 
+#define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(6))
 
 // TODO: Add Component Commands
 

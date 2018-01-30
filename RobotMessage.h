@@ -72,6 +72,8 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_RIGHT90,			//!< Drive train test for rotating 90 degrees right
 	COMMAND_DRIVETRAIN_180,				//!< Drive train test for rotating 180 degrees
 
+	COMMAND_DRIVETRAIN_GPTURN,			//!< Drive train test for Gyro rotation with a PID loop
+
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST

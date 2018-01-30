@@ -51,6 +51,12 @@ private:
 	void Run();
 
 	float fInitRotation;
+	float fPrevP;
+	float fSpeed;
+	float fCurrentPos;
+	float fTarget;
+	float fP;
+	float fD;
 
 	int iTurnState;
 	int iTicks;

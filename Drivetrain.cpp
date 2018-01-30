@@ -55,6 +55,13 @@ Drivetrain::Drivetrain()
 	pRightSlave2->SetInverted(true);
 
 	fInitRotation = 0;
+	fPrevP = 0;
+	fSpeed = 0;
+	fCurrentPos = 0;
+	fTarget = 0;
+	fP = 0;
+	fD = 0;
+
 	iTurnState = -1;
 	iTicks = 0;
 	iFinalPosLeft = 0;
@@ -95,7 +102,9 @@ void Drivetrain::Run()
 	SmartDashboard::PutNumber("Z Rotation",deg[2]);
 	SmartDashboard::PutNumber("fInite",fInitRotation);
 
-	if (iTurnState == 2){
+	SmartDashboard::PutString("Mode","Running");
+
+	/*if (iTurnState == 2){
 		if (deg[2] < fInitRotation + 90.0) {
 			//pIdgey->GetAccumGyro(deg);
 			pLeftMotor->Set(ControlMode::PercentOutput,.2);
@@ -138,6 +147,33 @@ void Drivetrain::Run()
 	/*if (iTurnState == -1){
 	fInitRotation = 0;
 	}*/
+
+	if (iTurnState == 7)
+	{
+		if ((deg[2] <= (fInitRotation + fTarget) + .5) || (deg[2] >= (fInitRotation + fTarget) - .5))
+		{
+			pLeftMotor->Set(ControlMode::PercentOutput,0);
+			pRightMotor->Set(ControlMode::PercentOutput,0);
+			iTurnState = -1;
+		}
+		else
+		{
+			fP = fTarget - deg[2];
+			if  (fPrevP == 0)
+				fD = 0;
+			else
+				fD = fPrevP - fP;
+			fPrevP = fP;
+			fSpeed = (DRIVETRAIN_CONST_KP*fP) - (DRIVETRAIN_CONST_KD*fD);
+			if (fSpeed < -1)
+				fSpeed = -1;
+			if (fSpeed > 1)
+				fSpeed = 1;
+			pLeftMotor->Set(ControlMode::PercentOutput,fSpeed);
+			pRightMotor->Set(ControlMode::PercentOutput,-1*fSpeed);
+		}
+	}
+
 	switch(localMessage.command)			//Reads the message command
 	{
 	//TODO add command cases for Component
@@ -151,9 +187,9 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_WAVE:
 		//y=10sin((3.14/50)+C_2)+50
-		y = (50*sin(PI/50 * x))/100.0;
-		z = (50*sin((PI/50 * x)-PI))/100.0;
-		pLeftMotor->Set(ControlMode::PercentOutput,y);
+		y = (25*sin(PI/50 * x) + 75)/100.0;
+		z = (25*sin((PI/50 * x)-PI) + 75)/100.0;
+		pLeftMotor->Set(ControlMode::PercentOutput,-1*y);
 		pRightMotor->Set(ControlMode::PercentOutput,z);
 		x++;
 		break;
@@ -178,6 +214,10 @@ void Drivetrain::Run()
 		iTurnState = 5;
 		break;
 
+	case COMMAND_DRIVETRAIN_GPTURN:
+		fInitRotation  = deg[2];
+		iTurnState = 7;
+		break;
 		/*		case COMMAND_DRIVETRAIN_MMOVE:
 			iTicks = (DISTANCE*4096)/(PI*DIAMETER);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
