@@ -47,6 +47,8 @@ private:
 
 	PigeonIMU* pIdgey;
 
+	Timer* pPIDTimer;
+
 	void OnStateChange();
 	void Run();
 
@@ -57,6 +59,7 @@ private:
 	float fTarget;
 	float fP;
 	float fD;
+	float fI;
 
 	int iTurnState;
 	int iTicks;

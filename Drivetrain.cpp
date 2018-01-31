@@ -58,14 +58,17 @@ Drivetrain::Drivetrain()
 	fPrevP = 0;
 	fSpeed = 0;
 	fCurrentPos = 0;
-	fTarget = 0;
+	fTarget = 90;
 	fP = 0;
 	fD = 0;
+	fI = 0;
 
 	iTurnState = -1;
 	iTicks = 0;
 	iFinalPosLeft = 0;
 	iFinalPosRight = 0;
+
+	pPIDTimer = new Timer();
 
 	pTask = new std::thread(&Drivetrain::StartTask, this, DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
 	wpi_assert(pTask);
@@ -148,29 +151,46 @@ void Drivetrain::Run()
 	fInitRotation = 0;
 	}*/
 
+	SmartDashboard::PutNumber("Target Angle",fInitRotation + fTarget);
+
 	if (iTurnState == 7)
 	{
-		if ((deg[2] <= (fInitRotation + fTarget) + .5) || (deg[2] >= (fInitRotation + fTarget) - .5))
+		if ((deg[2] <= (fInitRotation + fTarget + .1)) && (deg[2] >= (fInitRotation + fTarget - .1)))
 		{
-			pLeftMotor->Set(ControlMode::PercentOutput,0);
-			pRightMotor->Set(ControlMode::PercentOutput,0);
-			iTurnState = -1;
+			pPIDTimer->Start();
+			if (pPIDTimer->Get() >= .25) {
+				SmartDashboard::PutString("Completed","PID Completed");
+				pLeftMotor->Set(ControlMode::PercentOutput,0);
+				pRightMotor->Set(ControlMode::PercentOutput,0);
+				iTurnState = -1;
+				fTarget = 0;
+				fInitRotation = 0;
+			}
 		}
 		else
 		{
-			fP = fTarget - deg[2];
+			pPIDTimer->Stop();
+			pPIDTimer->Reset();
+			SmartDashboard::PutString("Mode","PID Running");
+			fP = (fTarget + fInitRotation) - deg[2];
+			SmartDashboard::PutNumber("P Value",fP);
 			if  (fPrevP == 0)
 				fD = 0;
 			else
 				fD = fPrevP - fP;
+			SmartDashboard::PutNumber("D Value",fD);
+			fI += fP;
 			fPrevP = fP;
-			fSpeed = (DRIVETRAIN_CONST_KP*fP) - (DRIVETRAIN_CONST_KD*fD);
+			SmartDashboard::PutNumber("Previous P Value",fPrevP);
+			fSpeed = (DRIVETRAIN_CONST_KP*fP) + (DRIVETRAIN_CONST_KI*fI) - (DRIVETRAIN_CONST_KD*fD);
 			if (fSpeed < -1)
 				fSpeed = -1;
 			if (fSpeed > 1)
 				fSpeed = 1;
+			SmartDashboard::PutNumber("Speed",fSpeed);
 			pLeftMotor->Set(ControlMode::PercentOutput,fSpeed);
 			pRightMotor->Set(ControlMode::PercentOutput,-1*fSpeed);
+			SmartDashboard::PutString("Completed","PID Not Completed");
 		}
 	}
 
@@ -181,8 +201,10 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
-		pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
-		pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
+		if (iTurnState == -1) {
+			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
+			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
+		}
 		break;
 
 	case COMMAND_DRIVETRAIN_WAVE:
@@ -215,8 +237,10 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_DRIVETRAIN_GPTURN:
-		fInitRotation  = deg[2];
+		if (fInitRotation == 0)
+			fInitRotation  = deg[2];
 		iTurnState = 7;
+		SmartDashboard::PutString("Mode","PID Turn Initiated");
 		break;
 		/*		case COMMAND_DRIVETRAIN_MMOVE:
 			iTicks = (DISTANCE*4096)/(PI*DIAMETER);

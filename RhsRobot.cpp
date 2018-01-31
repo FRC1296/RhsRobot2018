@@ -120,6 +120,7 @@ void RhsRobot::Run() {
 		else if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
+			SmartDashboard::PutString("Mode","PID Turn Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else
