@@ -185,8 +185,8 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
-#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
+#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
+#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 
 #define PIDGEY_ROTATE_LEFT90		(pController_1->GetRawButton(1))
 #define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(3))

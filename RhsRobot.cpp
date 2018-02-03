@@ -51,23 +51,20 @@ void RhsRobot::Init() {
 	pDrivetrain = new Drivetrain();
 	pClaw = new Claw();
 	//SmartDashboard::PutData('M')
+	pChooser = new frc::SendableChooser<char>();
 	pChooser->AddDefault("Middle", 'M');
 	pChooser->AddObject("Right",'R');
 	pChooser->AddObject("Left",'L');
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
-
-
-
-	/*
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
-
+	/*
  if()
 	{
 		nextComponent = ComponentSet.insert(nextComponent, );
 	}
-	 */
 
+	 */
 	// instantiate our other objects here
 }
 
@@ -99,10 +96,15 @@ void RhsRobot::Run() {
 	 * 			}
 	 */
 
-	char* Yay = (char) pChooser->GetSelected();
+	char Yay = (char) pChooser->GetSelected();
 
+	char c[2];
+	c[0] = Yay;
+	c[1] = 0;
+
+	SmartDashboard::PutString("YayNum",c);
 	std::__cxx11::string gameData;
-	gameData = frc::DriverStation::GetInstance().GetSmartDashboardType();
+		gameData = frc::DriverStation::GetInstance().GetGameSpecificMessage();
 	if(gameData[0] == 'L')
 	{
 		//Put left auto code here

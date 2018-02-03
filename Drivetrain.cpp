@@ -202,8 +202,8 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
 		if (iTurnState == -1) {
-			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
-			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
+			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left/(-1));
+			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right/(-1));
 		}
 		break;
 
