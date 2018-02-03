@@ -12,6 +12,7 @@
 #include "Drivetrain.h"
 #include "Claw.h"
 #include "Elevator.h"
+//#include "SendableChooser.h"
 
 class RhsRobot : public RhsRobotBase
 {
@@ -24,6 +25,8 @@ private:
 	std::vector<ComponentBase *> ComponentSet;
 
 	Joystick* pController_1;
+
+	frc::SendableChooser<char> *pChooser;
 	Drivetrain* pDrivetrain;
 	Claw* pClaw;
 	Elevator* pElevator;

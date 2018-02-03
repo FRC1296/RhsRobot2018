@@ -50,6 +50,13 @@ void RhsRobot::Init() {
 	pController_1 = new Joystick(0);
 	pDrivetrain = new Drivetrain();
 	pClaw = new Claw();
+	//SmartDashboard::PutData('M')
+	pChooser->AddDefault("Middle", 'M');
+	pChooser->AddObject("Right",'R');
+	pChooser->AddObject("Left",'L');
+	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
+
+
 
 
 	/*
@@ -91,6 +98,20 @@ void RhsRobot::Run() {
 					pDrivetrail->SendMessage(&robotMessage);
 	 * 			}
 	 */
+
+	char* Yay = (char) pChooser->GetSelected();
+
+	std::__cxx11::string gameData;
+	gameData = frc::DriverStation::GetInstance().GetSmartDashboardType();
+	if(gameData[0] == 'L')
+	{
+		//Put left auto code here
+		SmartDashboard::PutString("Left","lol");
+	} else {
+		//Put right auto code here
+		SmartDashboard::PutString("Right","Poi");
+	}
+
 
 
 	if(pDrivetrain)

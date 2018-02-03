@@ -12,39 +12,37 @@
 #include "ComponentBase.h"
 #include "RobotParams.h"
 #include "WPILib.h"
-#include "Elevator.h"
+#include "Autonomous.h"
 
 //Robot
 
-Elevator::Elevator()
-: ComponentBase(ELEVATOR_TASKNAME, ELEVATOR_QUEUE, ELEVATOR_PRIORITY)
+Autonomous::Autonomous()
+: ComponentBase(AUTONOMOUS_TASKNAME, AUTONOMOUS_QUEUE, AUTONOMOUS_PRIORITY)
 {
 	//TODO: add member objects
-	pElevatorMotor = new TalonSRX(CAN_ELEVATOR_TALON);
-	pElevatorMotorFollower = new VictorSPX(CAN_ELEVATOR_TALON);
-	pTask = new std::thread(&Elevator::StartTask, this, ELEVATOR_TASKNAME, ELEVATOR_PRIORITY);
+	pTask = new std::thread(&Component::StartTask, this, AUTONOMOUS_TASKNAME, AUTONOMOUS_PRIORITY);
 	wpi_assert(pTask);
 };
 
-Elevator::~Elevator()
+Autonomous::~Autonomous()
 {
 	//TODO delete member objects
 
 	delete(pTask);
 };
 
-void Elevator::OnStateChange()
+void Autonomous::OnStateChange()
 {
 };
 
-void Elevator::Run()
+void Autonomous::Run()
 {
 	switch(localMessage.command)			//Reads the message command
 	{
-	//TODO add command cases for Component
-		case COMMAND_COMPONENT_TEST:
+	//TODO add command cases for Autonomous
+	/*	case COMMAND_AUTONOMOUS_TEST:
 			break;
-
+*/
 		default:
 			break;
 		}

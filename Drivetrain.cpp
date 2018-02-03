@@ -220,7 +220,8 @@ void Drivetrain::Run()
 
 		//if (fInitRotation == 0) {
 		fInitRotation = deg[2];
-		iTurnState = 2;
+		iTurnState = 7;
+		fTarget = 90;
 		//pIdgey->GetAccumGyro(deg);
 		//}
 
@@ -228,18 +229,21 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_RIGHT90:
 		fInitRotation = deg[2];
-		iTurnState = -2;
+		iTurnState = 7;
+		fTarget = -90;
 		break;
 
 	case COMMAND_DRIVETRAIN_180:
 		fInitRotation = deg[2];
-		iTurnState = 5;
+		iTurnState = 7;
+		fTarget = 180;
 		break;
 
 	case COMMAND_DRIVETRAIN_GPTURN:
 		if (fInitRotation == 0)
 			fInitRotation  = deg[2];
 		iTurnState = 7;
+		fTarget = (localMessage.params.turn.fAngle);
 		SmartDashboard::PutString("Mode","PID Turn Initiated");
 		break;
 		/*		case COMMAND_DRIVETRAIN_MMOVE:
