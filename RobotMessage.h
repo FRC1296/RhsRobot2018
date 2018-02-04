@@ -68,10 +68,6 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_MTURN,			//!< Turns the robot a specified amount of degrees
 	COMMAND_DRIVETRAIN_WAVE,			//!< Drivetrain test for sin wave for THE CLAW
 
-	COMMAND_DRIVETRAIN_LEFT90,			//!< Drivetrain test for rotating 90 degrees left
-	COMMAND_DRIVETRAIN_RIGHT90,			//!< Drivetrain test for rotating 90 degrees right
-	COMMAND_DRIVETRAIN_180,				//!< Drivetrain test for rotating 180 degrees
-
 	COMMAND_DRIVETRAIN_GPTURN,			//!< Drivetrain test for Gyro rotation with a PID loop
 
 	//add new component messages here

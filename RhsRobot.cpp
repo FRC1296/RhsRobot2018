@@ -102,23 +102,24 @@ void RhsRobot::Run() {
 	c[0] = Yay;
 	c[1] = 0;
 
-	SmartDashboard::PutString("YayNum",c);
+	SmartDashboard::PutString("Field Starting Position",c);
 	std::__cxx11::string gameData;
-		gameData = frc::DriverStation::GetInstance().GetGameSpecificMessage();
+	gameData = frc::DriverStation::GetInstance().GetGameSpecificMessage();
+
 	if(gameData[0] == 'L')
 	{
 		//Put left auto code here
-		SmartDashboard::PutString("Left","lol");
+		SmartDashboard::PutString("Switch","Left");
 	} else {
 		//Put right auto code here
-		SmartDashboard::PutString("Right","Poi");
+		SmartDashboard::PutString("Switch","Right");
 	}
 
 
 
 	if(pDrivetrain)
 	{
-		if(pController_1->GetRawButton(2))
+		if(WAVE_DASH)
 		{
 			robotMessage.command  = COMMAND_DRIVETRAIN_WAVE;
 			SmartDashboard::PutString("Mode","WAVE DASH");
@@ -127,21 +128,28 @@ void RhsRobot::Run() {
 		}
 		else if(PIDGEY_ROTATE_LEFT90)
 		{
-			robotMessage.command = COMMAND_DRIVETRAIN_LEFT90;
+			robotMessage.params.turn.fAngle = 90;
+			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
+			SmartDashboard::PutString("Mode","EZ Money Left 90 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_RIGHT90)
 		{
-			robotMessage.command = COMMAND_DRIVETRAIN_RIGHT90;
+			robotMessage.params.turn.fAngle = -90;
+			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
+			SmartDashboard::PutString("Mode","EZ Money Right 90 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_180)
 		{
-			robotMessage.command = COMMAND_DRIVETRAIN_180;
+			robotMessage.params.turn.fAngle = 180;
+			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
+			SmartDashboard::PutString("Mode","EZ Money 180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_GPTURN)
 		{
+			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
 			SmartDashboard::PutString("Mode","PID Turn Called");
 			pDrivetrain->SendMessage(&robotMessage);

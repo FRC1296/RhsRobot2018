@@ -77,14 +77,17 @@ Add more as needed.
 
 // TODO: Delegate TalonSRX numbers
 
+const int CAN_PCM = 17;
+const int CAN_PIGEON = 18;
 const int CAN_PDB = 19;
 
-const int CAN_DRIVETRAIN_TALON_LEFT = 1;
-const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 2;
-const int CAN_DRIVETRAIN_VICTOR_LEFT2 = 3;
-const int CAN_DRIVETRAIN_TALON_RIGHT = 4;
-const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 5;
-const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 6;
+// Had to change these, lowkey salty at mechanical ~ Jiff
+const int CAN_DRIVETRAIN_TALON_LEFT = 4;
+const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 5;
+const int CAN_DRIVETRAIN_VICTOR_LEFT2 = 6;
+const int CAN_DRIVETRAIN_TALON_RIGHT = 1;
+const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 2;
+const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 3;
 
 const int CAN_CLAW_VICTOR_LEFT = -1; // Arbitrary numbers, we can discuss Saturday/Monday
 const int CAN_CLAW_VICTOR_RIGHT = -1; // See above
@@ -175,8 +178,8 @@ const int POV_STILL = -1;
 #define PI							3.14159
 #define WIDTH						26
 #define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
-#define DRIVETRAIN_CONST_KI			(1.0/500.0) // Constant I value for PID loops
-#define DRIVETRAIN_CONST_KD			(1.0/50.0)  // Constant D value for PID loops
+#define DRIVETRAIN_CONST_KI			(1.0/8000.0) // Constant I value for PID loops
+#define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
 
 #define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
@@ -185,14 +188,16 @@ const int POV_STILL = -1;
 #define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
-#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
+#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
+#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 
-#define PIDGEY_ROTATE_LEFT90		(pController_1->GetRawButton(1))
-#define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(3))
-#define PIDGEY_ROTATE_180			(pController_1->GetRawButton(4))
+#define WAVE_DASH					(pController_1->GetRawButton(L310_BUTTON_A))
 
-#define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(5))
+#define PIDGEY_ROTATE_LEFT90		(pController_1->GetRawButton(L310_BUTTON_X))
+#define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(L310_BUTTON_B))
+#define PIDGEY_ROTATE_180			(pController_1->GetRawButton(L310_BUTTON_Y))
+
+#define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 // TODO: Add Component Commands
 

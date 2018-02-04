@@ -34,8 +34,8 @@ Drivetrain::Drivetrain()
 	pRightSlave1 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT1);
 	pRightSlave2 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT2);
 
-	/*	pLeftMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
-	pRightMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0); */
+	pLeftMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
+	pRightMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
 	pLeftMotor->Set(ControlMode::PercentOutput, 0);
 	pRightMotor->Set(ControlMode::PercentOutput, 0);
 	pLeftMotor->ConfigOpenloopRamp(.1,0);
@@ -44,7 +44,7 @@ Drivetrain::Drivetrain()
 
 	pLeftMotor->SetNeutralMode(NeutralMode::Brake);
 	pRightMotor->SetNeutralMode(NeutralMode::Brake);
-	pIdgey = new PigeonIMU(pRightMotor);
+	pIdgey = new PigeonIMU(CAN_PIGEON);
 	pIdgey->SetFusedHeading(0.0,10);
 
 	pLeftSlave1->Follow(*pLeftMotor);
@@ -58,7 +58,7 @@ Drivetrain::Drivetrain()
 	fPrevP = 0;
 	fSpeed = 0;
 	fCurrentPos = 0;
-	fTarget = 90;
+	fTarget = 0;
 	fP = 0;
 	fD = 0;
 	fI = 0;
@@ -105,7 +105,10 @@ void Drivetrain::Run()
 	SmartDashboard::PutNumber("Z Rotation",deg[2]);
 	SmartDashboard::PutNumber("fInite",fInitRotation);
 
-	SmartDashboard::PutString("Mode","Running");
+	SmartDashboard::PutString("Modes","Running");
+
+	SmartDashboard::PutNumber("Left Encoder",pLeftMotor->GetSelectedSensorPosition(0));
+	SmartDashboard::PutNumber("Right Encoder",pRightMotor->GetSelectedSensorPosition(0));
 
 	/*if (iTurnState == 2){
 		if (deg[2] < fInitRotation + 90.0) {
@@ -155,43 +158,46 @@ void Drivetrain::Run()
 
 	if (iTurnState == 7)
 	{
-		if ((deg[2] <= (fInitRotation + fTarget + .1)) && (deg[2] >= (fInitRotation + fTarget - .1)))
+		if ((deg[2] <= (fInitRotation + fTarget + 1)) && (deg[2] >= (fInitRotation + fTarget - 1)))
 		{
 			pPIDTimer->Start();
 			if (pPIDTimer->Get() >= .25) {
-				SmartDashboard::PutString("Completed","PID Completed");
+				SmartDashboard::PutString("Modes","PID Done");
+				//SmartDashboard::PutString("Completed","PID Completed");
 				pLeftMotor->Set(ControlMode::PercentOutput,0);
 				pRightMotor->Set(ControlMode::PercentOutput,0);
 				iTurnState = -1;
 				fTarget = 0;
 				fInitRotation = 0;
+				return;
 			}
 		}
 		else
 		{
 			pPIDTimer->Stop();
 			pPIDTimer->Reset();
-			SmartDashboard::PutString("Mode","PID Running");
-			fP = (fTarget + fInitRotation) - deg[2];
-			SmartDashboard::PutNumber("P Value",fP);
-			if  (fPrevP == 0)
-				fD = 0;
-			else
-				fD = fPrevP - fP;
-			SmartDashboard::PutNumber("D Value",fD);
-			fI += fP;
-			fPrevP = fP;
-			SmartDashboard::PutNumber("Previous P Value",fPrevP);
-			fSpeed = (DRIVETRAIN_CONST_KP*fP) + (DRIVETRAIN_CONST_KI*fI) - (DRIVETRAIN_CONST_KD*fD);
-			if (fSpeed < -1)
-				fSpeed = -1;
-			if (fSpeed > 1)
-				fSpeed = 1;
-			SmartDashboard::PutNumber("Speed",fSpeed);
-			pLeftMotor->Set(ControlMode::PercentOutput,fSpeed);
-			pRightMotor->Set(ControlMode::PercentOutput,-1*fSpeed);
-			SmartDashboard::PutString("Completed","PID Not Completed");
 		}
+		SmartDashboard::PutString("Modes","PID Running");
+		fP = (fTarget + fInitRotation) - deg[2];
+		SmartDashboard::PutNumber("P Value",fP);
+		if  (fPrevP == 0)
+			fD = 0;
+		else
+			fD = fPrevP - fP;
+		SmartDashboard::PutNumber("D Value",fD);
+	//	fI += (DRIVETRAIN_CONST_KP*fP);
+	//	SmartDashboard::PutNumber("I Value",fI);
+		fPrevP = fP;
+		SmartDashboard::PutNumber("Previous P Value",fPrevP);
+		fSpeed = (DRIVETRAIN_CONST_KP*fP) /*+ (DRIVETRAIN_CONST_KI*fI)*/ - (DRIVETRAIN_CONST_KD*fD);
+		if (fSpeed < -1)
+			fSpeed = -1;
+		if (fSpeed > 1)
+			fSpeed = 1;
+		SmartDashboard::PutNumber("Speed",fSpeed);
+		pLeftMotor->Set(ControlMode::PercentOutput,fSpeed);
+		pRightMotor->Set(ControlMode::PercentOutput,-1*fSpeed);
+		SmartDashboard::PutString("Completed","PID Not Completed");
 	}
 
 	switch(localMessage.command)			//Reads the message command
@@ -202,8 +208,8 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
 		if (iTurnState == -1) {
-			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left/(-1));
-			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right/(-1));
+			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
+			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
 		}
 		break;
 
@@ -216,35 +222,14 @@ void Drivetrain::Run()
 		x++;
 		break;
 
-	case COMMAND_DRIVETRAIN_LEFT90:
-
-		//if (fInitRotation == 0) {
-		fInitRotation = deg[2];
-		iTurnState = 7;
-		fTarget = 90;
-		//pIdgey->GetAccumGyro(deg);
-		//}
-
-		break;
-
-	case COMMAND_DRIVETRAIN_RIGHT90:
-		fInitRotation = deg[2];
-		iTurnState = 7;
-		fTarget = -90;
-		break;
-
-	case COMMAND_DRIVETRAIN_180:
-		fInitRotation = deg[2];
-		iTurnState = 7;
-		fTarget = 180;
-		break;
-
 	case COMMAND_DRIVETRAIN_GPTURN:
-		if (fInitRotation == 0)
-			fInitRotation  = deg[2];
-		iTurnState = 7;
-		fTarget = (localMessage.params.turn.fAngle);
-		SmartDashboard::PutString("Mode","PID Turn Initiated");
+		if (iTurnState == -1)
+		{
+			fInitRotation = deg[2];
+			iTurnState = 7;
+			fTarget = (localMessage.params.turn.fAngle);
+			SmartDashboard::PutString("Modes","PID Turn Initiated");
+		}
 		break;
 		/*		case COMMAND_DRIVETRAIN_MMOVE:
 			iTicks = (DISTANCE*4096)/(PI*DIAMETER);
