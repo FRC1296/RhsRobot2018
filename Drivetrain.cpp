@@ -62,6 +62,10 @@ Drivetrain::Drivetrain()
 	fP = 0;
 	fD = 0;
 	fI = 0;
+	fMaxTurnSpeed = 0;
+	fMaxStraightSpeed = 0;
+	fTurnTTM = 0;
+	fStraightTTM = 0;
 
 	iTurnState = -1;
 	iTicks = 0;
@@ -69,6 +73,7 @@ Drivetrain::Drivetrain()
 	iFinalPosRight = 0;
 
 	pPIDTimer = new Timer();
+	pSpeedTimer = new Timer();
 
 	pTask = new std::thread(&Drivetrain::StartTask, this, DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
 	wpi_assert(pTask);
@@ -90,6 +95,7 @@ void Drivetrain::Run()
 	double y;
 	double z;
 	double deg[3];
+	double dps[3];
 
 	PigeonIMU::GeneralStatus genStatus;
 
@@ -110,46 +116,18 @@ void Drivetrain::Run()
 	SmartDashboard::PutNumber("Left Encoder",pLeftMotor->GetSelectedSensorPosition(0));
 	SmartDashboard::PutNumber("Right Encoder",pRightMotor->GetSelectedSensorPosition(0));
 
-	/*if (iTurnState == 2){
-		if (deg[2] < fInitRotation + 90.0) {
-			//pIdgey->GetAccumGyro(deg);
-			pLeftMotor->Set(ControlMode::PercentOutput,.2);
-			pRightMotor->Set(ControlMode::PercentOutput,-.2);
-			return;
-		}
+	SmartDashboard::PutNumber("Max Turn Speed",fMaxTurnSpeed);
+	SmartDashboard::PutNumber("Max Straight Speed",fMaxStraightSpeed);
+	SmartDashboard::PutNumber("Turn TTM",fTurnTTM);
+	SmartDashboard::PutNumber("Straight TTM",fStraightTTM);
 
-		else {
-			pLeftMotor->Set(ControlMode::PercentOutput,0);
-			pRightMotor->Set(ControlMode::PercentOutput,0);
-			iTurnState = -1;
-		}
-	}
-	if (iTurnState == -2){
-		if (deg[2] > fInitRotation - 90.0) {
-			pLeftMotor->Set(ControlMode::PercentOutput,-.2);
-			pRightMotor->Set(ControlMode::PercentOutput,.2);
-			return;
-		}
+	if (std::abs(pLeftMotor->GetSelectedSensorVelocity(0)) > fMaxStraightSpeed)
+		fMaxStraightSpeed = std::abs(pLeftMotor->GetSelectedSensorVelocity(0));
 
-		else {
-			pLeftMotor->Set(ControlMode::PercentOutput,0);
-			pRightMotor->Set(ControlMode::PercentOutput,0);
-			iTurnState = -1;
-		}
-	}
-	if (iTurnState == 5){
-		if (deg[2] < fInitRotation + 180.0) {
-			pLeftMotor->Set(ControlMode::PercentOutput,.2);
-			pRightMotor->Set(ControlMode::PercentOutput,-.2);
-			return;
-		}
+	pIdgey->GetRawGyro(dps);
+	if (std::abs(dps[2]) > fMaxTurnSpeed)
+		fMaxTurnSpeed = std::abs(deg[2]);
 
-		else {
-			pLeftMotor->Set(ControlMode::PercentOutput,0);
-			pRightMotor->Set(ControlMode::PercentOutput,0);
-			iTurnState = -1;
-		}
-	}
 	/*if (iTurnState == -1){
 	fInitRotation = 0;
 	}*/
@@ -185,8 +163,8 @@ void Drivetrain::Run()
 		else
 			fD = fPrevP - fP;
 		SmartDashboard::PutNumber("D Value",fD);
-	//	fI += (DRIVETRAIN_CONST_KP*fP);
-	//	SmartDashboard::PutNumber("I Value",fI);
+		//	fI += (DRIVETRAIN_CONST_KP*fP);
+		//	SmartDashboard::PutNumber("I Value",fI);
 		fPrevP = fP;
 		SmartDashboard::PutNumber("Previous P Value",fPrevP);
 		fSpeed = (DRIVETRAIN_CONST_KP*fP) /*+ (DRIVETRAIN_CONST_KI*fI)*/ - (DRIVETRAIN_CONST_KD*fD);

@@ -55,6 +55,7 @@ void RhsRobot::Init() {
 	pChooser->AddDefault("Middle", 'M');
 	pChooser->AddObject("Right",'R');
 	pChooser->AddObject("Left",'L');
+
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();

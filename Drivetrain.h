@@ -48,6 +48,7 @@ private:
 	PigeonIMU* pIdgey;
 
 	Timer* pPIDTimer;
+	Timer* pSpeedTimer;
 
 	void OnStateChange();
 	void Run();
@@ -60,6 +61,10 @@ private:
 	float fP;
 	float fD;
 	float fI;
+	float fMaxTurnSpeed;
+	float fMaxStraightSpeed;
+	float fTurnTTM;
+	float fStraightTTM;
 
 	int iTurnState;
 	int iTicks;
