@@ -65,6 +65,9 @@ private:
 	float fMaxStraightSpeed;
 	float fTurnTTM;
 	float fStraightTTM;
+	float fMaxTurnX;
+	float fMaxTurnY;
+	float fMaxTurnZ;
 
 	int iTurnState;
 	int iTicks;

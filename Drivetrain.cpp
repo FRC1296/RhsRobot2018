@@ -66,6 +66,9 @@ Drivetrain::Drivetrain()
 	fMaxStraightSpeed = 0;
 	fTurnTTM = 0;
 	fStraightTTM = 0;
+	fMaxTurnX = 0;
+	fMaxTurnY = 0;
+	fMaxTurnZ = 0;
 
 	iTurnState = -1;
 	iTicks = 0;
@@ -121,12 +124,22 @@ void Drivetrain::Run()
 	SmartDashboard::PutNumber("Turn TTM",fTurnTTM);
 	SmartDashboard::PutNumber("Straight TTM",fStraightTTM);
 
+	SmartDashboard::PutNumber("Max Turn X",fMaxTurnX);
+	SmartDashboard::PutNumber("Max Turn Y",fMaxTurnY);
+	SmartDashboard::PutNumber("Max Turn Z",fMaxTurnZ);
+
 	if (std::abs(pLeftMotor->GetSelectedSensorVelocity(0)) > fMaxStraightSpeed)
 		fMaxStraightSpeed = std::abs(pLeftMotor->GetSelectedSensorVelocity(0));
 
 	pIdgey->GetRawGyro(dps);
 	if (std::abs(dps[2]) > fMaxTurnSpeed)
-		fMaxTurnSpeed = std::abs(deg[2]);
+		fMaxTurnSpeed = std::abs(dps[2]);
+	if (std::abs(dps[0]) > fMaxTurnX)
+		fMaxTurnX = std::abs(dps[0]);
+	if (std::abs(dps[1]) > fMaxTurnY)
+		fMaxTurnY = std::abs(dps[1]);
+	if (std::abs(dps[2]) > fMaxTurnZ)
+		fMaxTurnZ = std::abs(dps[2]);
 
 	/*if (iTurnState == -1){
 	fInitRotation = 0;
