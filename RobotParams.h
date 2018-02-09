@@ -89,9 +89,10 @@ const int CAN_DRIVETRAIN_TALON_RIGHT = 1;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 2;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 3;
 
-const int CAN_CLAW_VICTOR_LEFT = -1; // Arbitrary numbers, we can discuss Saturday/Monday
+const int CAN_CLAW_VICTOR_LEFT = -1; // Arbitrary Numbers until delegated
 const int CAN_CLAW_VICTOR_RIGHT = -1; // See above
-const int CAN_ELEVATOR_TALON = -1; // See above
+const int CAN_ELEVATOR_TALON_LEFT = -1; // See above
+const int CAN_ELEVATOR_TALON_RIGHT = -1; // See above
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio

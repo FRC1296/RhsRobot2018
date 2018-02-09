@@ -36,11 +36,23 @@ public:
 	}
 
 private:
-	TalonSRX* pElevatorMotor;
-	VictorSPX* pElevatorMotorFollower;
+	TalonSRX* pElevatorMotorLeft;
+	TalonSRX* pElevatorMotorRight;
 
 	void OnStateChange();
 	void Run();
+
+	int iLeftInit;
+	int iRightInit;
+	float fCurVoltage;
+
+	// Arbitrary Numbers until we measure
+	const int iFloorToSwitch = 100;
+	const int iFloorToLowScale = 300;
+	const int iFloorToMidScale = 350;
+	const int iFloorToHighScale = 400;
+	const int iFloorToClimb = 500;
+	const int iFloorToMax = 600;
 };
 
 #endif			//COMPONENT_H
