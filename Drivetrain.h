@@ -68,11 +68,16 @@ private:
 	float fMaxTurnX;
 	float fMaxTurnY;
 	float fMaxTurnZ;
+	float fTimeToDest;
 
 	int iTurnState;
 	int iTicks;
 	int iFinalPosLeft;
 	int iFinalPosRight;
+	int iTurnArray[];
+	int iTurnArray2[];
+	int iNumPoints;
+	int iCurrNumPoints;s
 };
 
 #endif			//COMPONENT_H

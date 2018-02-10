@@ -181,7 +181,8 @@ const int POV_STILL = -1;
 #define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
 #define DRIVETRAIN_CONST_KI			(1.0/8000.0) // Constant I value for PID loops
 #define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
-#define MAX_TURN_SPEED				90.0		// Max Turning speed in Degrees per Second
+#define MAX_TURN_SPEED				32604.0		// Max Turning speed in ticks per 100 milliseconds
+#define UPDATE_RATE					.02			// Update loop rate for drive train
 #define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second
 #define TURN_TTM					0.4			// Time to maximum turning speed
 #define STRAIGHT_TTM				0.4			// Time to maximum straight speed
