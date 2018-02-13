@@ -23,6 +23,11 @@
 #include "ctre/Phoenix.h"
 #include "ComponentBase.h"			//For ComponentBase class
 
+void AddArray(int* Array, int LengthArr, int val);
+float AvgArrays(int* Array, int LengthArr);
+void dAddArray(float* Array, int LengthArr, float val);
+float dAvgArrays(float* Array, int LengthArr);
+
 class Drivetrain : public ComponentBase
 {
 public:
@@ -69,15 +74,17 @@ private:
 	float fMaxTurnY;
 	float fMaxTurnZ;
 	float fTimeToDest;
+	float dAvgArray1;
+	float dAvgArray2;
 
 	int iTurnState;
 	int iTicks;
 	int iFinalPosLeft;
 	int iFinalPosRight;
-	int iTurnArray[];
-	int iTurnArray2[];
+	int iTurnArray[20];
+	float dTurnArray2[10];
 	int iNumPoints;
-	int iCurrNumPoints;s
+	int iCurrNumPoints;
 };
 
 #endif			//COMPONENT_H

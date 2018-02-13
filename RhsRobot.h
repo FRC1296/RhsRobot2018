@@ -13,6 +13,7 @@
 #include "Claw.h"
 #include "Elevator.h"
 //#include "SendableChooser.h"
+#include "ctre/Phoenix.h"
 
 class RhsRobot : public RhsRobotBase
 {
@@ -22,6 +23,10 @@ public:
 
 private:
 	
+	TalonSRX* pUpMotor;
+
+	VictorSPX* pUpSlave;
+
 	std::vector<ComponentBase *> ComponentSet;
 
 	Joystick* pController_1;

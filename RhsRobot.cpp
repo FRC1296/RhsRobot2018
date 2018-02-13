@@ -55,6 +55,12 @@ void RhsRobot::Init() {
 	pChooser->AddDefault("Middle", 'M');
 	pChooser->AddObject("Right",'R');
 	pChooser->AddObject("Left",'L');
+	pUpMotor = new TalonSRX(8);
+	pUpSlave = new VictorSPX(7);
+
+	pUpMotor->Set(ControlMode::PercentOutput, 0);
+	pUpSlave->Follow(*pUpMotor);
+	pUpSlave->SetInverted(true);
 
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
@@ -116,43 +122,52 @@ void RhsRobot::Run() {
 		SmartDashboard::PutString("Switch","Right");
 	}
 
+/*	if(WAVE_DASH)
+	{
+		pUpMotor->Set(ControlMode::PercentOutput,.75);
 
+	}
+	else
+	{
+		pUpMotor->Set(ControlMode::PercentOutput,0);
+	}
+*/
 
 	if(pDrivetrain)
 	{
-		if(WAVE_DASH)
+		/*if(WAVE_DASH)
 		{
-			robotMessage.command  = COMMAND_DRIVETRAIN_WAVE;
+			/*robotMessage.command  = COMMAND_DRIVETRAIN_WAVE;
 			SmartDashboard::PutString("Mode","WAVE DASH");
-			pDrivetrain->SendMessage(&robotMessage);
-
+			pDrivetrain->SendMessage(&robotMessage);*/
+		/*
 		}
-		else if(PIDGEY_ROTATE_LEFT90)
+		else*/ if(PIDGEY_ROTATE_LEFT90)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
-			SmartDashboard::PutString("Mode","EZ Money Left 90 PID Called");
+			SmartDashboard::PutString("cmd","EZ Money Left 90 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_RIGHT90)
 		{
 			robotMessage.params.turn.fAngle = -90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
-			SmartDashboard::PutString("Mode","EZ Money Right 90 PID Called");
+			SmartDashboard::PutString("cmd","EZ Money Right 90 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_180)
 		{
 			robotMessage.params.turn.fAngle = 180;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
-			SmartDashboard::PutString("Mode","EZ Money 180 PID Called");
+			SmartDashboard::PutString("cmd","EZ Money 180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
-			SmartDashboard::PutString("Mode","PID Turn Called");
+			SmartDashboard::PutString("cmd","PID Turn Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else

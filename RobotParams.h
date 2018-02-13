@@ -181,7 +181,7 @@ const int POV_STILL = -1;
 #define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
 #define DRIVETRAIN_CONST_KI			(1.0/8000.0) // Constant I value for PID loops
 #define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
-#define MAX_TURN_SPEED				32604.0		// Max Turning speed in ticks per 100 milliseconds
+#define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
 #define UPDATE_RATE					.02			// Update loop rate for drive train
 #define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second
 #define TURN_TTM					0.4			// Time to maximum turning speed
@@ -199,7 +199,7 @@ const int POV_STILL = -1;
 #define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 #define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 
-#define WAVE_DASH					(pController_1->GetRawButton(L310_BUTTON_A))
+//#define WAVE_DASH					(pController_1->GetRawButton(L310_BUTTON_A))
 
 #define PIDGEY_ROTATE_LEFT90		(pController_1->GetRawButton(L310_BUTTON_X))
 #define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(L310_BUTTON_B))
