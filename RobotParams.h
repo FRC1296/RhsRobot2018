@@ -1,4 +1,4 @@
- /** \file
+/** \file
  *  Defines task parameters, hardware assignments and controller button/axis assignment.
  *
  * This header contains basic parameters for the robot. All parameters must be constants with internal
@@ -175,20 +175,6 @@ const int POV_STILL = -1;
  */
 #ifdef USE_L310_FOR_CONTROLLER_1
 
-#define DIAMETER					4
-#define PI							3.14159
-#define WIDTH						26
-#define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
-#define DRIVETRAIN_CONST_KI			(1.0/8000.0) // Constant I value for PID loops
-#define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
-#define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
-#define UPDATE_RATE					.02			// Update loop rate for drive train
-#define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second
-#define TURN_TTM					0.4			// Time to maximum turning speed
-#define STRAIGHT_TTM				0.4			// Time to maximum straight speed
-#define FILTER_ONE					4			// Length of first filter
-#define FILTER_TWO					2			// Length of second filter
-
 #define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
 #define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
@@ -208,6 +194,25 @@ const int POV_STILL = -1;
 #define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 // TODO: Add Component Commands
+
+/********** Drive Train Constants:**********/
+#define WHEEL_DIA					4			//Wheel Diameter in inches
+#define PI							3.14159
+#define ROBOT_WIDTH						26		// Width of the drivetrain in inches
+#define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
+#define DRIVETRAIN_CONST_KI			(1.0/8000.0) // Constant I value for PID loops
+#define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
+#define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
+#define UPDATE_RATE					.02			// Update loop rate for drive train
+#define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second
+#define TURN_TTM					0.4			// Time to maximum turning speed
+#define STRAIGHT_TTM				0.4			// Time to maximum straight speed
+#define FILTER_ONE_LENGTH			20			// Length of first filter
+#define FILTER_TWO_LENGTH			10			// Length of second filter
+#define MAX_SPEED_PID				.75			// Max speed allowed in autonomous commands
+
+#define ACCEPT_RANGE_TICKS			2048		//Acceptable Range for "finished" PID loop in ticks
+#define ACCEPT_RANGE_DEGR			5			//Acceptable Range for "finished" PID loop in degrees
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

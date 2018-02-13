@@ -17,9 +17,10 @@
 #include "RhsRobotBase.h"
 
 #define DISTANCE 5 //robotMessage.params.mmove.fDistance
-#define WIDTH 26
+#define ROBOT_WIDTH 26
 #define DEGREES 90 //robotMessage.params.turn.fAngle
 
+enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn};
 //Robot
 
 Drivetrain::Drivetrain()
@@ -74,12 +75,12 @@ Drivetrain::Drivetrain()
 	dAvgArray1 = 0;
 	dAvgArray2 = 0;
 
-	iTurnState = -1;
+	iTurnState = TurnState_Init;
 	iTicks = 0;
 	iFinalPosLeft = 0;
 	iFinalPosRight = 0;
-	memset(iTurnArray,0,sizeof(int)*20);
-	memset(dTurnArray2,0,sizeof(float)*10);
+	memset(iTurnArray,0,sizeof(int)*FILTER_ONE_LENGTH);
+	memset(dTurnArray2,0,sizeof(float)*FILTER_TWO_LENGTH);
 
 	iNumPoints = 0;
 	iCurrNumPoints = 0;
@@ -128,18 +129,6 @@ void Drivetrain::Run()
 	SmartDashboard::PutNumber("Left Encoder",pLeftMotor->GetSelectedSensorPosition(0));
 	SmartDashboard::PutNumber("Right Encoder",pRightMotor->GetSelectedSensorPosition(0));
 
-//	SmartDashboard::PutNumber("Max Turn Speed",fMaxTurnSpeed);
-//	SmartDashboard::PutNumber("Max Straight Speed",fMaxStraightSpeed);
-//	SmartDashboard::PutNumber("Turn TTM",fTurnTTM);
-//	SmartDashboard::PutNumber("Straight TTM",fStraightTTM);
-
-	SmartDashboard::PutNumber("Max Turn X",fMaxTurnX);
-	SmartDashboard::PutNumber("Max Turn Y",fMaxTurnY);
-	SmartDashboard::PutNumber("Max Turn Z",fMaxTurnZ);
-
-	if (std::abs(pLeftMotor->GetSelectedSensorVelocity(0)) > fMaxStraightSpeed)
-		fMaxStraightSpeed = std::abs(pLeftMotor->GetSelectedSensorVelocity(0));
-
 	pIdgey->GetRawGyro(dps);
 	if (std::abs(dps[2]) > fMaxTurnSpeed)
 		fMaxTurnSpeed = std::abs(dps[2]);
@@ -156,75 +145,19 @@ void Drivetrain::Run()
 
 	SmartDashboard::PutNumber("Target Angle",fInitRotation + fTarget);
 
-	if (iTurnState == 7)
+	switch (iTurnState)
 	{
-		if ((deg[2] <= (fInitRotation + fTarget + 1)) && (deg[2] >= (fInitRotation + fTarget - 1)))
-		{
-			pPIDTimer->Start();
-			if (pPIDTimer->Get() >= .25) {
-				SmartDashboard::PutString("snowflake","PID Done");
-				//SmartDashboard::PutString("Completed","PID Completed");
-				pLeftMotor->Set(ControlMode::PercentOutput,0);
-				pRightMotor->Set(ControlMode::PercentOutput,0);
-				iTurnState = -1;
-				fTarget = 0;
-				fInitRotation = 0;
-				return;
-			}
-		}
-		else
-		{
-			pPIDTimer->Stop();
-			pPIDTimer->Reset();
-		}
-		SmartDashboard::PutNumber("PERNTS",iCurrNumPoints);
-		if (iCurrNumPoints <= iNumPoints)
-		{
-			//iTurnArray + 1;
-			iCurrNumPoints += 1;
-			AddArray(iTurnArray, 100, MAX_TURN_SPEED);
-
-		}
-		else
-		{
-			AddArray(iTurnArray, 100, 0);
-			//iTurnArray + 0;
-			iCurrNumPoints += 1;
-		}
-
-		dAvgArray1 = AvgArrays(iTurnArray, 100);					//:P
-		SmartDashboard::PutNumber("Ave1",dAvgArray1);
-		SmartDashboard::PutString("hello?","i am a banana");
-		dAddArray(dTurnArray2, 50, dAvgArray1);
-		dAvgArray2 = dAvgArrays(dTurnArray2, 50);					//:P
-		fSpeed = dAvgArray2;
-
-		if ((dAvgArray1 + dAvgArray2) == 0)
-		{
-			iTurnState = -1;
-		}
-
-		SmartDashboard::PutString("Modes","PID Running");
-		//		fP = (fTarget + fInitRotation) - deg[2];
-		//		SmartDashboard::PutNumber("P Value",fP);
-		//		if  (fPrevP == 0)
-		//			fD = 0;
-		//		else
-		//			fD = fPrevP - fP;
-		//		SmartDashboard::PutNumber("D Value",fD);
-		//		//	fI += (DRIVETRAIN_CONST_KP*fP);
-		//		//	SmartDashboard::PutNumber("I Value",fI);
-		//		fPrevP = fP;
-		//		SmartDashboard::PutNumber("Previous P Value",fPrevP);
-		//		fSpeed = (DRIVETRAIN_CONST_KP*fP) /*+ (DRIVETRAIN_CONST_KI*fI)*/ - (DRIVETRAIN_CONST_KD*fD);
-		//		if (fSpeed < -1)
-		//			fSpeed = -1;
-		//		if (fSpeed > 1)
-		//			fSpeed = 1;
-		SmartDashboard::PutNumber("Speed",fSpeed);
-		pLeftMotor->Set(ControlMode::Velocity,fSpeed);
-		pRightMotor->Set(ControlMode::Velocity,-1*fSpeed);
-		SmartDashboard::PutString("Completed","PID Not Completed");
+	case TurnState_mTurn:
+		MeasuredTurn();
+		break;
+	case TurnState_gpTurn:
+		GyroPIDTurn();
+		break;
+	case TurnState_boxTurn:
+		BoxCarFilter();
+		break;
+	default:
+		break;
 	}
 
 	switch(localMessage.command)			//Reads the message command
@@ -234,7 +167,8 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
-		if (iTurnState == -1) {
+		if (iTurnState == TurnState_Init) {
+			SmartDashboard::PutString("Mode","ARCADEEEEEE");
 			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
 			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
 		}
@@ -251,16 +185,16 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_GPTURN:
 		SmartDashboard::PutString("Command","Gracious Professionalism Turn");
-		if (iTurnState == -1)
+		if (iTurnState == TurnState_Init)
 		{
 			fTarget = (localMessage.params.turn.fAngle);
-			iTicks = (512*WIDTH*fTarget)/(45*DIAMETER);
+			iTicks = (512*ROBOT_WIDTH*fTarget)/(45*WHEEL_DIA);
 			SmartDashboard::PutNumber("ticks",iTicks);
 			fTimeToDest = (iTicks*1.0/MAX_TURN_SPEED);
 			SmartDashboard::PutNumber("TTD",fTimeToDest);
 			iNumPoints = std::abs(fTimeToDest/UPDATE_RATE);
 			SmartDashboard::PutNumber("NmPts",iNumPoints);
-			iTurnState = 7;
+			iTurnState = TurnState_gpTurn;
 			fInitRotation = deg[2];
 			iCurrNumPoints = 0;
 
@@ -268,20 +202,25 @@ void Drivetrain::Run()
 		}
 		break;
 	case COMMAND_DRIVETRAIN_MMOVE:
-		iTicks = (DISTANCE*4096)/(PI*DIAMETER);
-		iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
-		iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
-		pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
-		pRightMotor->Set(ControlMode::Position,iFinalPosRight);
+		if (iTurnState == TurnState_Init)
+		{
+			iTicks = (DISTANCE*4096)/(PI*WHEEL_DIA);
+			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
+			iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
+			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
+			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
+		}
 		break;
 
 	case COMMAND_DRIVETRAIN_MTURN:
-		fTarget = (localMessage.params.turn.fAngle);
-		iTicks = (512*WIDTH*fTarget)/(45*DIAMETER);
-		fTimeToDest = ((1.0*iTicks)/(MAX_TURN_SPEED));
-		iNumPoints = (fTimeToDest/UPDATE_RATE);
-		iTurnState = 7;
-		/*	if (DEGREES<0) {
+		if (iTurnState == TurnState_Init)
+		{
+			fTarget = (localMessage.params.turn.fAngle);
+			iTicks = (512*ROBOT_WIDTH*fTarget)/(45*WHEEL_DIA);
+			/*fTimeToDest = ((1.0*iTicks)/(MAX_TURN_SPEED));
+			iNumPoints = (fTimeToDest/UPDATE_RATE);*/
+			iTurnState = TurnState_mTurn;
+			if (fTarget<0) {
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
 				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) + iTicks;
 			}
@@ -291,7 +230,8 @@ void Drivetrain::Run()
 			}
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
-		 */	break;
+		}
+		break;
 
 	default:
 		break;
@@ -299,6 +239,121 @@ void Drivetrain::Run()
 
 
 };
+
+void Drivetrain::BoxCarFilter()
+{
+	float fTargetCalc = fInitRotation + fTarget;
+
+	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
+	{
+		pPIDTimer->Start();
+		if (pPIDTimer->Get() >= .25) {
+			SmartDashboard::PutString("snowflake","PID Done");
+			SmartDashboard::PutString("Completed","PID Completed");
+			pLeftMotor->Set(ControlMode::PercentOutput,0);
+			pRightMotor->Set(ControlMode::PercentOutput,0);
+			iTurnState = TurnState_Init;
+			fTarget = 0;
+			fInitRotation = 0;
+			return;
+		}
+	}
+	else
+	{
+		pPIDTimer->Stop();
+		pPIDTimer->Reset();
+	}
+
+	SmartDashboard::PutNumber("Current Point",iCurrNumPoints);
+	if (iCurrNumPoints <= iNumPoints)
+	{
+		iCurrNumPoints ++;
+		AddToArray(iTurnArray, FILTER_ONE_LENGTH, MAX_TURN_SPEED);
+
+	}
+	else
+	{
+		AddToArray(iTurnArray, FILTER_ONE_LENGTH, 0);
+		//iTurnArray + 0;
+		iCurrNumPoints += 1;
+	}
+
+	dAvgArray1 = AvgArrays(iTurnArray, FILTER_ONE_LENGTH);
+	SmartDashboard::PutNumber("Ave1",dAvgArray1);
+
+	dAddToArray(dTurnArray2, FILTER_TWO_LENGTH, dAvgArray1);
+	dAvgArray2 = dAvgArrays(dTurnArray2, FILTER_TWO_LENGTH);
+	fSpeed = dAvgArray2;
+
+	if ((dAvgArray1 + dAvgArray2) == 0)
+	{
+		iTurnState = TurnState_Init;
+		SmartDashboard::PutString("Completed","Boxcar Terminated");
+	}
+
+	SmartDashboard::PutString("Modes","PID Running");
+	SmartDashboard::PutNumber("Speed",fSpeed);
+	pLeftMotor->Set(ControlMode::Velocity,fSpeed);
+	pRightMotor->Set(ControlMode::Velocity,-1*fSpeed);
+	SmartDashboard::PutString("Completed","PID Not Completed");
+}
+
+void Drivetrain::GyroPIDTurn()
+{
+	static float fTargetCalc = fInitRotation + fTarget;
+
+	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
+	{
+		pPIDTimer->Start();
+		if (pPIDTimer->Get() >= .25) {
+			SmartDashboard::PutString("Completed","PID Completed");
+			pLeftMotor->Set(ControlMode::PercentOutput,0);
+			pRightMotor->Set(ControlMode::PercentOutput,0);
+			iTurnState = TurnState_Init;
+			fTarget = 0;
+			fInitRotation = 0;
+			return;
+		}
+	}
+	else
+	{
+		pPIDTimer->Stop();
+		pPIDTimer->Reset();
+	}
+	SmartDashboard::PutString("Modes","PID Running");
+	fP = (fTarget + fInitRotation) - deg[2];
+	SmartDashboard::PutNumber("P Value",fP);
+	if  (fPrevP == 0)
+		fD = 0;
+	else
+		fD = fPrevP - fP;
+	SmartDashboard::PutNumber("D Value",fD);
+	//	fI += (DRIVETRAIN_CONST_KP*fP);
+	//	SmartDashboard::PutNumber("I Value",fI);
+	fPrevP = fP;
+	SmartDashboard::PutNumber("Previous P Value",fPrevP);
+	fSpeed = (DRIVETRAIN_CONST_KP*fP) /*+ (DRIVETRAIN_CONST_KI*fI)*/ - (DRIVETRAIN_CONST_KD*fD);
+	if (fSpeed < -1 * MAX_SPEED_PID)
+		fSpeed = -1 * MAX_SPEED_PID;
+	if (fSpeed > MAX_SPEED_PID)
+		fSpeed = MAX_SPEED_PID;
+	SmartDashboard::PutNumber("Speed",fSpeed);
+	pLeftMotor->Set(ControlMode::Velocity,fSpeed);
+	pRightMotor->Set(ControlMode::Velocity,-1*fSpeed);
+	SmartDashboard::PutString("Completed","PID Not Completed");
+}
+
+void Drivetrain::MeasuredTurn()
+{
+	if((pLeftMotor->GetSelectedSensorPosition(0) > iFinalPosLeft - ACCEPT_RANGE_TICKS) && (pLeftMotor->GetSelectedSensorPosition(0) < iFinalPosLeft + ACCEPT_RANGE_TICKS))
+	{
+		martDashboard::PutString("Completed","PID Completed");
+		iTurnState = TurnState_Init;
+		fTarget = 0;
+		fInitRotation = 0;
+		return;
+	}
+}
 
 float AvgArrays(int* Array, int LengthArr)
 {
@@ -312,9 +367,9 @@ float AvgArrays(int* Array, int LengthArr)
 	return sum;
 }
 
-void AddArray(int* Array, int LengthArr, int val)
+void AddToArray(int* Array, int LengthArr, int val)
 {
-//	int i = LengthArr;
+	//	int i = LengthArr;
 	for (int i = LengthArr - 1; i > 0; i--)
 	{
 		Array[i] = Array[i-1];
@@ -335,9 +390,9 @@ float dAvgArrays(float* Array, int LengthArr)
 	return sum;
 }
 
-void dAddArray(float* Array, int LengthArr, float val)
+void dAddToArray(float* Array, int LengthArr, float val)
 {
-//	int i = LengthArr;
+	//	int i = LengthArr;
 	for (int i = LengthArr - 1; i > 0; --i)
 	{
 		Array[i] = Array[i-1];

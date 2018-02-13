@@ -23,9 +23,9 @@
 #include "ctre/Phoenix.h"
 #include "ComponentBase.h"			//For ComponentBase class
 
-void AddArray(int* Array, int LengthArr, int val);
+void AddToArray(int* Array, int LengthArr, int val);
 float AvgArrays(int* Array, int LengthArr);
-void dAddArray(float* Array, int LengthArr, float val);
+void dAddToArray(float* Array, int LengthArr, float val);
 float dAvgArrays(float* Array, int LengthArr);
 
 class Drivetrain : public ComponentBase
@@ -57,6 +57,9 @@ private:
 
 	void OnStateChange();
 	void Run();
+	void BoxCarFilter();
+	void GyroPIDTurn();
+	void MeasuredTurn();
 
 	float fInitRotation;
 	float fPrevP;
@@ -81,8 +84,8 @@ private:
 	int iTicks;
 	int iFinalPosLeft;
 	int iFinalPosRight;
-	int iTurnArray[20];
-	float dTurnArray2[10];
+	int iTurnArray[FILTER_ONE_LENGTH];
+	float dTurnArray2[FILTER_TWO_LENGTH];
 	int iNumPoints;
 	int iCurrNumPoints;
 };

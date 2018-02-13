@@ -103,10 +103,10 @@ void RhsRobot::Run() {
 	 * 			}
 	 */
 
-	char Yay = (char) pChooser->GetSelected();
+	char sStart_Location = (char) pChooser->GetSelected();
 
 	char c[2];
-	c[0] = Yay;
+	c[0] = sStart_Location;
 	c[1] = 0;
 
 	SmartDashboard::PutString("Field Starting Position",c);
@@ -146,21 +146,21 @@ void RhsRobot::Run() {
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
-			SmartDashboard::PutString("cmd","EZ Money Left 90 PID Called");
+			SmartDashboard::PutString("cmd","Left 90 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_RIGHT90)
 		{
 			robotMessage.params.turn.fAngle = -90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
-			SmartDashboard::PutString("cmd","EZ Money Right 90 PID Called");
+			SmartDashboard::PutString("cmd","Right 90 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_180)
 		{
 			robotMessage.params.turn.fAngle = 180;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
-			SmartDashboard::PutString("cmd","EZ Money 180 PID Called");
+			SmartDashboard::PutString("cmd","180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else if(PIDGEY_ROTATE_GPTURN)
@@ -175,7 +175,6 @@ void RhsRobot::Run() {
 			robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
 			robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
 			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
-			SmartDashboard::PutString("Mode","ARCADEEEEEE");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 
