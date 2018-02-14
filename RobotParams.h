@@ -35,6 +35,7 @@ const int AUTOEXEC_PRIORITY 	= DEFAULT_PRIORITY;
 const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
 const int CLAW_PRIORITY 		= DEFAULT_PRIORITY;
 const int ELEVATOR_PRIORITY		= DEFAULT_PRIORITY;
+const int CLIMBER_PRIORITY		= DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -45,6 +46,7 @@ const char* const AUTOEXEC_TASKNAME		= "tAutoEx";
 const char* const AUTOPARSER_TASKNAME	= "tParse";
 const char* const CLAW_TASKNAME 		= "tClaw";
 const char* const ELEVATOR_TASKNAME		= "tElevator";
+const char* const CLIMBER_TASKNAME		= "tClimber";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
@@ -57,6 +59,7 @@ const char* const AUTONOMOUS_QUEUE 	= "/tmp/qAuto";
 const char* const AUTOPARSER_QUEUE 	= "/tmp/qParse";
 const char* const CLAW_QUEUE 		= "/tmp/qClaw";
 const char* const ELEVATOR_QUEUE	= "/tmp/qElevator";
+const char* const CLIMBER_QUEUE		= "/tmp/qClimber";
 
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
@@ -89,6 +92,8 @@ const int CAN_DRIVETRAIN_TALON_RIGHT = 1;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 2;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 3;
 
+const int CAN_CLIMBER_TALON = 1; // Arbitrary Numbers until delegated
+const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
 const int CAN_CLAW_VICTOR_LEFT = -1; // Arbitrary Numbers until delegated
 const int CAN_CLAW_VICTOR_RIGHT = -1; // See above
 const int CAN_ELEVATOR_TALON_LEFT = -1; // See above
@@ -191,7 +196,8 @@ const int POV_STILL = -1;
 #define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(L310_BUTTON_B))
 #define PIDGEY_ROTATE_180			(pController_1->GetRawButton(L310_BUTTON_Y))
 
-#define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CLIMBER_PULL_UP				(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
 
 // TODO: Add Component Commands
 

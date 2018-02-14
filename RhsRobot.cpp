@@ -157,7 +157,7 @@ void RhsRobot::Run() {
 			SmartDashboard::PutString("cmd","180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-		else if(PIDGEY_ROTATE_GPTURN)
+		/*else if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
@@ -170,7 +170,7 @@ void RhsRobot::Run() {
 			robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
 			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
 			pDrivetrain->SendMessage(&robotMessage);
-		}
+		}*/
 
 	}
 
