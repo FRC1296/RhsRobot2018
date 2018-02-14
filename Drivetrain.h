@@ -92,6 +92,7 @@ private:
 	float dTurnArray2[FILTER_TWO_LENGTH];
 	int iNumPoints;
 	int iCurrNumPoints;
+	int iTargetDistance;
 };
 
 #endif			//COMPONENT_H

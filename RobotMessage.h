@@ -65,10 +65,11 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_RUN,
 	COMMAND_DRIVETRAIN_RUN_ARCADE,		//!< Run drive train using arcade controls
 	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
-	COMMAND_DRIVETRAIN_MTURN,			//!< Turns the robot a specified amount of degrees
+	COMMAND_DRIVETRAIN_MTURN,			//!< Drivetrain test for Turning with just encoders
 	COMMAND_DRIVETRAIN_WAVE,			//!< Drivetrain test for sin wave for THE CLAW
 
 	COMMAND_DRIVETRAIN_GPTURN,			//!< Drivetrain test for Gyro rotation with a PID loop
+	COMMAND_DRIVETRAIN_BOXFILTER,		//!< Drivetrain test for Boxfilter turning
 
 	COMMAND_ELEVATOR_MOVE,				//!< "Manual" elevator control
 	COMMAND_ELEVATOR_FLOOR,				//!< Elevator floor position

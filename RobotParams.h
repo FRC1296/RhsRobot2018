@@ -191,16 +191,20 @@ const int POV_STILL = -1;
 #define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(L310_BUTTON_B))
 #define PIDGEY_ROTATE_180			(pController_1->GetRawButton(L310_BUTTON_Y))
 
-#define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define DRIVETRAIN_BOXFILTER		(pController_1->GetRawButton(L310_BUTTON_X))
+#define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(L310_BUTTON_B))
+#define DRIVETRAIN_MTURN			(pController_1->GetRawButton(L310_BUTTON_A))
+
+#define DRIVETRAIN_MMOVE			(pController_1->GetRawButton(L310_BUTTON_Y))
 
 // TODO: Add Component Commands
 
 /********** Drive Train Constants:**********/
-#define WHEEL_DIA					4			//Wheel Diameter in inches
+#define WHEEL_DIA					4.0			//Wheel Diameter in inches
 #define PI							3.14159
-#define ROBOT_WIDTH						26		// Width of the drivetrain in inches
+#define ROBOT_WIDTH					26.0		// Width of the drivetrain in inches
 #define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
-#define DRIVETRAIN_CONST_KI			(1.0/8000.0) // Constant I value for PID loops
+#define DRIVETRAIN_CONST_KI			(1.0/1000.0) // Constant I value for PID loops
 #define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
 #define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
 #define UPDATE_RATE					.02			// Update loop rate for drive train
@@ -212,7 +216,10 @@ const int POV_STILL = -1;
 #define MAX_SPEED_PID				.75			// Max speed allowed in autonomous commands
 
 #define ACCEPT_RANGE_TICKS			2048		//Acceptable Range for "finished" PID loop in ticks
-#define ACCEPT_RANGE_DEGR			5			//Acceptable Range for "finished" PID loop in degrees
+#define ACCEPT_RANGE_DEGR			2			//Acceptable Range for "finished" PID loop in degrees
+#define ACCEPT_RANGE_KI				20			//Acceptable Range for adding Integral Value
+
+#define ACCEPT_RANGE_MOVE			512			//Acceptable Range for "finished" PID loop for moving straight
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

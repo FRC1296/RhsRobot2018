@@ -136,7 +136,7 @@ void RhsRobot::Run() {
 			pDrivetrain->SendMessage(&robotMessage);*/
 		/*
 		}
-		else*/ if(PIDGEY_ROTATE_LEFT90)
+		else*/ /* if(PIDGEY_ROTATE_LEFT90)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
@@ -157,11 +157,33 @@ void RhsRobot::Run() {
 			SmartDashboard::PutString("cmd","180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
+		*/
+		if (DRIVETRAIN_BOXFILTER)
+		{
+			robotMessage.params.turn.fAngle = 90;
+			robotMessage.command = COMMAND_DRIVETRAIN_BOXFILTER;
+			SmartDashboard::PutString("cmd","Box Filter Called");
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else if (DRIVETRAIN_MTURN)
+		{
+			robotMessage.params.turn.fAngle = 90;
+			robotMessage.command = COMMAND_DRIVETRAIN_MTURN;
+			SmartDashboard::PutString("cmd","Measured Turn Called");
+			pDrivetrain->SendMessage(&robotMessage);
+		}
 		else if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
 			SmartDashboard::PutString("cmd","PID Turn Called");
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else if(DRIVETRAIN_MMOVE)
+		{
+			robotMessage.params.mmove.fDistance = 30;
+			robotMessage.command = COMMAND_DRIVETRAIN_MMOVE;
+			SmartDashboard::PutString("cmd","PID Move Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else

@@ -55,6 +55,11 @@ Drivetrain::Drivetrain()
 	pRightSlave1->SetInverted(true);
 	pRightSlave2->SetInverted(true);
 
+	pLeftMotor->Config_kP(1,DRIVETRAIN_CONST_KP,0);
+	pLeftMotor->Config_kD(2,DRIVETRAIN_CONST_KD,0);
+	pRightMotor->Config_kP(3,DRIVETRAIN_CONST_KP,0);
+	pRightMotor->Config_kD(4,DRIVETRAIN_CONST_KD,0);
+
 	fInitRotation = 0;
 	fPrevP = 0;
 	fSpeed = 0;
@@ -71,6 +76,7 @@ Drivetrain::Drivetrain()
 	fMaxTurnY = 0;
 	fMaxTurnZ = 0;
 	fTimeToDest = 0;
+	iTargetDistance = 0;
 
 	dAvgArray1 = 0;
 	dAvgArray2 = 0;
@@ -182,20 +188,30 @@ void Drivetrain::Run()
 		x++;
 		break;
 
+	case COMMAND_DRIVETRAIN_BOXFILTER:
+		if (iTurnState == TurnState_Init)
+		{
+			fTarget = (localMessage.params.turn.fAngle);
+			iTurnState = TurnState_boxTurn;
+			fInitRotation = deg[2];
+			iCurrNumPoints = 0;
+		}
+		break;
+
 	case COMMAND_DRIVETRAIN_GPTURN:
 		SmartDashboard::PutString("Command","Gracious Professionalism Turn");
 		if (iTurnState == TurnState_Init)
 		{
 			fTarget = (localMessage.params.turn.fAngle);
-			iTicks = (512*ROBOT_WIDTH*fTarget)/(45*WHEEL_DIA);
+			/*iTicks = (512*ROBOT_WIDTH*fTarget)/(45*WHEEL_DIA);
 			SmartDashboard::PutNumber("ticks",iTicks);
 			fTimeToDest = (iTicks*1.0/MAX_TURN_SPEED);
 			SmartDashboard::PutNumber("TTD",fTimeToDest);
 			iNumPoints = std::abs(fTimeToDest/UPDATE_RATE);
-			SmartDashboard::PutNumber("NmPts",iNumPoints);
+			SmartDashboard::PutNumber("NmPts",iNumPoints);*/
 			iTurnState = TurnState_gpTurn;
 			fInitRotation = deg[2];
-			iCurrNumPoints = 0;
+			//iCurrNumPoints = 0;
 
 			SmartDashboard::PutString("Modes","PID Turn Initiated");
 		}
@@ -203,11 +219,18 @@ void Drivetrain::Run()
 	case COMMAND_DRIVETRAIN_MMOVE:
 		if (iTurnState == TurnState_Init)
 		{
-			iTicks = (DISTANCE*4096)/(PI*WHEEL_DIA);
+			iTargetDistance = localMessage.params.mmove.fDistance;
+			iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
 			iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
+			if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) && (pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE))
+			{
+				// Quick and dirty, will fix
+				pLeftMotor->Set(ControlMode::PercentOutput,0);
+				pRightMotor->Set(ControlMode::PercentOutput,0);
+			}
 		}
 		break;
 
@@ -215,11 +238,12 @@ void Drivetrain::Run()
 		if (iTurnState == TurnState_Init)
 		{
 			fTarget = (localMessage.params.turn.fAngle);
-			iTicks = (512*ROBOT_WIDTH*fTarget)/(45*WHEEL_DIA);
+			iTicks = (512.0*ROBOT_WIDTH*fTarget)/(45.0*WHEEL_DIA);
 			/*fTimeToDest = ((1.0*iTicks)/(MAX_TURN_SPEED));
 			iNumPoints = (fTimeToDest/UPDATE_RATE);*/
+			SmartDashboard::PutNumber("iTicks",iTicks);
 			iTurnState = TurnState_mTurn;
-			if (fTarget<0) {
+			if (fTarget < 0) {
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
 				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) + iTicks;
 			}
@@ -227,6 +251,8 @@ void Drivetrain::Run()
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) + iTicks;
 				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
 			}
+			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
+			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
 		}
@@ -299,7 +325,7 @@ void Drivetrain::BoxCarFilter()
 
 void Drivetrain::GyroPIDTurn()
 {
-	static float fTargetCalc = fInitRotation + fTarget;
+	float fTargetCalc = fInitRotation + fTarget;
 
 	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
 	{
@@ -327,18 +353,24 @@ void Drivetrain::GyroPIDTurn()
 	else
 		fD = fPrevP - fP;
 	SmartDashboard::PutNumber("D Value",fD);
-	//	fI += (DRIVETRAIN_CONST_KP*fP);
+
 	//	SmartDashboard::PutNumber("I Value",fI);
 	fPrevP = fP;
 	SmartDashboard::PutNumber("Previous P Value",fPrevP);
 	fSpeed = (DRIVETRAIN_CONST_KP*fP) /*+ (DRIVETRAIN_CONST_KI*fI)*/ - (DRIVETRAIN_CONST_KD*fD);
+	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_KI)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_KI))) {
+		fI += fP;
+		fSpeed += (DRIVETRAIN_CONST_KI*fI);
+	}
+	else
+		fI = 0;
 	if (fSpeed < -1 * MAX_SPEED_PID)
 		fSpeed = -1 * MAX_SPEED_PID;
 	if (fSpeed > MAX_SPEED_PID)
 		fSpeed = MAX_SPEED_PID;
 	SmartDashboard::PutNumber("Speed",fSpeed);
-	pLeftMotor->Set(ControlMode::Velocity,fSpeed);
-	pRightMotor->Set(ControlMode::Velocity,-1*fSpeed);
+	pLeftMotor->Set(ControlMode::PercentOutput,fSpeed);
+	pRightMotor->Set(ControlMode::PercentOutput,-1*fSpeed);
 	SmartDashboard::PutString("Completed","PID Not Completed");
 }
 
@@ -398,4 +430,3 @@ void dAddToArray(float* Array, int LengthArr, float val)
 	}
 	Array[0] = val;
 }
-
