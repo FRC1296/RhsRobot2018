@@ -193,7 +193,6 @@ void RhsRobot::Run() {
 			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-		}*/
 
 	}
 
