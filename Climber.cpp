@@ -41,7 +41,7 @@ void Climber::OnStateChange()
 {
 };
 
-void Component::Run()
+void Climber::Run()
 {
 	switch(localMessage.command)			//Reads the message command
 	{
