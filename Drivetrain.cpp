@@ -107,8 +107,7 @@ void Drivetrain::Run()
 	static int x = 0;
 	double y;
 	double z;
-	double deg[3];
-	double dps[3];
+
 
 	PigeonIMU::GeneralStatus genStatus;
 
@@ -347,7 +346,7 @@ void Drivetrain::MeasuredTurn()
 {
 	if((pLeftMotor->GetSelectedSensorPosition(0) > iFinalPosLeft - ACCEPT_RANGE_TICKS) && (pLeftMotor->GetSelectedSensorPosition(0) < iFinalPosLeft + ACCEPT_RANGE_TICKS))
 	{
-		martDashboard::PutString("Completed","PID Completed");
+		SmartDashboard::PutString("Completed","PID Completed");
 		iTurnState = TurnState_Init;
 		fTarget = 0;
 		fInitRotation = 0;

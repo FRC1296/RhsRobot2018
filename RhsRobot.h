@@ -22,11 +22,6 @@ public:
 	virtual ~RhsRobot();
 
 private:
-	
-	TalonSRX* pUpMotor;
-
-	VictorSPX* pUpSlave;
-
 	std::vector<ComponentBase *> ComponentSet;
 
 	Joystick* pController_1;

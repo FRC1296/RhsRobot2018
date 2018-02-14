@@ -55,12 +55,6 @@ void RhsRobot::Init() {
 	pChooser->AddDefault("Middle", 'M');
 	pChooser->AddObject("Right",'R');
 	pChooser->AddObject("Left",'L');
-	pUpMotor = new TalonSRX(8);
-	pUpSlave = new VictorSPX(7);
-
-	pUpMotor->Set(ControlMode::PercentOutput, 0);
-	pUpSlave->Follow(*pUpMotor);
-	pUpSlave->SetInverted(true);
 
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 

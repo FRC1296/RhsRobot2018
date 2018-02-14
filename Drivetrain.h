@@ -17,6 +17,7 @@
 #include "RhsRobotBase.h"
 #include <math.h>
 #include "RobotMessage.h"
+#include "RobotParams.h"
 
 //Robot
 #include "WPILib.h"
@@ -79,6 +80,9 @@ private:
 	float fTimeToDest;
 	float dAvgArray1;
 	float dAvgArray2;
+
+	double deg[3];
+	double dps[3];
 
 	int iTurnState;
 	int iTicks;
