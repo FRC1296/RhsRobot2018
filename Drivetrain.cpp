@@ -20,7 +20,7 @@
 #define ROBOT_WIDTH 26
 #define DEGREES 90 //robotMessage.params.turn.fAngle
 
-enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn};
+enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn, TurnState_mMove};
 //Robot
 
 Drivetrain::Drivetrain()
@@ -37,6 +37,7 @@ Drivetrain::Drivetrain()
 
 	pLeftMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
 	pRightMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
+
 	pLeftMotor->Set(ControlMode::PercentOutput, 0);
 	pRightMotor->Set(ControlMode::PercentOutput, 0);
 	pLeftMotor->ConfigOpenloopRamp(.1,0);
@@ -55,10 +56,22 @@ Drivetrain::Drivetrain()
 	pRightSlave1->SetInverted(true);
 	pRightSlave2->SetInverted(true);
 
-	pLeftMotor->Config_kP(1,DRIVETRAIN_CONST_KP,0);
-	pLeftMotor->Config_kD(2,DRIVETRAIN_CONST_KD,0);
-	pRightMotor->Config_kP(3,DRIVETRAIN_CONST_KP,0);
-	pRightMotor->Config_kD(4,DRIVETRAIN_CONST_KD,0);
+	static double p = .5;
+	static double d = 0;
+	pLeftMotor->Config_kP(0,p,5000);
+	pLeftMotor->Config_kD(0,d,5000);
+	pRightMotor->Config_kP(0,p,5000);
+	pRightMotor->Config_kD(0,d,5000);
+
+	pLeftMotor->ConfigNominalOutputForward(0,0);
+	pLeftMotor->ConfigNominalOutputReverse(0,0);
+	pLeftMotor->ConfigPeakOutputForward(1,0);
+	pLeftMotor->ConfigPeakOutputReverse(-1,0);
+
+	pRightMotor->ConfigNominalOutputForward(0,0);
+	pRightMotor->ConfigNominalOutputReverse(0,0);
+	pRightMotor->ConfigPeakOutputForward(1,0);
+	pRightMotor->ConfigPeakOutputReverse(-1,0);
 
 	fInitRotation = 0;
 	fPrevP = 0;
@@ -93,6 +106,11 @@ Drivetrain::Drivetrain()
 
 	pPIDTimer = new Timer();
 	pSpeedTimer = new Timer();
+
+	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
+	iInitRightPos = pRightMotor->GetSelectedSensorPosition(0);
+	pLeftMotor->SetSelectedSensorPosition(iInitLeftPos,0,0);
+	pRightMotor->SetSelectedSensorPosition(iInitRightPos,0,0);
 
 	pTask = new std::thread(&Drivetrain::StartTask, this, DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
 	wpi_assert(pTask);
@@ -161,6 +179,9 @@ void Drivetrain::Run()
 	case TurnState_boxTurn:
 		BoxCarFilter();
 		break;
+	case TurnState_mMove:
+		MeasuredMove();
+		break;
 	default:
 		break;
 	}
@@ -223,14 +244,19 @@ void Drivetrain::Run()
 			iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
 			iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
+			iTurnState = TurnState_mMove;
+			if (fTarget < 0) {
+				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) + iTicks;
+				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) + iTicks;
+			}
+			else {
+				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
+				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
+			}
+			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
+			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
-			if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) && (pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE))
-			{
-				// Quick and dirty, will fix
-				pLeftMotor->Set(ControlMode::PercentOutput,0);
-				pRightMotor->Set(ControlMode::PercentOutput,0);
-			}
 		}
 		break;
 
@@ -263,7 +289,21 @@ void Drivetrain::Run()
 	}
 
 
-};
+};\
+
+void Drivetrain::MeasuredMove()
+{
+	if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) && (pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
+	{
+		// Quick and dirty, will fix
+		pLeftMotor->Set(ControlMode::PercentOutput,0);
+		pRightMotor->Set(ControlMode::PercentOutput,0);
+		iTurnState = TurnState_Init;
+		SmartDashboard::PutString("Completed","PID Move Done");
+	}
+	SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
+	SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
+}
 
 void Drivetrain::BoxCarFilter()
 {
