@@ -61,7 +61,6 @@ private:
 	void BoxCarFilter();
 	void GyroPIDTurn();
 	void MeasuredTurn();
-	void MeasuredMove();
 
 	float fInitRotation;
 	float fPrevP;
@@ -94,9 +93,6 @@ private:
 	int iNumPoints;
 	int iCurrNumPoints;
 	int iTargetDistance;
-
-	int iInitLeftPos;
-	int iInitRightPos;
 };
 
 #endif			//COMPONENT_H
