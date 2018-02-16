@@ -8,33 +8,76 @@
 #ifndef AUTONOMOUS_H
 #define AUTONOMOUS_H
 
-/**
-	A template class for creating new components
- */
-#include "ComponentBase.h"			//For ComponentBase class
-#include <pthread.h>
 #include <string>
+#include <thread>
 
 //Robot
 #include "WPILib.h"
+#include "ComponentBase.h" //For the ComponentBase class
+#include "RobotParams.h" //For various robot parameters
 
+
+// if you have more than this many lines in your script, THEY WILL NOT RUN! Change if needed.
+const int AUTONOMOUS_SCRIPT_LINES = 150;
+const int AUTONOMOUS_CHECKLIST_LINES = 150;
+const char* const AUTONOMOUS_SCRIPT_FILEPATH = "/home/lvuser/RhsScript.txt";
+
+//from 2014
+const float MAX_VELOCITY_PARAM = 1.0;
+const float MAX_DISTANCE_PARAM = 100.0;
 
 class Autonomous : public ComponentBase
 {
 public:
 	Autonomous();
-	virtual ~Autonomous();
-	static void *StartTask(void *pThis, const char* szAutonomousName, int iPriority)
+	~Autonomous();
+	void DoScript();
+
+	static void *StartTask(void *pThis)
 	{
-		pthread_setname_np(pthread_self(), szAutonomousName);
-		pthread_setschedprio(pthread_self(), iPriority);
 		((Autonomous *)pThis)->DoWork();
 		return(NULL);
 	}
 
+	static void *StartScript(void *pThis)
+	{
+		((Autonomous *)pThis)->DoScript();
+		return(NULL);
+	}
+
+protected:
+	bool Evaluate(std::string statement);	//Evaluates an autonomous script statement
+	RobotMessage Message;
+	bool bScriptLoaded; //not yet in use
+	bool bInAutoMode;
+	bool bPauseAutoMode;
+
 private:
+	std::string script[AUTONOMOUS_SCRIPT_LINES];	//Autonomous script
+	int lineNumber;
+	int iAutoDebugMode;
+	std::thread *pScript;
+	bool bReceivedCommandResponse;
+	unsigned int uResponseCount;
+	MessageCommand ReceivedCommand;
+	Timer *pDebugTimer;
+	char szModeString[6];
+
+	bool Begin(char *);
+	bool End(char *);
+	void Delay(float);
+	bool Move(char *);
+	bool MeasuredMove(char *);
+	bool Turn(char *);
+
+	bool CommandResponse(const char *szQueueName);
+	bool CommandNoResponse(const char *szQueueName);
+	bool MultiCommandResponse(vector<char*> szQueueNames, vector<MessageCommand> commands);
+
+	void Init();
 	void OnStateChange();
 	void Run();
+	bool LoadScriptFile();
 };
 
-#endif			//COMPONENT_H
+#endif //AUTONOMOUS_BASE_H

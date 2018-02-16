@@ -17,7 +17,6 @@
 #include "RhsRobotBase.h"
 
 #define DISTANCE 5 //robotMessage.params.mmove.fDistance
-#define ROBOT_WIDTH 26
 #define DEGREES 90 //robotMessage.params.turn.fAngle
 
 enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn};
@@ -172,6 +171,14 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
+		if (iTurnState == TurnState_Init) {
+			SmartDashboard::PutString("Mode","ARCADEEEEEE");
+			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
+			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
+		}
+		break;
+
+	case COMMAND_DRIVETRAIN_RUN_TANK:
 		if (iTurnState == TurnState_Init) {
 			SmartDashboard::PutString("Mode","ARCADEEEEEE");
 			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);

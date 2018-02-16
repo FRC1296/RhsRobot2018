@@ -18,7 +18,9 @@
 RhsRobot::RhsRobot() {
 
 	// set new object pointers to NULL here
-	pController_1 = NULL;
+	pAuto = NULL;
+	pControllerDriver = NULL;
+	pControllerOperator = NULL;
 	pDrivetrain = NULL;
 	pClaw = NULL;
 	pElevator = NULL;
@@ -36,8 +38,10 @@ RhsRobot::~RhsRobot() {
 		delete (*nextComponent);
 	}
 
-
 	// delete other system objects here (but not our message-based objects)
+
+	delete pControllerDriver;
+	delete pControllerOperator;
 }
 
 void RhsRobot::Init() {
@@ -47,25 +51,36 @@ void RhsRobot::Init() {
 	 * 			drivetrain = new Drivetrain(); (in RhsRobot::Init())
 	 */
 
-	pController_1 = new Joystick(0);
-	pDrivetrain = new Drivetrain();
-	pClaw = new Claw();
-	//SmartDashboard::PutData('M')
 	pChooser = new frc::SendableChooser<char>();
 	pChooser->AddDefault("Middle", 'M');
 	pChooser->AddObject("Right",'R');
 	pChooser->AddObject("Left",'L');
-
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
+	pControllerDriver = new Joystick(0);
+	pControllerOperator = new Joystick(1);
+
+	pDrivetrain = new Drivetrain();
+	pClaw = new Claw();
+	pAuto = new Autonomous();
+
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
-	/*
- if()
+
+    if(pDrivetrain)
 	{
-		nextComponent = ComponentSet.insert(nextComponent, );
+		nextComponent = ComponentSet.insert(nextComponent, pDrivetrain);
 	}
 
-	 */
+    if(pClaw)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pClaw);
+	}
+
+    if(pAuto)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pAuto);
+	}
+
 	// instantiate our other objects here
 }
 
@@ -97,35 +112,17 @@ void RhsRobot::Run() {
 	 * 			}
 	 */
 
-	char sStart_Location = (char) pChooser->GetSelected();
+	UpdateGameData();
 
-	char c[2];
-	c[0] = sStart_Location;
-	c[1] = 0;
-
-	SmartDashboard::PutString("Field Starting Position",c);
-	std::__cxx11::string gameData;
-	gameData = frc::DriverStation::GetInstance().GetGameSpecificMessage();
-
-	if(gameData[0] == 'L')
+	if(pAuto)
 	{
-		//Put left auto code here
-		SmartDashboard::PutString("Switch","Left");
-	} else {
-		//Put right auto code here
-		SmartDashboard::PutString("Switch","Right");
-	}
+		if(GetCurrentRobotState() == ROBOT_STATE_AUTONOMOUS)
+		{
+			// all messages to components will come from the autonomous task
 
-/*	if(WAVE_DASH)
-	{
-		pUpMotor->Set(ControlMode::PercentOutput,.75);
-
+			return;
+		}
 	}
-	else
-	{
-		pUpMotor->Set(ControlMode::PercentOutput,0);
-	}
-*/
 
 	if(pDrivetrain)
 	{
@@ -207,9 +204,126 @@ void RhsRobot::Run() {
 
 		robotMessage.command = COMMAND_SYSTEM_CONSTANTS;
 		robotMessage.params.system.fBattery = DriverStation::GetInstance().GetBatteryVoltage();
+
+		if(pDrivetrain)
+		{
+			pDrivetrain->SendMessage(&robotMessage);
+		}
 	}
 }
 
+void RhsRobot::UpdateGameData(void)
+{
+	// if the starting position has changed or we get new
+
+	gameData = frc::DriverStation::GetInstance().GetGameSpecificMessage();
+	sStartLocation = (char) pChooser->GetSelected();
+
+	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
+	{
+		robotMessage.command = COMMAND_SYSTEM_GAMEDATA;
+
+		if(gameData[0] == 'L')
+		{
+			robotMessage.params.gamedata.eSwitchSide = GAMEPIECESIDE_LEFT;
+			SmartDashboard::PutBoolean("Switch Left", true);
+			SmartDashboard::PutBoolean("Switch Right", false);
+		}
+		else if (gameData[0] == 'R')
+		{
+			robotMessage.params.gamedata.eSwitchSide = GAMEPIECESIDE_RIGHT;
+			SmartDashboard::PutBoolean("Switch Left", false);
+			SmartDashboard::PutBoolean("Switch Right", true);
+		}
+		else
+		{
+			robotMessage.params.gamedata.eSwitchSide = GAMEPIECESIDE_LEFT;
+			SmartDashboard::PutBoolean("Switch Left", true);
+			SmartDashboard::PutBoolean("Switch Right", false);
+		}
+
+		if(gameData[1] == 'L')
+		{
+			robotMessage.params.gamedata.eScaleSide = GAMEPIECESIDE_LEFT;
+			SmartDashboard::PutBoolean("Scale Left", true);
+			SmartDashboard::PutBoolean("Scale Right", false);
+		}
+		else if(gameData[1] == 'R')
+		{
+			robotMessage.params.gamedata.eScaleSide = GAMEPIECESIDE_RIGHT;
+			SmartDashboard::PutBoolean("Scale Left", false);
+			SmartDashboard::PutBoolean("Scale Right", true);
+		}
+		else
+		{
+			robotMessage.params.gamedata.eScaleSide = GAMEPIECESIDE_LEFT;
+			SmartDashboard::PutBoolean("Scale Left", true);
+			SmartDashboard::PutBoolean("Scale Right", false);
+		}
+
+		if(gameData[2] == 'L')
+		{
+			robotMessage.params.gamedata.eOpponentSwitchSide = GAMEPIECESIDE_LEFT;
+			SmartDashboard::PutBoolean("Opponent Left", true);
+			SmartDashboard::PutBoolean("Opponent Right", false);
+		}
+		else if(gameData[2] == 'R')
+		{
+			robotMessage.params.gamedata.eOpponentSwitchSide = GAMEPIECESIDE_RIGHT;
+			SmartDashboard::PutBoolean("Opponent Left", false);
+			SmartDashboard::PutBoolean("Opponent Right", true);
+		}
+		else
+		{
+			robotMessage.params.gamedata.eOpponentSwitchSide = GAMEPIECESIDE_LEFT;
+			SmartDashboard::PutBoolean("Opponent Left", true);
+			SmartDashboard::PutBoolean("Opponent Right", false);
+		}
+
+		if(sStartLocation == 'L')
+		{
+			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_LEFT;
+			SmartDashboard::PutBoolean("Start Left", true);
+			SmartDashboard::PutBoolean("Start Middle", false);
+			SmartDashboard::PutBoolean("Start Right", false);
+		}
+		else if(sStartLocation == 'M')
+		{
+			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_CENTER;
+			SmartDashboard::PutBoolean("Start Left", false);
+			SmartDashboard::PutBoolean("Start Middle", true);
+			SmartDashboard::PutBoolean("Start Right", false);
+		}
+		else if(sStartLocation == 'R')
+		{
+			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_RIGHT;
+			SmartDashboard::PutBoolean("Start Left", false);
+			SmartDashboard::PutBoolean("Start Middle", false);
+			SmartDashboard::PutBoolean("Start Right", true);
+		}
+		else
+		{
+			// is it a good idea to leave middle as the default position?
+
+			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_CENTER;
+		}
+
+		// the game data has changed so tell everyone who is interested
+
+		if(pAuto)
+		{
+			pAuto->SendMessage(&robotMessage);
+		}
+
+		if(pDrivetrain)
+		{
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+
+		gameDataPrev = gameData;
+		sStartLocationLast = sStartLocation;
+	}
+}
 
 HAL_Bool HAL_Initialize(int32_t timeout, int32_t mode);
 
