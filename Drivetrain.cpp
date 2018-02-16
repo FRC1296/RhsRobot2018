@@ -44,6 +44,11 @@ Drivetrain::Drivetrain()
 	pRightMotor->ConfigOpenloopRamp(.1,0);
 	pRightMotor->SetInverted(true);
 
+
+	//pLeftMotor->ConfigClosedloopRamp(.25,0);
+	//pRightMotor->ConfigClosedloopRamp(.25,0);
+
+
 	pLeftMotor->SetNeutralMode(NeutralMode::Brake);
 	pRightMotor->SetNeutralMode(NeutralMode::Brake);
 	pIdgey = new PigeonIMU(CAN_PIGEON);
@@ -57,7 +62,7 @@ Drivetrain::Drivetrain()
 	pRightSlave2->SetInverted(true);
 
 	static double p = .5;
-	static double d = 0;
+	static double d = 5;
 	pLeftMotor->Config_kP(0,p,5000);
 	pLeftMotor->Config_kD(0,d,5000);
 	pRightMotor->Config_kP(0,p,5000);
@@ -244,6 +249,8 @@ void Drivetrain::Run()
 			iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
 			iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
+			//pLeftMotor->SetSelectedSensorPosition(pLeftMotor->GetSelectedSensorPosition(0),0,5000);
+			//pRightMotor->SetSelectedSensorPosition(pRightMotor->GetSelectedSensorPosition(0),0,5000);
 			iTurnState = TurnState_mMove;
 			if (fTarget < 0) {
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) + iTicks;
@@ -255,8 +262,11 @@ void Drivetrain::Run()
 			}
 			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
 			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
+		/*	pLeftMotor->ConfigPeakOutputForward(.75,0);
+			pLeftMotor->ConfigPeakOutputReverse(-.75,0);*/
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
+			SmartDashboard::PutNumber("iTicks", iTicks);
 		}
 		break;
 
@@ -294,13 +304,24 @@ void Drivetrain::Run()
 void Drivetrain::MeasuredMove()
 {
 	if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) && (pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
-	{
-		// Quick and dirty, will fix
-		pLeftMotor->Set(ControlMode::PercentOutput,0);
-		pRightMotor->Set(ControlMode::PercentOutput,0);
-		iTurnState = TurnState_Init;
-		SmartDashboard::PutString("Completed","PID Move Done");
-	}
+		{
+			pPIDTimer->Start();
+			if (pPIDTimer->Get() >= .25) {
+				SmartDashboard::PutString("snowflake","PID Done");
+				SmartDashboard::PutString("Completed","PID Completed");
+			//	pLeftMotor->Set(ControlMode::PercentOutput,0);
+			//	pRightMotor->Set(ControlMode::PercentOutput,0);
+				iTurnState = TurnState_Init;
+				fTarget = 0;
+				fInitRotation = 0;
+				return;
+			}
+		}
+		else
+		{
+			pPIDTimer->Stop();
+			pPIDTimer->Reset();
+		}
 	SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
 	SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
 }
