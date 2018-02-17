@@ -204,7 +204,18 @@ void RhsRobot::Run() {
 
 	if(pClaw)
 	{
-
+		if(CLAW_INHALE)
+		{
+			robotMessage.command = COMMAND_CLAW_INHALE;
+			robotMessage.params.claw.fClawSpeed = CLAW_INHALE;
+			pClaw->SendMessage(&robotMessage);
+		}
+		else if(CLAW_EXHALE)
+		{
+			robotMessage.command = COMMAND_CLAW_EXHALE;
+			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
+			pClaw->SendMessage(&robotMessage);
+		}
 	}
 }
 

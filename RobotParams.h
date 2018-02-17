@@ -94,8 +94,8 @@ const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 3;
 
 const int CAN_CLIMBER_TALON = 1; // Arbitrary Numbers until delegated
 const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
-const int CAN_CLAW_VICTOR_LEFT = -1; // Arbitrary Numbers until delegated
-const int CAN_CLAW_VICTOR_RIGHT = -1; // See above
+const int CAN_CLAW_VICTOR_LEFT = 13; // Arbitrary Numbers until delegated
+const int CAN_CLAW_VICTOR_RIGHT = 14; // See above
 const int CAN_ELEVATOR_TALON_LEFT = -1; // See above
 const int CAN_ELEVATOR_TALON_RIGHT = -1; // See above
 
@@ -202,6 +202,9 @@ const int POV_STILL = -1;
 
 #define DRIVETRAIN_MMOVE			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 #define CLIMBER_PULL_UP				(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
+#define CLAW_INHALE 				(pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT))
+#define CLAW_EXHALE					(pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
 
 // TODO: Add Component Commands
 

@@ -16,6 +16,7 @@
 #include <string>
 #include "RhsRobotBase.h"
 #include "RobotMessage.h"
+#include "RobotParams.h"
 
 //Robot
 #include "WPILib.h"
