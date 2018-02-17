@@ -9,10 +9,10 @@
 
 #include "RhsRobotBase.h"
 #include "WPILib.h"
+#include "Autonomous.h"
 #include "Drivetrain.h"
 #include "Claw.h"
 #include "Elevator.h"
-//#include "SendableChooser.h"
 #include "ctre/Phoenix.h"
 
 class RhsRobot : public RhsRobotBase
@@ -24,16 +24,25 @@ public:
 private:
 	std::vector<ComponentBase *> ComponentSet;
 
-	Joystick* pController_1;
+	Joystick* pControllerDriver;
+	Joystick* pControllerOperator;
 
 	frc::SendableChooser<char> *pChooser;
+
+	Autonomous *pAuto;
 	Drivetrain* pDrivetrain;
 	Claw* pClaw;
 	Elevator* pElevator;
 
+	string gameData = "XXX";
+	string gameDataPrev = "XXX";
+	char sStartLocation = 'X';
+	char sStartLocationLast = 'X';
+
 	void Init();
 	void OnStateChange();
 	void Run();
+	void UpdateGameData();
 
 	int iLoop;
 };
