@@ -180,29 +180,28 @@ const int POV_STILL = -1;
  */
 #ifdef USE_L310_FOR_CONTROLLER_1
 
-#define TANK_DRIVE_LEFT				(pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define TANK_DRIVE_RIGHT			(-pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
-#define CHEEZY_DRIVE_WHEEL			(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
-#define CHEEZY_DRIVE_THROTTLE		(-pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define CHEEZY_DRIVE_SPIN		    (-pController_1->GetRawAxis(L310_TRIGGER_LEFT) + Controller_1->GetRawAxis(L310_TRIGGER_RIGHT))
-#define CHEEZY_DRIVE_QUICKTURN		(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define TANK_DRIVE_LEFT				(pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
+#define TANK_DRIVE_RIGHT			(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
+#define CHEEZY_DRIVE_WHEEL			(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
+#define CHEEZY_DRIVE_THROTTLE		(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
+#define CHEEZY_DRIVE_SPIN		    (-pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT) + pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
+#define CHEEZY_DRIVE_QUICKTURN		(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define ARCADE_DRIVE_LEFT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
-#define ARCADE_DRIVE_RIGHT			((pController_1->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pController_1->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
+#define ARCADE_DRIVE_LEFT			((pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
+#define ARCADE_DRIVE_RIGHT			((pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 
-//#define WAVE_DASH					(pController_1->GetRawButton(L310_BUTTON_A))
+//#define WAVE_DASH					(pControllerDriver->GetRawButton(L310_BUTTON_A))
 
-#define PIDGEY_ROTATE_LEFT90		(pController_1->GetRawButton(L310_BUTTON_X))
-#define PIDGEY_ROTATE_RIGHT90		(pController_1->GetRawButton(L310_BUTTON_B))
-#define PIDGEY_ROTATE_180			(pController_1->GetRawButton(L310_BUTTON_Y))
+#define PIDGEY_ROTATE_LEFT90		(pControllerDriver->GetRawButton(L310_BUTTON_X))
+#define PIDGEY_ROTATE_RIGHT90		(pControllerDriver->GetRawButton(L310_BUTTON_B))
+#define PIDGEY_ROTATE_180			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 
+#define DRIVETRAIN_BOXFILTER		(pControllerDriver->GetRawButton(L310_BUTTON_X))
+#define PIDGEY_ROTATE_GPTURN		(pControllerDriver->GetRawButton(L310_BUTTON_B))
+#define DRIVETRAIN_MTURN			(pControllerDriver->GetRawButton(L310_BUTTON_A))
 
-#define DRIVETRAIN_BOXFILTER		(pController_1->GetRawButton(L310_BUTTON_X))
-#define PIDGEY_ROTATE_GPTURN		(pController_1->GetRawButton(L310_BUTTON_B))
-#define DRIVETRAIN_MTURN			(pController_1->GetRawButton(L310_BUTTON_A))
-
-#define DRIVETRAIN_MMOVE			(pController_1->GetRawButton(L310_BUTTON_Y))
-#define CLIMBER_PULL_UP				(pController_1->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define DRIVETRAIN_MMOVE			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
+#define CLIMBER_PULL_UP				(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 // TODO: Add Component Commands
 
