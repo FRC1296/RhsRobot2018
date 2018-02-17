@@ -84,6 +84,7 @@ private:
 	float dAvgArray1;
 	float dAvgArray2;
 	float fMMoveTime;
+	float fTurnTime;
 	float fTargetCalc;
 
 	double deg[3];

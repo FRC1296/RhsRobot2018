@@ -113,6 +113,7 @@ Drivetrain::Drivetrain()
 	pPIDTimer = new Timer();
 	pPIDTimerMove = new Timer();
 	pSpeedTimer = new Timer();
+	pPIDTurnTimer = new Timer();
 
 	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
 	iInitRightPos = pRightMotor->GetSelectedSensorPosition(0);
@@ -174,7 +175,7 @@ void Drivetrain::Run()
 	}*/
 
 	SmartDashboard::PutNumber("Target Angle",fTargetCalc);
-	SmartDashboard::PutNumber("Curr Angle",deg[2]);
+	SmartDashboard::PutNumber("CurrAngle",deg[2]);
 
 	switch (iTurnState)
 	{
@@ -239,6 +240,7 @@ void Drivetrain::Run()
 			iNumPoints = std::abs(fTimeToDest/UPDATE_RATE);
 			SmartDashboard::PutNumber("NmPts",iNumPoints);*/
 			iTurnState = TurnState_gpTurn;
+			pPIDTurnTimer->Start();
 			fInitRotation = deg[2];
 			//iCurrNumPoints = 0;
 			fTargetCalc = fInitRotation + fTarget;
@@ -250,6 +252,7 @@ void Drivetrain::Run()
 		if (iTurnState == TurnState_Init)
 		{
 			fMMoveTime = localMessage.params.mmove.fTime;
+			fTurnTime = localMessage.params.mmove.fTime;
 			iTargetDistance = localMessage.params.mmove.fDistance;
 			iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
@@ -320,8 +323,11 @@ void Drivetrain::MeasuredMove()
 			fInitRotation = 0;
 			pPIDTimerMove->Stop();
 			iTurnState = TurnState_gpTurn;
+			pPIDTurnTimer->Reset();
+			pPIDTurnTimer->Start();
 			return;
 	}
+
 	if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) && (pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
 		{
 			pPIDTimer->Start();
@@ -408,6 +414,19 @@ void Drivetrain::BoxCarFilter()
 void Drivetrain::GyroPIDTurn()
 {
 
+
+	if (pPIDTurnTimer->Get() >= 3)
+		{
+				SmartDashboard::PutString("PID turn","PID Timeout");
+				SmartDashboard::PutString("Completed","PID Completed");
+					pLeftMotor->Set(ControlMode::PercentOutput,0);
+					pRightMotor->Set(ControlMode::PercentOutput,0);
+				iTurnState = TurnState_Init;
+				fTarget = 0;
+				fInitRotation = 0;
+				return;
+
+		}
 	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
 	{
 		pPIDTimer->Start();
