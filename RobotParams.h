@@ -2,7 +2,7 @@
  *  Defines task parameters, hardware assignments and controller button/axis assignment.
  *
  * This header contains basic parameters for the robot. All parameters must be constants with internal
- * linkage, otherwise the One Definition Rule will be violated.
+ * linkage, otherwise the One Definition Rule will be violated..
  */
 
 // TODO: please go over these items with a knowledgeable mentor and check to see what we need/don't need
