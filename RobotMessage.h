@@ -49,7 +49,6 @@ enum MessageCommand {
 	COMMAND_SYSTEM_OK,					//!< COMMAND_SYSTEM_OK
 	COMMAND_SYSTEM_ERROR,				//!< COMMAND_SYSTEM_ERROR
 	COMMAND_SYSTEM_CONSTANTS,
-	COMMAND_SYSTEM_GAMEDATA,
 
 	COMMAND_ROBOT_STATE_DISABLED,		//!< Tells all components that the robot is disabled
 	COMMAND_ROBOT_STATE_AUTONOMOUS,		//!< Tells all components that the robot is in auto
@@ -65,7 +64,6 @@ enum MessageCommand {
 
 	COMMAND_DRIVETRAIN_RUN,
 	COMMAND_DRIVETRAIN_RUN_ARCADE,		//!< Run drive train using arcade controls
-	COMMAND_DRIVETRAIN_RUN_TANK,
 	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
 	COMMAND_DRIVETRAIN_MTURN,			//!< Drivetrain test for Turning with just encoders
 	COMMAND_DRIVETRAIN_WAVE,			//!< Drivetrain test for sin wave for THE CLAW
@@ -104,6 +102,11 @@ struct ProximityMoveParams {
 	float fTime;
 };
 
+struct TimedMoveParams {
+	float fSpeed;
+	float fTime;
+};
+
 struct TurnParams {
 	float fAngle;
 	float fTimeout;
@@ -130,30 +133,8 @@ struct SystemParams {
 	float fBattery;
 };
 
-enum GamePieceSides
-{
-	GAMEPIECESIDE_LEFT,
-	GAMEPIECESIDE_RIGHT,
-	GAMEPIECESIDE_LAST
-};
-
-enum GamePieceStart
-{
-	GAMEPIECESTART_LEFT,
-	GAMEPIECESTART_CENTER,
-	GAMEPIECESTART_RIGHT,
-	GAMEPIECESTART_LAST
-};
-
-struct GameDataParams {
-	GamePieceSides eSwitchSide;
-	GamePieceSides eScaleSide;
-	GamePieceSides eOpponentSwitchSide;
-	GamePieceStart eStartingPosition;
-};
 
 ///Used to deliver autonomous values to Drivetrain
-
 struct AutonomousParams {
 	unsigned uMode;
 	unsigned uDelay;
@@ -174,11 +155,10 @@ union MessageParams {
 	MoveParams move;
 	MeasuredMoveParams mmove;
 	ProximityMoveParams pmove;
+	TimedMoveParams tmove;
 	TurnParams turn;
 	SystemParams system;
 	ArcadeDriveParams adrive;
-	TankDriveParams tdrive;
-	GameDataParams gamedata;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components
