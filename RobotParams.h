@@ -225,7 +225,7 @@ const int POV_STILL = -1;
 #define ACCEPT_RANGE_DEGR			2			//Acceptable Range for "finished" PID loop in degrees
 #define ACCEPT_RANGE_KI				20			//Acceptable Range for adding Integral Value
 
-#define ACCEPT_RANGE_MOVE			512			//Acceptable Range for "finished" PID loop for moving straight
+#define ACCEPT_RANGE_MOVE			768	//512			//Acceptable Range for "finished" PID loop for moving straight
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

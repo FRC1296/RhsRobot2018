@@ -61,8 +61,8 @@ Drivetrain::Drivetrain()
 	pRightSlave1->SetInverted(true);
 	pRightSlave2->SetInverted(true);
 
-	static double p = .5;
-	static double d = 5;
+	static double p = .05;
+	static double d = .03;
 	pLeftMotor->Config_kP(0,p,5000);
 	pLeftMotor->Config_kD(0,d,5000);
 	pRightMotor->Config_kP(0,p,5000);
