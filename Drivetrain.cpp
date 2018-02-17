@@ -31,7 +31,7 @@ Drivetrain::Drivetrain()
 	pRightMotor = new TalonSRX(CAN_DRIVETRAIN_TALON_RIGHT);
 
 	pLeftSlave1 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_LEFT1);
-	pLeftSlave2 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_LEFT2);
+	pLeftSlave2 = new TalonSRX(CAN_DRIVETRAIN_TALON_LEFT2);
 	pRightSlave1 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT1);
 	pRightSlave2 = new VictorSPX(CAN_DRIVETRAIN_VICTOR_RIGHT2);
 
@@ -51,7 +51,7 @@ Drivetrain::Drivetrain()
 
 	pLeftMotor->SetNeutralMode(NeutralMode::Brake);
 	pRightMotor->SetNeutralMode(NeutralMode::Brake);
-	pIdgey = new PigeonIMU(CAN_PIGEON);
+	pIdgey = new PigeonIMU(pLeftSlave2);
 	pIdgey->SetFusedHeading(0.0,10);
 
 	pLeftSlave1->Follow(*pLeftMotor);
@@ -95,6 +95,7 @@ Drivetrain::Drivetrain()
 	fMaxTurnZ = 0;
 	fTimeToDest = 0;
 	iTargetDistance = 0;
+	fTargetCalc = 0;
 
 	dAvgArray1 = 0;
 	dAvgArray2 = 0;
@@ -110,6 +111,7 @@ Drivetrain::Drivetrain()
 	iCurrNumPoints = 0;
 
 	pPIDTimer = new Timer();
+	pPIDTimerMove = new Timer();
 	pSpeedTimer = new Timer();
 
 	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
@@ -171,7 +173,8 @@ void Drivetrain::Run()
 	fInitRotation = 0;
 	}*/
 
-	SmartDashboard::PutNumber("Target Angle",fInitRotation + fTarget);
+	SmartDashboard::PutNumber("Target Angle",fTargetCalc);
+	SmartDashboard::PutNumber("Curr Angle",deg[2]);
 
 	switch (iTurnState)
 	{
@@ -238,6 +241,7 @@ void Drivetrain::Run()
 			iTurnState = TurnState_gpTurn;
 			fInitRotation = deg[2];
 			//iCurrNumPoints = 0;
+			fTargetCalc = fInitRotation + fTarget;
 
 			SmartDashboard::PutString("Modes","PID Turn Initiated");
 		}
@@ -245,6 +249,7 @@ void Drivetrain::Run()
 	case COMMAND_DRIVETRAIN_MMOVE:
 		if (iTurnState == TurnState_Init)
 		{
+			fMMoveTime = localMessage.params.mmove.fTime;
 			iTargetDistance = localMessage.params.mmove.fDistance;
 			iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
 			iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
@@ -252,6 +257,7 @@ void Drivetrain::Run()
 			//pLeftMotor->SetSelectedSensorPosition(pLeftMotor->GetSelectedSensorPosition(0),0,5000);
 			//pRightMotor->SetSelectedSensorPosition(pRightMotor->GetSelectedSensorPosition(0),0,5000);
 			iTurnState = TurnState_mMove;
+			fTargetCalc = deg[2];
 			if (fTarget < 0) {
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) + iTicks;
 				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) + iTicks;
@@ -260,6 +266,9 @@ void Drivetrain::Run()
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
 				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
 			}
+			pPIDTimerMove->Reset();
+			pPIDTimerMove->Start();
+
 			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
 			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
 		/*	pLeftMotor->ConfigPeakOutputForward(.75,0);
@@ -303,6 +312,16 @@ void Drivetrain::Run()
 
 void Drivetrain::MeasuredMove()
 {
+	if (pPIDTimerMove->Get() >= fMMoveTime){
+			SmartDashboard::PutString("PID move","PID Done");
+			SmartDashboard::PutString("Complete","PID Completed");
+			iTurnState = TurnState_Init;
+			fTarget = 0;
+			fInitRotation = 0;
+			pPIDTimerMove->Stop();
+			iTurnState = TurnState_gpTurn;
+			return;
+	}
 	if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) && (pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
 		{
 			pPIDTimer->Start();
@@ -311,9 +330,10 @@ void Drivetrain::MeasuredMove()
 				SmartDashboard::PutString("Completed","PID Completed");
 			//	pLeftMotor->Set(ControlMode::PercentOutput,0);
 			//	pRightMotor->Set(ControlMode::PercentOutput,0);
-				iTurnState = TurnState_Init;
+				//iTurnState = TurnState_Init;
 				fTarget = 0;
 				fInitRotation = 0;
+				iTurnState = TurnState_gpTurn;
 				return;
 			}
 		}
@@ -324,11 +344,12 @@ void Drivetrain::MeasuredMove()
 		}
 	SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
 	SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
+
 }
 
 void Drivetrain::BoxCarFilter()
 {
-	float fTargetCalc = fInitRotation + fTarget;
+//	float fTargetCalc = fInitRotation + fTarget;
 
 	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
 	{
@@ -386,7 +407,6 @@ void Drivetrain::BoxCarFilter()
 
 void Drivetrain::GyroPIDTurn()
 {
-	float fTargetCalc = fInitRotation + fTarget;
 
 	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
 	{
@@ -407,7 +427,7 @@ void Drivetrain::GyroPIDTurn()
 		pPIDTimer->Reset();
 	}
 	SmartDashboard::PutString("Modes","PID Running");
-	fP = (fTarget + fInitRotation) - deg[2];
+	fP = (fTargetCalc) - deg[2];
 	SmartDashboard::PutNumber("P Value",fP);
 	if  (fPrevP == 0)
 		fD = 0;
@@ -418,7 +438,7 @@ void Drivetrain::GyroPIDTurn()
 	//	SmartDashboard::PutNumber("I Value",fI);
 	fPrevP = fP;
 	SmartDashboard::PutNumber("Previous P Value",fPrevP);
-	fSpeed = (DRIVETRAIN_CONST_KP*fP) /*+ (DRIVETRAIN_CONST_KI*fI)*/ - (DRIVETRAIN_CONST_KD*fD);
+	fSpeed = (DRIVETRAIN_CONST_KP*fP) - (DRIVETRAIN_CONST_KD*fD);
 	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_KI)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_KI))) {
 		fI += fP;
 		fSpeed += (DRIVETRAIN_CONST_KI*fI);

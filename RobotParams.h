@@ -81,13 +81,13 @@ Add more as needed.
 // TODO: Delegate TalonSRX numbers
 
 const int CAN_PCM = 17;
-const int CAN_PIGEON = 18;
+const int CAN_PIGEON = 6;
 const int CAN_PDB = 19;
 
 // Had to change these, lowkey salty at mechanical ~ Jiff
 const int CAN_DRIVETRAIN_TALON_LEFT = 4;
 const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 5;
-const int CAN_DRIVETRAIN_VICTOR_LEFT2 = 6;
+const int CAN_DRIVETRAIN_TALON_LEFT2 = 6;
 const int CAN_DRIVETRAIN_TALON_RIGHT = 1;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 2;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 3;
