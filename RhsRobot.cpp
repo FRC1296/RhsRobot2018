@@ -115,6 +115,11 @@ void RhsRobot::Run() {
 	 * 			}
 	 */
 
+	if((iLoop++ % 50) == 0)  // once every second or so
+	{
+		UpdateSystemData();
+	}
+
 	UpdateGameData();
 
 	if(pAuto)
@@ -199,21 +204,6 @@ void RhsRobot::Run() {
 	if(pClaw)
 	{
 
-	}
-
-	if((iLoop++ % 50) == 0)  // once every second or so
-	{
-		// send system health data to interested subsystems
-
-		robotMessage.command = COMMAND_SYSTEM_CONSTANTS;
-		robotMessage.params.system.fBattery = frc::DriverStation::GetInstance().GetBatteryVoltage();
-
-		if(pDrivetrain)
-		{
-			pDrivetrain->SendMessage(&robotMessage);
-		}
-
-		SmartDashboard::PutNumber("Match Time", frc::DriverStation::GetInstance().GetMatchTime());
 	}
 }
 
@@ -335,6 +325,22 @@ void RhsRobot::UpdateGameData(void)
 		sStartLocationLast = sStartLocation;
 	}
 }
+
+void RhsRobot::UpdateSystemData(void)
+{
+	// send system health data to interested subsystems
+
+	robotMessage.command = COMMAND_SYSTEM_CONSTANTS;
+	robotMessage.params.system.fBattery = frc::DriverStation::GetInstance().GetBatteryVoltage();
+
+	if(pDrivetrain)
+	{
+		pDrivetrain->SendMessage(&robotMessage);
+	}
+
+	SmartDashboard::PutNumber("Match Time", frc::DriverStation::GetInstance().GetMatchTime());
+}
+
 
 HAL_Bool HAL_Initialize(int32_t timeout, int32_t mode);
 

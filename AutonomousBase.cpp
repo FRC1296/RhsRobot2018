@@ -33,6 +33,7 @@ Autonomous::Autonomous()
 	pDebugTimer->Start();
 
 	szModeString[0] = 0;
+	bModeFound = false;
 
 	pTask = new std::thread(&Autonomous::StartTask, this);
 	wpi_assert(pTask);

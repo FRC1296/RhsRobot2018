@@ -31,6 +31,8 @@ const char *szTokens[] = {
 		"MOVE",				//!<(left speed) (right speed)
 		"MMOVE",	        //!<(speed) (distance:inches) (timeout)
 		"TURN",				//!<(degrees) (timeout)
+		"ELEVATOR",			//!<(degrees) (timeout)
+		"CLAW",		    	//!<(degrees) (timeout)
 		"NOP" };
 
 bool Autonomous::Evaluate(std::string rStatement) {
@@ -104,6 +106,22 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	switch (iCommand)
 	{
+		case AUTO_TOKEN_MODE:
+			Begin(pCurrLinePos);
+			pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+			if(!strncmp(pToken, szModeString, 4))
+			{
+				// this is our mode
+				bModeFound = true;
+			}
+			else
+			{
+				// this is not chosen mode
+				bModeFound = false;
+			}
+			rStatus.append("mode");
+			break;
+
 		case AUTO_TOKEN_BEGIN:
 			Begin(pCurrLinePos);
 			rStatus.append("begin");
@@ -141,35 +159,72 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			break;
 
 		case AUTO_TOKEN_MOVE:
-			if (!Move(pCurrLinePos))
+			if(bModeFound)
 			{
-				rStatus.append("move error");
-			}
-			else
-			{
-				rStatus.append("move");
+				if (!Move(pCurrLinePos))
+				{
+					rStatus.append("move error");
+				}
+				else
+				{
+					rStatus.append("move");
+				}
 			}
 			break;
 
 		case AUTO_TOKEN_MMOVE:
-			if (!MeasuredMove(pCurrLinePos))
+			if(bModeFound)
 			{
-				rStatus.append("move error");
-			}
-			else
-			{
-				rStatus.append("move");
+				if (!MeasuredMove(pCurrLinePos))
+				{
+					rStatus.append("move error");
+				}
+				else
+				{
+					rStatus.append("move");
+				}
 			}
 			break;
 
 		case AUTO_TOKEN_TURN:
-			if (!Turn(pCurrLinePos))
+			if(bModeFound)
 			{
-				rStatus.append("turn error");
+				if (!Turn(pCurrLinePos))
+				{
+					rStatus.append("turn error");
+				}
+				else
+				{
+					rStatus.append("turn");
+				}
 			}
-			else
+			break;
+
+		case AUTO_TOKEN_ELEVATOR:
+			if(bModeFound)
 			{
-				rStatus.append("turn");
+				if (!Elevator(pCurrLinePos))
+				{
+					rStatus.append("turn error");
+				}
+				else
+				{
+					rStatus.append("turn");
+				}
+			}
+			break;
+
+		case AUTO_TOKEN_CLAW:
+			if(bModeFound)
+			{
+				if (!Claw(pCurrLinePos))
+				{
+					rStatus.append("turn error");
+				}
+				else
+				{
+					rStatus.append("turn");
+				}
 			}
 			break;
 

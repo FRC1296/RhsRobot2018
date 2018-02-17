@@ -61,7 +61,8 @@ private:
 	unsigned int uResponseCount;
 	MessageCommand ReceivedCommand;
 	Timer *pDebugTimer;
-	char szModeString[6];
+	char szModeString[8];
+	bool bModeFound;
 
 	bool Begin(char *);
 	bool End(char *);
@@ -69,6 +70,8 @@ private:
 	bool Move(char *);
 	bool MeasuredMove(char *);
 	bool Turn(char *);
+	bool Elevator(char *);
+	bool Claw(char *);
 
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);

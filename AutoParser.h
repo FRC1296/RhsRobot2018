@@ -16,12 +16,14 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_MODE,				//!<	mode block number, number(integer)
 	AUTO_TOKEN_DEBUG,				//!<	debug mode, 0 = off, 1 = on
 	AUTO_TOKEN_MESSAGE,				//!<	print debug message
-	AUTO_TOKEN_BEGIN,				//!<	mark beginning of mode block
-	AUTO_TOKEN_END,					//!<	mark end of mode block
-	AUTO_TOKEN_DELAY,				//!<	delay (seconds - float)
+	AUTO_TOKEN_BEGIN,				//!<	mark beginning of program
+	AUTO_TOKEN_END,					//!<	mark end of program
+	AUTO_TOKEN_DELAY,				//!<	delay (seconds:float)
 	AUTO_TOKEN_MOVE,				//!<N	move (left & right PWM - float)
-	AUTO_TOKEN_MMOVE,				//!<R	mmove <speed> (inches - float)
-	AUTO_TOKEN_TURN,				//!<R	turn <degrees - float> (timeout)
+	AUTO_TOKEN_MMOVE,				//!<R	mmove <speed> <inches:float>  <timeout:float>
+	AUTO_TOKEN_TURN,				//!<R	turn <degrees:float> <timeout:float>
+	AUTO_TOKEN_ELEVATOR,			//!<R	elevator <INTAKE|SWITCH|SCALEHI|SCALELO|STOW> <timeout:float>
+	AUTO_TOKEN_CLAW,                //!<R	claw <IN|OUT|STOP>
 	AUTO_TOKEN_LAST
 } AUTO_COMMAND_TOKENS;
 

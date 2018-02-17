@@ -43,6 +43,7 @@ private:
 	void OnStateChange();
 	void Run();
 	void UpdateGameData();
+	void UpdateSystemData();
 
 	int iLoop;
 };

@@ -1,0 +1,94 @@
+# comments start with #
+# all possible modes
+# starting position - switch position - scale position - opp switch position
+#MODE CLRL
+#MODE CRLR
+#MODE CLLL
+#MODE CRRR
+#MODE LLRL
+#MODE LRLR
+#MODE LLLL
+#MODE LRRR
+#MODE RLRL
+#MODE RRLR
+#MODE RLLL
+#MODE RRRR
+#MODE XXXX
+# turn debug message off and on
+#DEBUG 0
+#DEBUG 1
+# print message to console
+#MESSAGE Sample
+#BEGIN
+#END
+# delay in seconds
+#DELAY 1.0
+# move, not timed or measured, left and right wheel speed
+#MOVE 1.0 1.0
+# move in straight line, speed and length and timeout
+#MMOVE 0.5 36 5.0
+# turn in degrees with timeout
+#TURN 90.0 5.0
+# run the elevator to one of five positions with timeout
+#ELEVATOR INTAKE 5.0
+#ELEVATOR SWITCH 5.0
+#ELEVATOR SCALEHI 5.0
+#ELEVATOR SCALELO 5.0
+#ELEVATOR STOW 5.0
+# have the claw intake a cube, spit out a cube or stop
+#CLAW IN 2.0
+#CLAW OUT 2.0
+#CLAW STOP
+
+BEGIN
+DEBUG 0
+#modes with robot starting in the center
+MODE CLRL
+MODE CRLR
+MODE CLLL
+MODE CRRR
+
+#modes with robot starting just left of switch
+
+MODE LLRL
+ELEVATOR SWITCH 5.0
+MMOVE 0.5 36 5.0
+TURN -90.0 5.0
+MMOVE 0.5 60 5.0
+CLAW OUT 2.0
+CLAW STOP
+
+MODE LRLR
+ELEVATOR SWITCH 5.0
+MMOVE 0.5 36 5.0
+TURN 90.0 5.0
+MMOVE 0.5 60 5.0
+CLAW OUT 2.0
+CLAW STOP
+
+MODE LLLL
+ELEVATOR SWITCH 5.0
+TURN -90.0 5.0
+MMOVE 0.5 60 5.0
+CLAW OUT 2.0
+CLAW STOP
+
+MODE LRRR
+ELEVATOR SWITCH 5.0
+MMOVE 0.5 36 5.0
+TURN 90.0 5.0
+MMOVE 0.5 60 5.0
+
+#modes with robot starting just right of switch
+MODE RLRL
+MODE RRLR
+MODE RLLL
+MODE RRRR
+
+#modes where we just run forward
+MODE XXXX
+MMOVE 120 10.0
+END
+
+
+

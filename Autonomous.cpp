@@ -271,3 +271,31 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	return (CommandResponse(DRIVETRAIN_QUEUE));
 }
 
+bool Autonomous::Elevator(char *pCurrLinePos)
+{
+	char *pToken;
+
+	// parse remainder of line to get target angle and timeout
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		return (false);
+	}
+}
+
+bool Autonomous::Claw(char *pCurrLinePos)
+{
+	char *pToken;
+
+	// parse remainder of line to get target angle and timeout
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		return (false);
+	}
+}
+
