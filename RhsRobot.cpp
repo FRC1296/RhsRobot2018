@@ -18,12 +18,15 @@
 RhsRobot::RhsRobot() {
 
 	// set new object pointers to NULL here
-	pAuto = NULL;
 	pControllerDriver = NULL;
 	pControllerOperator = NULL;
+	pChooser = NULL;
+
+	pAuto = NULL;
 	pDrivetrain = NULL;
 	pClaw = NULL;
 	pElevator = NULL;
+
 	iLoop = 0;            // a helpful little loop counter
 }
 
@@ -126,14 +129,14 @@ void RhsRobot::Run() {
 
 	if(pDrivetrain)
 	{
-		/*if(WAVE_DASH)
+#if 0
+		if(WAVE_DASH)
 		{
-			/*robotMessage.command  = COMMAND_DRIVETRAIN_WAVE;
+			robotMessage.command  = COMMAND_DRIVETRAIN_WAVE;
 			SmartDashboard::PutString("Mode","WAVE DASH");
-			pDrivetrain->SendMessage(&robotMessage);*/
-		/*
+			pDrivetrain->SendMessage(&robotMessage);
 		}
-		else*/ /* if(PIDGEY_ROTATE_LEFT90)
+		else if(PIDGEY_ROTATE_LEFT90)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
@@ -154,7 +157,8 @@ void RhsRobot::Run() {
 			SmartDashboard::PutString("cmd","180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-		*/
+#endif
+
 		if (DRIVETRAIN_BOXFILTER)
 		{
 			robotMessage.params.turn.fAngle = 90;
@@ -190,7 +194,6 @@ void RhsRobot::Run() {
 			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-
 	}
 
 	if(pClaw)
@@ -203,12 +206,14 @@ void RhsRobot::Run() {
 		// send system health data to interested subsystems
 
 		robotMessage.command = COMMAND_SYSTEM_CONSTANTS;
-		robotMessage.params.system.fBattery = DriverStation::GetInstance().GetBatteryVoltage();
+		robotMessage.params.system.fBattery = frc::DriverStation::GetInstance().GetBatteryVoltage();
 
 		if(pDrivetrain)
 		{
 			pDrivetrain->SendMessage(&robotMessage);
 		}
+
+		SmartDashboard::PutNumber("Match Time", frc::DriverStation::GetInstance().GetMatchTime());
 	}
 }
 
@@ -217,6 +222,12 @@ void RhsRobot::UpdateGameData(void)
 	// if the starting position has changed or we get new
 
 	gameData = frc::DriverStation::GetInstance().GetGameSpecificMessage();
+
+	if(gameData.length() == 0)
+	{
+		return;
+	}
+
 	sStartLocation = (char) pChooser->GetSelected();
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))

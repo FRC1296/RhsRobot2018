@@ -29,6 +29,7 @@ ComponentBase::ComponentBase(const char* newComponentName, const char *queueName
 
 	iPipeRpt = -1;
 	pTask = NULL;
+	lastCommand = COMMAND_UNKNOWN;
 
 	mkfifo(queueName, 0666);
 	queueLocal = queueName;
