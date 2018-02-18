@@ -100,7 +100,6 @@ MODE CRRR
 #modes with robot starting just left of switch
 
 MODE LLRL
-MODE LLRL
 MODE LRLR
 MODE LLLL
 MODE LRRR
