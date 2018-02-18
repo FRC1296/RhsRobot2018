@@ -83,6 +83,7 @@ enum MessageCommand {
 
 	COMMAND_CLAW_INHALE,				//!< Grab the block
 	COMMAND_CLAW_EXHALE,				//!< Spit out block
+	COMMAND_CLAW_STOP,
 
 	//add new component messages here
 

@@ -332,7 +332,6 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 bool Autonomous::Claw(char *pCurrLinePos)
 {
 	char *pToken;
-	float fSpeed;
 
 	// parse remainder of line to get mode
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
@@ -345,6 +344,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 
 	if(strncmp(pToken, "IN", 2))
 	{
+		// parse remainder of line to get the speed
 		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
 		if(pToken == NULL)
@@ -353,10 +353,12 @@ bool Autonomous::Claw(char *pCurrLinePos)
 			return (false);
 		}
 
-		fSpeed = atof(pToken);
+		Message.command = COMMAND_CLAW_INHALE;
+		Message.params.claw.fClawSpeed = atof(pToken);
 	}
 	else if(strncmp(pToken, "OUT", 3))
 	{
+		// parse remainder of line to get the speed
 		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
 		if(pToken == NULL)
@@ -365,11 +367,13 @@ bool Autonomous::Claw(char *pCurrLinePos)
 			return (false);
 		}
 
-		fSpeed = -atof(pToken);
+		Message.command = COMMAND_CLAW_EXHALE;
+		Message.params.claw.fClawSpeed = atof(pToken);
 	}
 	else if(strncmp(pToken, "STOP", 4))
 	{
-		fSpeed = 0.0;
+		Message.command = COMMAND_CLAW_STOP;
+		Message.params.claw.fClawSpeed = 0.0;
 	}
 	else
 	{
@@ -377,9 +381,9 @@ bool Autonomous::Claw(char *pCurrLinePos)
 	}
 
 #ifndef TEST_SCRIPTS
-	return(true);
+	return (CommandNoResponse(CLAW_QUEUE));
 #else
-	printf("Claw %0.2f\n", fSpeed);
+	printf("Claw %0.2f\n", Message.params.claw.fClawSpeed);
 	return(true);
 #endif
 }

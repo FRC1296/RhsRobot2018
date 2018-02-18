@@ -58,6 +58,11 @@ void Claw::Run()
 			pClawVictorRight->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
 			break;
 
+		case COMMAND_CLAW_STOP:
+			pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
+			pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
+			break;
+
 		default:
 			break;
 		}
