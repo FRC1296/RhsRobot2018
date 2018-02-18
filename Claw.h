@@ -21,6 +21,7 @@
 //Robot
 #include "WPILib.h"
 #include "ctre\Phoenix.h"
+#include "Solenoid.h"
 
 
 class Claw : public ComponentBase
@@ -39,6 +40,8 @@ public:
 private:
 	VictorSPX* pClawVictorLeft;
 	VictorSPX* pClawVictorRight;
+	Solenoid* pClawSolenoidLeft;
+	Solenoid* pClawSolenoidRight;
 
 	void OnStateChange();
 	void Run();

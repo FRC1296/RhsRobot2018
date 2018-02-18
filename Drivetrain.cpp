@@ -240,11 +240,14 @@ void Drivetrain::Run()
 			iNumPoints = std::abs(fTimeToDest/UPDATE_RATE);
 			SmartDashboard::PutNumber("NmPts",iNumPoints);*/
 			iTurnState = TurnState_gpTurn;
+			pPIDTurnTimer->Reset();
 			pPIDTurnTimer->Start();
 			fInitRotation = deg[2];
 			//iCurrNumPoints = 0;
 			fTargetCalc = fInitRotation + fTarget;
 
+
+			SmartDashboard::PutString("PID turn", "TURN PID START");
 			SmartDashboard::PutString("Modes","PID Turn Initiated");
 		}
 		break;

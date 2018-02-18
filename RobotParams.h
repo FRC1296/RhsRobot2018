@@ -80,7 +80,7 @@ Add more as needed.
 
 // TODO: Delegate TalonSRX numbers
 
-const int CAN_PCM = 17;
+const int CAN_PCM = 0;
 const int CAN_PIGEON = 6;
 const int CAN_PDB = 19;
 

@@ -147,7 +147,7 @@ void Autonomous::Run()
 bool Autonomous::LoadScriptFile()
 {
 	bool bReturn = true;
-	//printf("Auto Script Filepath: [%s]\n", AUTONOMOUS_SCRIPT_FILEPATH);
+	printf("Auto Script Filepath: [%s]\n", AUTONOMOUS_SCRIPT_FILEPATH);
 	ifstream scriptStream;
 	scriptStream.open(AUTONOMOUS_SCRIPT_FILEPATH);
 
@@ -158,7 +158,7 @@ bool Autonomous::LoadScriptFile()
 			if(!scriptStream.eof())
 			{
 				getline(scriptStream, script[i]);
-				//cout << script[i] << endl;
+				cout << script[i] << endl;
 			}
 			else
 			{
@@ -166,12 +166,12 @@ bool Autonomous::LoadScriptFile()
 			}
 		}
 
-		//printf("Autonomous script loaded\n");
+		printf("Autonomous script loaded\n");
 		scriptStream.close();
 	}
 	else
 	{
-		//printf("No auto file found\n");
+		printf("No auto file found\n");
 		bReturn = false;
 	}
 
@@ -184,9 +184,9 @@ void Autonomous::DoScript()
 	SmartDashboard::PutString("Script Line", "DoScript started");
 	SmartDashboard::PutString("Auto Status", "Ready to go");
 	SmartDashboard::PutBoolean("Script File Loaded", false);
-	//printf("DoScript\n");
+	printf("DoScript\n");
 
-	// excutes autos over and over again
+	// executes autos over and over again
 
 	//while(true)
 	//{
@@ -201,7 +201,7 @@ void Autonomous::DoScript()
 			{
 				// wait a little and try again, really only useful if when practicing
 
-				SmartDashboard::PutBoolean("Script File Not Found", false);
+				SmartDashboard::PutBoolean("Script File Found", false);
 				Wait(1.0);
 			}
 			else
@@ -213,6 +213,11 @@ void Autonomous::DoScript()
 		}
 
 		// if there is a script we will execute it some heck or high water!
+		while (!bInAutoMode)
+		{
+			Wait(0.1);
+		}
+
 		while (!bInAutoMode)
 		{
 			Wait(0.1);

@@ -23,6 +23,10 @@ Claw::Claw()
 	//TODO: add member objects
 	pClawVictorLeft = new VictorSPX(CAN_CLAW_VICTOR_LEFT);
 	pClawVictorRight = new VictorSPX(CAN_CLAW_VICTOR_RIGHT);
+	pClawSolenoidLeft = new Solenoid(CAN_PCM, 0);
+	pClawSolenoidRight = new Solenoid(CAN_PCM, 1);
+	pClawSolenoidLeft->Set(true);
+	pClawSolenoidRight->Set(true);
 
 	pTask = new std::thread(&Component::StartTask, this, CLAW_TASKNAME, CLAW_PRIORITY);
 	wpi_assert(pTask);

@@ -26,6 +26,7 @@ private:
 
 	Joystick* pControllerDriver;
 	Joystick* pControllerOperator;
+	Compressor* pCompressor;
 
 	frc::SendableChooser<char> *pChooser;
 

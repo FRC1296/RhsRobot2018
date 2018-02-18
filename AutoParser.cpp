@@ -48,7 +48,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	rStatement.erase(0, rStatement.find_first_not_of(" \r\n\t"));
 
 	if(rStatement.empty()) {
-		//printf("statement is empty");
+		printf("statement is empty");
 		return (bReturn);
 	}
 
@@ -67,6 +67,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	if(pToken == NULL)
 	{
+		printf("%s %s\n", pCurrLinePos, szDelimiters);
 		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		PRINTAUTOERROR;
 		rStatus.append("missing token");

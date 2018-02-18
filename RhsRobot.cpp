@@ -63,6 +63,8 @@ void RhsRobot::Init() {
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
+	pCompressor = new Compressor(CAN_PCM);
+	pCompressor->SetClosedLoopControl(true);
 
 	pDrivetrain = new Drivetrain();
 	pClaw = new Claw();
@@ -70,17 +72,17 @@ void RhsRobot::Init() {
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
-    if(pDrivetrain)
+	if(pDrivetrain)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pDrivetrain);
 	}
 
-    if(pClaw)
+	if(pClaw)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pClaw);
 	}
 
-    if(pAuto)
+	if(pAuto)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pAuto);
 	}

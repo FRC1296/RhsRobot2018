@@ -85,6 +85,8 @@ enum MessageCommand {
 	COMMAND_CLAW_EXHALE,				//!< Spit out block
 	COMMAND_CLAW_STOP,
 
+	COMMAND_CLAW_PINCH,					//!< Pinch the block
+	COMMAND_CLAW_RELEASE,				//!< Release the block
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST
