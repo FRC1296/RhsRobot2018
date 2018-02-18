@@ -104,11 +104,6 @@ MODE LRLR
 MODE LLLL
 MODE LRRR
 DEBUG 0
-#modes with robot starting in the center
-MODE CLRL
-MODE CRLR
-MODE CLLL
-MODE CRRR
 
 #modes with robot starting just left of switch
 
