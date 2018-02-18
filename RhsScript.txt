@@ -41,7 +41,6 @@
 #CLAW STOP
 
 BEGIN
-<<<<<<< HEAD
 DEBUG 1
 
 #modes with robot starting in the center
