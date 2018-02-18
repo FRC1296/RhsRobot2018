@@ -17,10 +17,8 @@
 #include "RhsRobotBase.h"
 
 #define DISTANCE 5 //robotMessage.params.mmove.fDistance
-#define ROBOT_WIDTH 26
 #define DEGREES 90 //robotMessage.params.turn.fAngle
 
-enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn, TurnState_mMove};
 //Robot
 
 Drivetrain::Drivetrain()
@@ -251,6 +249,7 @@ void Drivetrain::Run()
 			SmartDashboard::PutString("Modes","PID Turn Initiated");
 		}
 		break;
+
 	case COMMAND_DRIVETRAIN_MMOVE:
 		if (iTurnState == TurnState_Init)
 		{
@@ -307,6 +306,14 @@ void Drivetrain::Run()
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
 		}
+		break;
+
+	case COMMAND_DRIVETRAIN_AUTOTURN:
+		AutoMeasuredTurn();
+		break;
+
+	case COMMAND_DRIVETRAIN_AUTOMOVE:
+		AutoMeasuredMove();
 		break;
 
 	default:
@@ -416,8 +423,6 @@ void Drivetrain::BoxCarFilter()
 
 void Drivetrain::GyroPIDTurn()
 {
-
-
 	if (pPIDTurnTimer->Get() >= 3)
 		{
 				SmartDashboard::PutString("PID turn","PID Timeout");

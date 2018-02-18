@@ -231,7 +231,7 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 
 	// send the message to the drive train
 
-	Message.command = COMMAND_DRIVETRAIN_MMOVE;
+	Message.command = COMMAND_DRIVETRAIN_AUTOMOVE;
 	Message.params.mmove.fSpeed = fSpeed;
 	Message.params.mmove.fDistance = fDistance;
 	Message.params.mmove.fTime = fTime;
@@ -271,7 +271,7 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	fTimeout = atof(pToken);
 
 	// send the message to the drive train
-	Message.command = COMMAND_DRIVETRAIN_MTURN;
+	Message.command = COMMAND_DRIVETRAIN_AUTOTURN;
 	Message.params.turn.fAngle= fAngle;
 	Message.params.turn.fTimeout = fTimeout;
 

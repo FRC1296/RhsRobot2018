@@ -29,6 +29,8 @@ float AvgArrays(int* Array, int LengthArr);
 void dAddToArray(float* Array, int LengthArr, float val);
 float dAvgArrays(float* Array, int LengthArr);
 
+enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn, TurnState_mMove};
+
 class Drivetrain : public ComponentBase
 {
 public:
@@ -64,6 +66,8 @@ private:
 	void GyroPIDTurn();
 	void MeasuredTurn();
 	void MeasuredMove();
+	void AutoMeasuredMove();
+	void AutoMeasuredTurn();
 
 	float fInitRotation;
 	float fPrevP;

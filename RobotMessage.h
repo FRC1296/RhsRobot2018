@@ -69,6 +69,8 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
 	COMMAND_DRIVETRAIN_MTURN,			//!< Drivetrain test for Turning with just encoders
 	COMMAND_DRIVETRAIN_WAVE,			//!< Drivetrain test for sin wave for THE CLAW
+	COMMAND_DRIVETRAIN_AUTOTURN,
+	COMMAND_DRIVETRAIN_AUTOMOVE,
 
 	COMMAND_DRIVETRAIN_GPTURN,			//!< Drivetrain test for Gyro rotation with a PID loop
 	COMMAND_DRIVETRAIN_BOXFILTER,		//!< Drivetrain test for Boxfilter turning
