@@ -13,6 +13,7 @@
 #include "RobotParams.h"
 #include "WPILib.h"
 #include "Claw.h"
+#include "RobotMessage.h"
 
 //Robot
 
@@ -43,6 +44,18 @@ void Claw::Run()
 	{
 	//TODO add command cases for Component
 		case COMMAND_COMPONENT_TEST:
+			break;
+
+		case COMMAND_CLAW_INHALE:
+			pClawVictorLeft->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
+			pClawVictorRight->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
+			SmartDashboard::PutNumber("LeftTrigger",L310_TRIGGER_LEFT);
+			SmartDashboard::PutNumber("RightTrigger",L310_TRIGGER_RIGHT);
+			break;
+
+		case COMMAND_CLAW_EXHALE:
+			pClawVictorLeft->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
+			pClawVictorRight->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
 			break;
 
 		default:

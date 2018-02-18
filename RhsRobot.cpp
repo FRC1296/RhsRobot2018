@@ -188,7 +188,8 @@ void RhsRobot::Run() {
 		}
 		else if(DRIVETRAIN_MMOVE)
 		{
-			robotMessage.params.mmove.fDistance = 36*3;
+			robotMessage.params.mmove.fDistance = 36*2;
+			robotMessage.params.mmove.fTime = 3;
 			robotMessage.command = COMMAND_DRIVETRAIN_MMOVE;
 			SmartDashboard::PutString("cmd","PID Move Called");
 			pDrivetrain->SendMessage(&robotMessage);
@@ -204,7 +205,18 @@ void RhsRobot::Run() {
 
 	if(pClaw)
 	{
-
+		if(CLAW_INHALE)
+		{
+			robotMessage.command = COMMAND_CLAW_INHALE;
+			robotMessage.params.claw.fClawSpeed = CLAW_INHALE;
+			pClaw->SendMessage(&robotMessage);
+		}
+		else if(CLAW_EXHALE)
+		{
+			robotMessage.command = COMMAND_CLAW_EXHALE;
+			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
+			pClaw->SendMessage(&robotMessage);
+		}
 	}
 }
 

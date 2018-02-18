@@ -81,6 +81,9 @@ enum MessageCommand {
 	COMMAND_ELEVATOR_SCALE_HIGH,		//!< Elevator scale position (tipped not in our favor)
 	COMMAND_ELEVATOR_CLIMB,				//!< Prepare Elevator for climbing
 
+	COMMAND_CLAW_INHALE,				//!< Grab the block
+	COMMAND_CLAW_EXHALE,				//!< Spit out block
+
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST
@@ -118,6 +121,10 @@ struct TankDriveParams {
 struct ArcadeDriveParams {
 	float left;
 	float right;
+};
+
+struct ClawParams {
+	float fClawSpeed;
 };
 
 struct ElevatorParams {
@@ -179,6 +186,7 @@ union MessageParams {
 	ArcadeDriveParams adrive;
 	TankDriveParams tdrive;
 	GameDataParams gamedata;
+	ClawParams claw;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

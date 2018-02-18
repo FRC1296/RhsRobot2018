@@ -2,7 +2,7 @@
  *  Defines task parameters, hardware assignments and controller button/axis assignment.
  *
  * This header contains basic parameters for the robot. All parameters must be constants with internal
- * linkage, otherwise the One Definition Rule will be violated.
+ * linkage, otherwise the One Definition Rule will be violated..
  */
 
 // TODO: please go over these items with a knowledgeable mentor and check to see what we need/don't need
@@ -81,21 +81,21 @@ Add more as needed.
 // TODO: Delegate TalonSRX numbers
 
 const int CAN_PCM = 17;
-const int CAN_PIGEON = 18;
+const int CAN_PIGEON = 6;
 const int CAN_PDB = 19;
 
 // Had to change these, lowkey salty at mechanical ~ Jiff
 const int CAN_DRIVETRAIN_TALON_LEFT = 4;
 const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 5;
-const int CAN_DRIVETRAIN_VICTOR_LEFT2 = 6;
+const int CAN_DRIVETRAIN_TALON_LEFT2 = 6;
 const int CAN_DRIVETRAIN_TALON_RIGHT = 1;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 2;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 3;
 
 const int CAN_CLIMBER_TALON = 1; // Arbitrary Numbers until delegated
 const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
-const int CAN_CLAW_VICTOR_LEFT = -1; // Arbitrary Numbers until delegated
-const int CAN_CLAW_VICTOR_RIGHT = -1; // See above
+const int CAN_CLAW_VICTOR_LEFT = 13; // Arbitrary Numbers until delegated
+const int CAN_CLAW_VICTOR_RIGHT = 14; // See above
 const int CAN_ELEVATOR_TALON_LEFT = -1; // See above
 const int CAN_ELEVATOR_TALON_RIGHT = -1; // See above
 
@@ -202,6 +202,9 @@ const int POV_STILL = -1;
 
 #define DRIVETRAIN_MMOVE			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 #define CLIMBER_PULL_UP				(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
+#define CLAW_INHALE 				(pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT))
+#define CLAW_EXHALE					(pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
 
 // TODO: Add Component Commands
 

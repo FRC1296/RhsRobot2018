@@ -47,14 +47,16 @@ private:
 	TalonSRX* pRightMotor;
 
 	VictorSPX* pLeftSlave1;
-	VictorSPX* pLeftSlave2;
+	TalonSRX* pLeftSlave2;
 	VictorSPX* pRightSlave1;
 	VictorSPX* pRightSlave2;
 
 	PigeonIMU* pIdgey;
 
 	Timer* pPIDTimer;
+	Timer* pPIDTimerMove;
 	Timer* pSpeedTimer;
+	Timer* pPIDTurnTimer;
 
 	void OnStateChange();
 	void Run();
@@ -81,6 +83,9 @@ private:
 	float fTimeToDest;
 	float dAvgArray1;
 	float dAvgArray2;
+	float fMMoveTime;
+	float fTurnTime;
+	float fTargetCalc;
 
 	double deg[3];
 	double dps[3];
