@@ -55,8 +55,9 @@ void RhsRobot::Init() {
 	 */
 
 	pChooser = new frc::SendableChooser<char>();
-	pChooser->AddDefault("Middle", 'M');
+	pChooser->AddDefault("Middle", 'X');
 	pChooser->AddObject("Right",'R');
+	pChooser->AddObject("Right",'M');
 	pChooser->AddObject("Left",'L');
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
