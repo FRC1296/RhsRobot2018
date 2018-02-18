@@ -105,6 +105,7 @@ MODE LLLL
 MODE LRRR
 DEBUG 0
 #modes with robot starting in the center
+MODE CLRL
 MODE CRLR
 MODE CLLL
 MODE CRRR
@@ -112,42 +113,19 @@ MODE CRRR
 #modes with robot starting just left of switch
 
 MODE LLRL
-ELEVATOR SWITCH 5.0
-MMOVE 0.5 36 5.0
-TURN -90.0 5.0
-MMOVE 0.5 60 5.0
-CLAW OUT 2.0
-CLAW STOP
-
 MODE LRLR
-ELEVATOR SWITCH 5.0
-MMOVE 0.5 36 5.0
-TURN 90.0 5.0
-MMOVE 0.5 60 5.0
-CLAW OUT 2.0
-CLAW STOP
-
 MODE LLLL
-ELEVATOR SWITCH 5.0
-TURN -90.0 5.0
-MMOVE 0.5 60 5.0
-CLAW OUT 2.0
-CLAW STOP
-
 MODE LRRR
-ELEVATOR SWITCH 5.0
-MMOVE 0.5 36 5.0
-TURN 90.0 5.0
-MMOVE 0.5 60 5.0
->>>>>>> d4815c664caea078a94fdb5923adcdf65f164baa
 
 #modes with robot starting just right of switch
+
 MODE RLRL
 MODE RRLR
 MODE RLLL
 MODE RRRR
 
 #modes where we just run forward
+
 MODE XXXX
 MMOVE 120 10.0
 END
