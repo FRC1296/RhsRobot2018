@@ -55,16 +55,16 @@ void RhsRobot::Init() {
 	 */
 
 	pChooser = new frc::SendableChooser<char>();
-	pChooser->AddDefault("Middle", 'X');
-	pChooser->AddObject("Right",'R');
-	pChooser->AddObject("Right",'M');
 	pChooser->AddObject("Left",'L');
+	pChooser->AddObject("Center",'C');
+	pChooser->AddObject("Right",'R');
+	pChooser->AddDefault("Simple", 'X');
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
-	pCompressor = new Compressor(CAN_PCM);
-	pCompressor->SetClosedLoopControl(true);
+	//pCompressor = new Compressor(CAN_PCM);
+	//pCompressor->SetClosedLoopControl(true);
 
 	pDrivetrain = new Drivetrain();
 	pClaw = new Claw();
@@ -309,7 +309,7 @@ void RhsRobot::UpdateGameData(void)
 			SmartDashboard::PutBoolean("Start Middle", false);
 			SmartDashboard::PutBoolean("Start Right", false);
 		}
-		else if(sStartLocation == 'M')
+		else if(sStartLocation == 'C')
 		{
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_CENTER;
 			SmartDashboard::PutBoolean("Start Left", false);
@@ -325,9 +325,7 @@ void RhsRobot::UpdateGameData(void)
 		}
 		else
 		{
-			// is it a good idea to leave middle as the default position?
-
-			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_CENTER;
+			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_SIMPLE;
 		}
 
 		// the game data has changed so tell everyone who is interested
@@ -344,6 +342,7 @@ void RhsRobot::UpdateGameData(void)
 
 		gameDataPrev = gameData;
 		sStartLocationLast = sStartLocation;
+		SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 	}
 }
 

@@ -112,8 +112,8 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	switch (iCommand)
 	{
 		case AUTO_TOKEN_MODE:
-			Begin(pCurrLinePos);
 			pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
 			if(!strncmp(pToken, szModeString, 4))
 			{
 				// this is our mode
@@ -148,18 +148,21 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			break;
 
 		case AUTO_TOKEN_DELAY:
-			pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
-
-			if (pToken == NULL)
+			if(bModeFound)
 			{
-				rStatus.append("missing parameter");
-			}
-			else
-			{
-				fParam1 = atof(pToken);
-				rStatus.append("wait");
+				pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
-				Delay(fParam1);
+				if (pToken == NULL)
+				{
+					rStatus.append("missing parameter");
+				}
+				else
+				{
+					fParam1 = atof(pToken);
+					rStatus.append("wait");
+
+					Delay(fParam1);
+				}
 			}
 			break;
 

@@ -25,9 +25,9 @@
 #DELAY 1.0
 # move, not timed or measured, left and right wheel speed
 #MOVE 1.0 1.0
-# move in straight line, speed and length and timeout
+# move in straight line, speed (always positive) and length and timeout
 #MMOVE 0.5 36 5.0
-# turn in degrees with timeout
+# turn in degrees with timeout (positive is CW, negative CCW)
 #TURN 90.0 5.0
 # run the elevator to one of five positions with timeout
 #ELEVATOR INTAKE 5.0
@@ -46,54 +46,54 @@ DEBUG 1
 #modes with robot starting in the center
 MODE CLRL
 	MMOVE 0.5 36 5.0
-	TURN -90.0 5.0
+	TURN 90.0 5.0
 	MMOVE 0.5 60 5.0
 	ELEVATOR SWITCH 5.0
-	TURN 90.0 5.0
-	MMOVE 0.5 36 5.0
+	TURN -90.0 5.0
+	MMOVE 0.5 60 5.0
 	CLAW OUT 1.0
 	DELAY 2.0
 	CLAW STOP
-	MMOVE -0.5 36 5.0
+	MMOVE 0.5 -36 5.0
 	ELEVATOR STOW 5.0
 
 MODE CRLR
 	MMOVE 0.5 36 5.0
-	TURN 90.0 5.0
+	TURN -90.0 5.0
 	MMOVE 0.5 60 5.0
 	ELEVATOR SWITCH 5.0
-	TURN -90.0 5.0
-	MMOVE 0.5 36 5.0
+	TURN 90.0 5.0
+	MMOVE 0.5 60 5.0
 	CLAW OUT 1.0
 	DELAY 2.0
 	CLAW STOP
-	MMOVE -0.5 36 5.0
+	MMOVE 0.5 -36 5.0
 	ELEVATOR STOW 5.0
 
 MODE CLLL
 	MMOVE 0.5 36 5.0
-	TURN -90.0 5.0
+	TURN 90.0 5.0
 	MMOVE 0.5 60 5.0
 	ELEVATOR SWITCH 5.0
-	TURN 90.0 5.0
-	MMOVE 0.5 36 5.0
+	TURN -90.0 5.0
+	MMOVE 0.5 60 5.0
 	CLAW OUT 1.0
 	DELAY 2.0
 	CLAW STOP
-	MMOVE -0.5 36 5.0
+	MMOVE 0.5 -36 5.0
 	ELEVATOR STOW 5.0
 
 MODE CRRR
 	MMOVE 0.5 36 5.0
-	TURN 90.0 5.0
+	TURN -90.0 5.0
 	MMOVE 0.5 60 5.0
 	ELEVATOR SWITCH 5.0
-	TURN -90.0 5.0
-	MMOVE 0.5 36 5.0
+	TURN 90.0 5.0
+	MMOVE 0.5 60 5.0
 	CLAW OUT 1.0
 	DELAY 2.0
 	CLAW STOP
-	MMOVE -0.5 36 5.0
+	MMOVE 0.5 -36 5.0
 	ELEVATOR STOW 5.0
  
 #modes with robot starting just left of switch
@@ -112,8 +112,18 @@ MODE RRRR
 
 #modes where we just run forward
 
-MODE XXXX
-MMOVE 120 10.0
+MODE XLRL
+MMOVE 0.5 120.0 5.0
+
+MODE XRLR
+MMOVE 0.5 120.0 5.0
+
+MODE XLLL
+MMOVE 0.5 120.0 5.0
+
+MODE XRRR
+MMOVE 0.5 120.0 5.0
+
 END
 
 

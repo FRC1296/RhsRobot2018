@@ -276,6 +276,7 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	Message.params.turn.fTimeout = fTimeout;
 
 #ifndef TEST_SCRIPTS
+	printf("Turn Message to Drivetrain\n");
 	return (CommandResponse(DRIVETRAIN_QUEUE));
 #else
 	printf("COMMAND_DRIVETRAIN_MTURN %0.2f %0.2f\n", fAngle, fTimeout);
