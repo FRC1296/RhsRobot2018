@@ -28,6 +28,10 @@ Claw::Claw()
 	pClawSolenoidLeft->Set(true);
 	pClawSolenoidRight->Set(true);
 
+	pPDP = new PowerDistributionPanel(CAN_PDB);
+
+	motorsStopped = false;
+
 	pTask = new std::thread(&Component::StartTask, this, CLAW_TASKNAME, CLAW_PRIORITY);
 	wpi_assert(pTask);
 };
@@ -44,6 +48,11 @@ void Claw::OnStateChange()
 
 void Claw::Run()
 {
+	if (motorsStopped && !(pPDP->GetCurrent(CLAW_CHANNEL_ONE) > CLAW_LIMIT || pPDP->GetCurrent(CLAW_CHANNEL_TWO) > CLAW_LIMIT))
+		motorsStopped = false;
+
+	SmartDashboard::PutNumber("Claw Current",pPDP->GetCurrent(CLAW_CHANNEL_ONE));
+
 	switch(localMessage.command)			//Reads the message command
 	{
 	//TODO add command cases for Component
@@ -55,6 +64,12 @@ void Claw::Run()
 			pClawVictorRight->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
 			SmartDashboard::PutNumber("LeftTrigger",L310_TRIGGER_LEFT);
 			SmartDashboard::PutNumber("RightTrigger",L310_TRIGGER_RIGHT);
+			if (!(motorsStopped) && (pPDP->GetCurrent(CLAW_CHANNEL_ONE) > CLAW_LIMIT || pPDP->GetCurrent(CLAW_CHANNEL_TWO) > CLAW_LIMIT))
+			{
+				pClawVictorLeft->Set(ControlMode::PercentOutput,0);
+				pClawVictorRight->Set(ControlMode::PercentOutput,0);
+				motorsStopped = true;
+			}
 			break;
 
 		case COMMAND_CLAW_EXHALE:
@@ -62,9 +77,19 @@ void Claw::Run()
 			pClawVictorRight->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
 			break;
 
+		case COMMAND_CLAW_PINCH:
+			pClawSolenoidLeft->Set(true);
+			pClawSolenoidRight->Set(false);
+			break;
+
+		case COMMAND_CLAW_RELEASE:
+			pClawSolenoidLeft->Set(false);
+			pClawSolenoidRight->Set(true);
+			break;
+
 		case COMMAND_CLAW_STOP:
-			pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
-			pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
+			pClawVictorLeft->Set(ControlMode::PercentOutput,0);
+			pClawVictorRight->Set(ControlMode::PercentOutput,0);
 			break;
 
 		default:

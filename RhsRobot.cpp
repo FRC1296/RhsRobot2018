@@ -55,9 +55,8 @@ void RhsRobot::Init() {
 	 */
 
 	pChooser = new frc::SendableChooser<char>();
-	pChooser->AddDefault("Middle", 'X');
+	pChooser->AddDefault("Middle", 'M');
 	pChooser->AddObject("Right",'R');
-	pChooser->AddObject("Right",'M');
 	pChooser->AddObject("Left",'L');
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
@@ -69,6 +68,7 @@ void RhsRobot::Init() {
 	pDrivetrain = new Drivetrain();
 	pClaw = new Claw();
 	pAuto = new Autonomous();
+	pElevator = new Elevator();
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
@@ -117,6 +117,12 @@ void RhsRobot::Run() {
 					pDrivetrail->SendMessage(&robotMessage);
 	 * 			}
 	 */
+
+	fLeftTrigger = pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT);
+	fRightTrigger = pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT);
+
+	SmartDashboard::PutNumber("Left Trigger",fLeftTrigger);
+	SmartDashboard::PutNumber("Right Trigger",fRightTrigger);
 
 	if((iLoop++ % 50) == 0)  // once every second or so
 	{
@@ -167,21 +173,14 @@ void RhsRobot::Run() {
 		}
 #endif
 
-		if (DRIVETRAIN_BOXFILTER)
+/*		if (DRIVETRAIN_BOXFILTER)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_BOXFILTER;
 			SmartDashboard::PutString("cmd","Box Filter Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-		else if (DRIVETRAIN_MTURN)
-		{
-			robotMessage.params.turn.fAngle = 90;
-			robotMessage.command = COMMAND_DRIVETRAIN_MTURN;
-			SmartDashboard::PutString("cmd","Measured Turn Called");
-			pDrivetrain->SendMessage(&robotMessage);
-		}
-		else if(PIDGEY_ROTATE_GPTURN)
+		else*/ if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
@@ -207,23 +206,50 @@ void RhsRobot::Run() {
 
 	if(pClaw)
 	{
-		if(CLAW_INHALE)
+		if(CLAW_INHALE > .1)
 		{
 			robotMessage.command = COMMAND_CLAW_INHALE;
 			robotMessage.params.claw.fClawSpeed = CLAW_INHALE;
 			pClaw->SendMessage(&robotMessage);
 		}
-		else if(CLAW_EXHALE)
+		else if(CLAW_EXHALE > .1)
 		{
 			robotMessage.command = COMMAND_CLAW_EXHALE;
 			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
 			pClaw->SendMessage(&robotMessage);
 		}
+		else if(CLAW_PINCH > .1)
+		{
+			robotMessage.command = COMMAND_CLAW_PINCH;
+			pClaw->SendMessage(&robotMessage);
+		}
+		else if(CLAW_RELEASE > .1)
+		{
+			robotMessage.command = COMMAND_CLAW_RELEASE;
+			pClaw->SendMessage(&robotMessage);
+		}
 		else
 		{
 			robotMessage.command = COMMAND_CLAW_STOP;
-			robotMessage.params.claw.fClawSpeed = 0.0;
+			robotMessage.params.claw.fClawSpeed = 0;
 			pClaw->SendMessage(&robotMessage);
+		}
+	}
+
+	if(pElevator)
+	{
+		SmartDashboard::PutNumber("Raw Elevator Axis",ELEVATOR);
+		if (ELEVATOR > .2 || ELEVATOR < -.2)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_MOVE;
+			robotMessage.params.elevator.fSpeed = ELEVATOR;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_ELEVATOR_MOVE;
+			robotMessage.params.elevator.fSpeed = 0;
+			pElevator->SendMessage(&robotMessage);
 		}
 	}
 }

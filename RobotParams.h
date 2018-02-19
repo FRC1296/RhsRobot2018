@@ -80,9 +80,13 @@ Add more as needed.
 
 // TODO: Delegate TalonSRX numbers
 
-const int CAN_PCM = 0;
+const int CAN_PCM = 0; // Both must be zero
 const int CAN_PIGEON = 6;
-const int CAN_PDB = 19;
+const int CAN_PDB = 0; // Both must be zero
+
+const int CLAW_CHANNEL_ONE = 7;
+const int CLAW_CHANNEL_TWO = 8;
+const int CLAW_LIMIT = 20; // Claw's current limit
 
 // Had to change these, lowkey salty at mechanical ~ Jiff
 const int CAN_DRIVETRAIN_TALON_LEFT = 4;
@@ -96,8 +100,8 @@ const int CAN_CLIMBER_TALON = 1; // Arbitrary Numbers until delegated
 const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
 const int CAN_CLAW_VICTOR_LEFT = 13; // Arbitrary Numbers until delegated
 const int CAN_CLAW_VICTOR_RIGHT = 14; // See above
-const int CAN_ELEVATOR_TALON_LEFT = -1; // See above
-const int CAN_ELEVATOR_TALON_RIGHT = -1; // See above
+const int CAN_ELEVATOR_TALON_LEFT = 11; // HAS THE ENCODER ON IT
+const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
@@ -196,15 +200,19 @@ const int POV_STILL = -1;
 #define PIDGEY_ROTATE_RIGHT90		(pControllerDriver->GetRawButton(L310_BUTTON_B))
 #define PIDGEY_ROTATE_180			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 
-#define DRIVETRAIN_BOXFILTER		(pControllerDriver->GetRawButton(L310_BUTTON_X))
+// #define DRIVETRAIN_BOXFILTER		(pControllerDriver->GetRawButton(L310_BUTTON_X))
 #define PIDGEY_ROTATE_GPTURN		(pControllerDriver->GetRawButton(L310_BUTTON_B))
-#define DRIVETRAIN_MTURN			(pControllerDriver->GetRawButton(L310_BUTTON_A))
 
 #define DRIVETRAIN_MMOVE			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 #define CLIMBER_PULL_UP				(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 #define CLAW_INHALE 				(pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT))
 #define CLAW_EXHALE					(pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
+
+#define CLAW_PINCH					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
+
+#define ELEVATOR					(pControllerOperator->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 
 // TODO: Add Component Commands
 
@@ -213,8 +221,8 @@ const int POV_STILL = -1;
 #define PI							3.14159
 #define ROBOT_WIDTH					26.0		// Width of the drivetrain in inches
 #define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
-#define DRIVETRAIN_CONST_KI			(1.0/1000.0) // Constant I value for PID loops
-#define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
+#define DRIVETRAIN_CONST_KI			(1.0/1500.0) // Constant I value for PID loops
+#define DRIVETRAIN_CONST_KD			(1.0/30.0)  // Constant D value for PID loops
 #define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
 #define UPDATE_RATE					.02			// Update loop rate for drive train
 #define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second

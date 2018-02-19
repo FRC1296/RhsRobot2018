@@ -16,7 +16,6 @@
 #include "ComponentBase.h" //For the ComponentBase class
 #include "RobotParams.h" //For various robot parameters
 
-#define TEST_SCRIPTS
 
 // if you have more than this many lines in your script, THEY WILL NOT RUN! Change if needed.
 const int AUTONOMOUS_SCRIPT_LINES = 150;

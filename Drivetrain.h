@@ -62,9 +62,8 @@ private:
 
 	void OnStateChange();
 	void Run();
-	void BoxCarFilter();
+//	void BoxCarFilter();
 	void GyroPIDTurn();
-	void MeasuredTurn();
 	void MeasuredMove();
 	void AutoMeasuredMove();
 	void AutoMeasuredTurn();
@@ -90,6 +89,7 @@ private:
 	float fMMoveTime;
 	float fTurnTime;
 	float fTargetCalc;
+	float fMoveAngle;
 
 	double deg[3];
 	double dps[3];

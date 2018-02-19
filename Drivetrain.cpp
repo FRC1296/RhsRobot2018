@@ -94,6 +94,9 @@ Drivetrain::Drivetrain()
 	fTimeToDest = 0;
 	iTargetDistance = 0;
 	fTargetCalc = 0;
+	fTurnTime = 0;
+	fMMoveTime = 0;
+	fMoveAngle = 0;
 
 	dAvgArray1 = 0;
 	dAvgArray2 = 0;
@@ -177,15 +180,12 @@ void Drivetrain::Run()
 
 	switch (iTurnState)
 	{
-	case TurnState_mTurn:
-		MeasuredTurn();
-		break;
 	case TurnState_gpTurn:
 		GyroPIDTurn();
 		break;
-	case TurnState_boxTurn:
+		/*	case TurnState_boxTurn:
 		BoxCarFilter();
-		break;
+		break; */
 	case TurnState_mMove:
 		MeasuredMove();
 		break;
@@ -202,8 +202,8 @@ void Drivetrain::Run()
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
 		if (iTurnState == TurnState_Init) {
 			SmartDashboard::PutString("Mode","ARCADEEEEEE");
-			pLeftMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.left);
-			pRightMotor->Set(ControlMode::PercentOutput,localMessage.params.adrive.right);
+			pLeftMotor->Set(ControlMode::PercentOutput,.2*(localMessage.params.adrive.left));
+			pRightMotor->Set(ControlMode::PercentOutput,.2*(localMessage.params.adrive.right));
 		}
 		break;
 
@@ -216,7 +216,7 @@ void Drivetrain::Run()
 		x++;
 		break;
 
-	case COMMAND_DRIVETRAIN_BOXFILTER:
+		/*	case COMMAND_DRIVETRAIN_BOXFILTER:
 		if (iTurnState == TurnState_Init)
 		{
 			fTarget = (localMessage.params.turn.fAngle);
@@ -224,7 +224,7 @@ void Drivetrain::Run()
 			fInitRotation = deg[2];
 			iCurrNumPoints = 0;
 		}
-		break;
+		break; */
 
 	case COMMAND_DRIVETRAIN_GPTURN:
 		SmartDashboard::PutString("Command","Gracious Professionalism Turn");
@@ -276,7 +276,7 @@ void Drivetrain::Run()
 
 			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
 			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
-		/*	pLeftMotor->ConfigPeakOutputForward(.75,0);
+			/*	pLeftMotor->ConfigPeakOutputForward(.75,0);
 			pLeftMotor->ConfigPeakOutputReverse(-.75,0);*/
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
@@ -321,49 +321,57 @@ void Drivetrain::Run()
 	}
 
 
-};\
+};
 
 void Drivetrain::MeasuredMove()
 {
+	fMoveAngle = deg[2];
 	if (pPIDTimerMove->Get() >= fMMoveTime){
-			SmartDashboard::PutString("PID move","PID Done");
-			SmartDashboard::PutString("Complete","PID Completed");
-			iTurnState = TurnState_Init;
-			fTarget = 0;
-			fInitRotation = 0;
-			pPIDTimerMove->Stop();
-			iTurnState = TurnState_gpTurn;
-			pPIDTurnTimer->Reset();
-			pPIDTurnTimer->Start();
-			return;
+		SmartDashboard::PutString("PID move","PID Done");
+		SmartDashboard::PutString("Complete","PID Completed");
+		iTurnState = TurnState_Init;
+		fTarget = 0;
+		fInitRotation = 0;
+		pPIDTimerMove->Stop();
+		iTurnState = TurnState_gpTurn;
+		pPIDTurnTimer->Reset();
+		pPIDTurnTimer->Start();
+		return;
 	}
 
 	if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) && (pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) && (pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
-		{
-			pPIDTimer->Start();
-			if (pPIDTimer->Get() >= .25) {
-				SmartDashboard::PutString("snowflake","PID Done");
-				SmartDashboard::PutString("Completed","PID Completed");
+	{
+		pPIDTimer->Start();
+		if (pPIDTimer->Get() >= .25) {
+			SmartDashboard::PutString("snowflake","PID Done");
+			SmartDashboard::PutString("Completed","PID Completed");
 			//	pLeftMotor->Set(ControlMode::PercentOutput,0);
 			//	pRightMotor->Set(ControlMode::PercentOutput,0);
-				//iTurnState = TurnState_Init;
-				fTarget = 0;
-				fInitRotation = 0;
-				iTurnState = TurnState_gpTurn;
-				return;
-			}
+			//iTurnState = TurnState_Init;
+			fTarget = 0;
+			fInitRotation = 0;
+			iTurnState = TurnState_gpTurn;
+			return;
 		}
-		else
-		{
-			pPIDTimer->Stop();
-			pPIDTimer->Reset();
-		}
+	}
+	else
+	{
+		pPIDTimer->Stop();
+		pPIDTimer->Reset();
+	}
+	if ((fMoveAngle > fTargetCalc + ACCEPT_RANGE_DEGR) || (fMoveAngle < fTargetCalc - ACCEPT_RANGE_DEGR))
+	{
+		if (fMoveAngle < fTargetCalc)
+			iFinalPosLeft += (512*ROBOT_WIDTH*(fTargetCalc - fMoveAngle))/(45*WHEEL_DIA);
+		else if (fMoveAngle > fTargetCalc)
+			iFinalPosRight += (512*ROBOT_WIDTH*(fMoveAngle - fTargetCalc))/(45*WHEEL_DIA);
+	}
 	SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
 	SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
 
 }
 
-void Drivetrain::BoxCarFilter()
+/* void Drivetrain::BoxCarFilter()
 {
 //	float fTargetCalc = fInitRotation + fTarget;
 
@@ -420,21 +428,21 @@ void Drivetrain::BoxCarFilter()
 	pRightMotor->Set(ControlMode::Velocity,-1*fSpeed);
 	SmartDashboard::PutString("Completed","PID Not Completed");
 }
-
+ */
 void Drivetrain::GyroPIDTurn()
 {
 	if (pPIDTurnTimer->Get() >= 3)
-		{
-				SmartDashboard::PutString("PID turn","PID Timeout");
-				SmartDashboard::PutString("Completed","PID Completed");
-					pLeftMotor->Set(ControlMode::PercentOutput,0);
-					pRightMotor->Set(ControlMode::PercentOutput,0);
-				iTurnState = TurnState_Init;
-				fTarget = 0;
-				fInitRotation = 0;
-				return;
+	{
+		SmartDashboard::PutString("PID turn","PID Timeout");
+		SmartDashboard::PutString("Completed","PID Completed");
+		pLeftMotor->Set(ControlMode::PercentOutput,0);
+		pRightMotor->Set(ControlMode::PercentOutput,0);
+		iTurnState = TurnState_Init;
+		fTarget = 0;
+		fInitRotation = 0;
+		return;
 
-		}
+	}
 	if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
 	{
 		pPIDTimer->Start();
@@ -480,18 +488,6 @@ void Drivetrain::GyroPIDTurn()
 	pLeftMotor->Set(ControlMode::PercentOutput,fSpeed);
 	pRightMotor->Set(ControlMode::PercentOutput,-1*fSpeed);
 	SmartDashboard::PutString("Completed","PID Not Completed");
-}
-
-void Drivetrain::MeasuredTurn()
-{
-	if((pLeftMotor->GetSelectedSensorPosition(0) > iFinalPosLeft - ACCEPT_RANGE_TICKS) && (pLeftMotor->GetSelectedSensorPosition(0) < iFinalPosLeft + ACCEPT_RANGE_TICKS))
-	{
-		SmartDashboard::PutString("Completed","PID Completed");
-		iTurnState = TurnState_Init;
-		fTarget = 0;
-		fInitRotation = 0;
-		return;
-	}
 }
 
 float AvgArrays(int* Array, int LengthArr)
