@@ -16,25 +16,21 @@
 void Drivetrain::AutoMeasuredMove()
 {
 	fMMoveTime = localMessage.params.mmove.fTime;
-	fTurnTime = localMessage.params.mmove.fTime;
 	iTargetDistance = localMessage.params.mmove.fDistance;
 	iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
-	iFinalPosLeft = iTicks + pLeftMotor->GetSelectedSensorPosition(0);
-	iFinalPosRight = iTicks + pRightMotor->GetSelectedSensorPosition(0);
+	iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
+	iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
 
-	fTargetCalc = deg[2];
-
-	if (fTarget < 0) {
-		iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) + iTicks;
-		iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) + iTicks;
-	}
-	else {
-		iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
-		iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
-	}
+	printf("AutoMeasuredMove time %0.3f distance %d ticks %d left %d right %d\n",
+			fMMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight);
 
 	pPIDTimerMove->Reset();
 	pPIDTimerMove->Start();
+
+	pLeftMotor->ConfigPeakOutputForward(localMessage.params.mmove.fSpeed, 0.0);
+	pLeftMotor->ConfigPeakOutputReverse(-localMessage.params.mmove.fSpeed, 0.0);
+	pRightMotor->ConfigPeakOutputForward(localMessage.params.mmove.fSpeed, 0.0);
+	pRightMotor->ConfigPeakOutputReverse(-localMessage.params.mmove.fSpeed, 0.0);
 
 	pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 	pRightMotor->Set(ControlMode::Position,iFinalPosRight);
@@ -49,15 +45,6 @@ void Drivetrain::AutoMeasuredMove()
 
 		if (pPIDTimerMove->Get() >= fMMoveTime)
 		{
-			SmartDashboard::PutString("PID move","PID Done");
-			SmartDashboard::PutString("Complete","PID Completed");
-
-			fTarget = 0;
-			fInitRotation = 0;
-			pPIDTimerMove->Stop();
-			iTurnState = TurnState_gpTurn;
-			pPIDTurnTimer->Reset();
-			pPIDTurnTimer->Start();
 			break;
 		}
 
@@ -68,24 +55,23 @@ void Drivetrain::AutoMeasuredMove()
 				(pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) &&
 				(pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
 			{
-				pPIDTimer->Start();
-				fTarget = 0;
-				fInitRotation = 0;
-				iTurnState = TurnState_gpTurn;
-
-				SmartDashboard::PutString("Completed","PID Completed");
 				break;
-			}
-			else
-			{
-				pPIDTimer->Stop();
-				pPIDTimer->Reset();
 			}
 
 		SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
 		SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
 		Wait(0.02);
 	}
+
+	pPIDTimerMove->Stop();
+
+	pLeftMotor->Set(ControlMode::PercentOutput ,0.0);
+	pRightMotor->Set(ControlMode::PercentOutput, 0.0);
+
+	pLeftMotor->ConfigPeakOutputForward(1.0, 0.0);
+	pLeftMotor->ConfigPeakOutputReverse(-1.0, 0.0);
+	pRightMotor->ConfigPeakOutputForward(1.0, 0.0);
+	pRightMotor->ConfigPeakOutputReverse(-1.0, 0.0);
 
 	SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 }
@@ -101,6 +87,8 @@ void Drivetrain::AutoMeasuredTurn()
 	fInitRotation = deg[2];
 	fTargetCalc = fInitRotation + fTarget;
 
+printf("AutoMeasuredTurn %d\n", 1);
+
 	SmartDashboard::PutString("PID turn", "TURN PID START");
 	SmartDashboard::PutString("Modes","PID Turn Initiated");
 	Wait(0.02);
@@ -114,6 +102,8 @@ void Drivetrain::AutoMeasuredTurn()
 
 		if (pPIDTurnTimer->Get() >= 3)
 		{
+			printf("AutoMesaruedTurn %d\n", 2);
+
 			SmartDashboard::PutString("PID turn","PID Timeout");
 			SmartDashboard::PutString("Completed","PID Completed");
 			pLeftMotor->Set(ControlMode::PercentOutput,0);
@@ -126,6 +116,8 @@ void Drivetrain::AutoMeasuredTurn()
 
 		if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
 		{
+			printf("AutoMeasuredTurn %d\n", 3);
+
 			// we are close enough
 
 			pPIDTimer->Stop();
@@ -140,6 +132,8 @@ void Drivetrain::AutoMeasuredTurn()
 
 		// scale turning rate to amount left to turn
 
+		printf("AutoMeasuredTurn %d\n", 4);
+
 		fP = (fTargetCalc) - deg[2];
 		if  (fPrevP == 0)
 			fD = 0;
@@ -151,6 +145,8 @@ void Drivetrain::AutoMeasuredTurn()
 
 		if ((deg[2] <= (fTargetCalc + ACCEPT_RANGE_KI)) && (deg[2] >= (fTargetCalc - ACCEPT_RANGE_KI)))
 		{
+			printf("AutoMeasuredTurn %d\n", 5);
+
 			fI += fP;
 			fSpeed += (DRIVETRAIN_CONST_KI*fI);
 		}
@@ -163,10 +159,14 @@ void Drivetrain::AutoMeasuredTurn()
 
 		if (fSpeed < -1 * MAX_SPEED_PID)
 		{
+			printf("AutoMeasuredTurn %d\n", 6);
+
 			fSpeed = -1 * MAX_SPEED_PID;
 		}
 		else if (fSpeed > MAX_SPEED_PID)
 		{
+			printf("AutoMeasuredTurn %d\n", 7);
+
 			fSpeed = MAX_SPEED_PID;
 		}
 
@@ -179,6 +179,8 @@ void Drivetrain::AutoMeasuredTurn()
 		SmartDashboard::PutNumber("D Value",fD);
 		SmartDashboard::PutNumber("Speed",fSpeed);
 		SmartDashboard::PutString("Completed","PID Not Completed");
+
+		printf("AutoMeasuredTurn %d\n", 8);
 
 		Wait(0.02);
 	}

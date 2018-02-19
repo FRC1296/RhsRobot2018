@@ -131,12 +131,18 @@ void Autonomous::Run()
 			{
 				szModeString[0] = 'C';
 			}
-			else
+			else if(localMessage.params.gamedata.eStartingPosition == GAMEPIECESTART_RIGHT)
 			{
 				szModeString[0] = 'R';
 			}
+			else
+			{
+				szModeString[0] = 'X';
+			}
 
 			szModeString[4] = 0;
+
+			printf("auto mode change %s\n", szModeString);
 			break;
 
 		default:

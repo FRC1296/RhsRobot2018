@@ -269,7 +269,11 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	Message.command = COMMAND_DRIVETRAIN_AUTOTURN;
 	Message.params.turn.fAngle= fAngle;
 	Message.params.turn.fTimeout = fTimeout;
+
+#ifndef TEST_SCRIPTS
+	printf("Turn Message to Drivetrain\n");
 	return (CommandResponse(DRIVETRAIN_QUEUE));
+#endif
 }
 
 bool Autonomous::Elevator(char *pCurrLinePos)
