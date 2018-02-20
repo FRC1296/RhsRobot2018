@@ -25,6 +25,7 @@ Drivetrain::Drivetrain()
 : ComponentBase(DRIVETRAIN_TASKNAME, DRIVETRAIN_QUEUE, DRIVETRAIN_PRIORITY)
 {
 	bUseCheesyDrive = false;
+	bInAuto = false;
 
 	//TODO: add member objects
 	pLeftMotor = new TalonSRX(CAN_DRIVETRAIN_TALON_LEFT);
@@ -96,6 +97,7 @@ Drivetrain::Drivetrain()
 	fTimeToDest = 0;
 	iTargetDistance = 0;
 	fTargetCalc = 0;
+	fBatteryVoltage = 12.0;
 
 	dAvgArray1 = 0;
 	dAvgArray2 = 0;
@@ -133,7 +135,30 @@ Drivetrain::~Drivetrain()
 
 void Drivetrain::OnStateChange()
 {
-};
+	// do we need to do anything when the robot state changes?
+
+	switch(localMessage.command)
+	{
+		case COMMAND_ROBOT_STATE_AUTONOMOUS:
+			bInAuto = true;
+			bUseCheesyDrive = false;
+			pLeftMotor->Set(ControlMode::PercentOutput, 0);
+			pRightMotor->Set(ControlMode::PercentOutput, 0);
+			break;
+
+		case COMMAND_ROBOT_STATE_TEST:
+		case COMMAND_ROBOT_STATE_TELEOPERATED:
+		case COMMAND_ROBOT_STATE_DISABLED:
+		case COMMAND_ROBOT_STATE_UNKNOWN:
+		default:
+			bInAuto = false;
+			bUseCheesyDrive = true;
+			pLeftMotor->Set(ControlMode::PercentOutput, 0);
+			pRightMotor->Set(ControlMode::PercentOutput, 0);
+			break;
+	}
+}
+
 
 void Drivetrain::Run()
 {

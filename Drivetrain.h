@@ -116,6 +116,7 @@ private:
 
 	float fBatteryVoltage;
 	bool bUseCheesyDrive;
+	bool bInAuto;
 	CheesyLoop *pCheesy;
 };
 

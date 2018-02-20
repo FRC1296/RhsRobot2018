@@ -67,8 +67,6 @@ class CheesyLoop {
 	CheesyLoop();
  	~CheesyLoop();
 
- 	bool bEnableServo;
-
 	static void *StartTask(void *pThis, const char* szComponentName, int iPriority)
 	{
 		pthread_setname_np(pthread_self(), szComponentName);
