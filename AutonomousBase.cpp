@@ -219,6 +219,10 @@ void Autonomous::DoScript()
 		}
 
 		// if there is a script we will execute it some heck or high water!
+		while (!bInAutoMode)
+		{
+			Wait(0.1);
+		}
 
 		while (!bInAutoMode)
 		{

@@ -236,13 +236,19 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 	Message.params.mmove.fDistance = fDistance;
 	Message.params.mmove.fTime = fTime;
 
+#ifndef TEST_SCRIPTS
 	return (CommandResponse(DRIVETRAIN_QUEUE));
+#else
+	printf("COMMAND_DRIVETRAIN_MMOVE %0.2f %0.2f %0.2f\n", fSpeed, fDistance, fTime);
+	return(true);
+#endif
 }
 
 bool Autonomous::Turn(char *pCurrLinePos) {
 	char *pToken;
 	float fAngle;
 	float fTimeout;
+
 	// parse remainder of line to get target angle and timeout
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
@@ -265,7 +271,6 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 	fTimeout = atof(pToken);
 
 	// send the message to the drive train
-
 	Message.command = COMMAND_DRIVETRAIN_AUTOTURN;
 	Message.params.turn.fAngle= fAngle;
 	Message.params.turn.fTimeout = fTimeout;
@@ -273,6 +278,9 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 #ifndef TEST_SCRIPTS
 	printf("Turn Message to Drivetrain\n");
 	return (CommandResponse(DRIVETRAIN_QUEUE));
+#else
+	printf("COMMAND_DRIVETRAIN_MTURN %0.2f %0.2f\n", fAngle, fTimeout);
+	return(true);
 #endif
 }
 
@@ -280,7 +288,7 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 {
 	char *pToken;
 
-	// parse remainder of line to get target angle and timeout
+	// parse remainder of line to get mode
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
 	if(pToken == NULL)
@@ -288,13 +296,45 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		return (false);
 	}
+
+	if(strncmp(pToken, "INTAKE", 6))
+	{
+
+	}
+	else if(strncmp(pToken, "SWITCH", 6))
+	{
+
+	}
+	else if(strncmp(pToken, "SCALEHI", 7))
+	{
+
+	}
+	else if(strncmp(pToken, "SCALELO", 7))
+	{
+
+	}
+	else if(strncmp(pToken, "STOW", 4))
+	{
+
+	}
+	else
+	{
+		return(false);
+	}
+
+#ifndef TEST_SCRIPTS
+	return(true);
+#else
+	printf("Elevator %s\n", pToken);
+	return(true);
+#endif
 }
 
 bool Autonomous::Claw(char *pCurrLinePos)
 {
 	char *pToken;
 
-	// parse remainder of line to get target angle and timeout
+	// parse remainder of line to get mode
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
 	if(pToken == NULL)
@@ -302,5 +342,50 @@ bool Autonomous::Claw(char *pCurrLinePos)
 		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		return (false);
 	}
+
+	if(strncmp(pToken, "IN", 2))
+	{
+		// parse remainder of line to get the speed
+		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+		if(pToken == NULL)
+		{
+			SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+			return (false);
+		}
+
+		Message.command = COMMAND_CLAW_INHALE;
+		Message.params.claw.fClawSpeed = atof(pToken);
+	}
+	else if(strncmp(pToken, "OUT", 3))
+	{
+		// parse remainder of line to get the speed
+		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+		if(pToken == NULL)
+		{
+			SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+			return (false);
+		}
+
+		Message.command = COMMAND_CLAW_EXHALE;
+		Message.params.claw.fClawSpeed = atof(pToken);
+	}
+	else if(strncmp(pToken, "STOP", 4))
+	{
+		Message.command = COMMAND_CLAW_STOP;
+		Message.params.claw.fClawSpeed = 0.0;
+	}
+	else
+	{
+		return(false);
+	}
+
+#ifndef TEST_SCRIPTS
+	return (CommandNoResponse(CLAW_QUEUE));
+#else
+	printf("Claw %0.2f\n", Message.params.claw.fClawSpeed);
+	return(true);
+#endif
 }
 

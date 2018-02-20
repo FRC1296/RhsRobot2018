@@ -43,6 +43,10 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	bool bReturn = false; ///setting this to true WILL cause auto parsing to quit!
 	string rStatus;
 
+	// trim uninteresting stuff from front of string
+
+	rStatement.erase(0, rStatement.find_first_not_of(" \r\n\t"));
+
 	if(rStatement.empty()) {
 		printf("statement is empty");
 		return (bReturn);
@@ -209,11 +213,11 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			{
 				if (!Elevator(pCurrLinePos))
 				{
-					rStatus.append("turn error");
+					rStatus.append("elevator error");
 				}
 				else
 				{
-					rStatus.append("turn");
+					rStatus.append("elevator");
 				}
 			}
 			break;
@@ -223,11 +227,11 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			{
 				if (!Claw(pCurrLinePos))
 				{
-					rStatus.append("turn error");
+					rStatus.append("claw error");
 				}
 				else
 				{
-					rStatus.append("turn");
+					rStatus.append("claw");
 				}
 			}
 			break;
