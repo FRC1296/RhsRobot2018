@@ -24,7 +24,7 @@ const char* const ROBOT_VERSION =	"0.5";			//Version
 #define TRUNC_HUND(a)		((int)(100 * a)) * .01
 #define PRINTAUTOERROR		printf("Early Death! %s %i \n", __FILE__, __LINE__);
 
-//Task Params - Defines component task priorites relative to the default priority.
+//Task Params - Defines component task priorities relative to the default priority.
 //EXAMPLE: const int DRIVETRAIN_PRIORITY = DEFAULT_PRIORITY -2;
 const int DEFAULT_PRIORITY      = 50;
 const int COMPONENT_PRIORITY 	= DEFAULT_PRIORITY;
@@ -36,6 +36,7 @@ const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
 const int CLAW_PRIORITY 		= DEFAULT_PRIORITY;
 const int ELEVATOR_PRIORITY		= DEFAULT_PRIORITY;
 const int CLIMBER_PRIORITY		= DEFAULT_PRIORITY;
+const int CHEESY_PRIORITY 	    = DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -47,6 +48,7 @@ const char* const AUTOPARSER_TASKNAME	= "tParse";
 const char* const CLAW_TASKNAME 		= "tClaw";
 const char* const ELEVATOR_TASKNAME		= "tElevator";
 const char* const CLIMBER_TASKNAME		= "tClimber";
+const char* const CHEESY_TASKNAME	    = "tCheesy";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
