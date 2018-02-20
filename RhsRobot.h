@@ -40,6 +40,9 @@ private:
 	char sStartLocation = 'X';
 	char sStartLocationLast = 'X';
 
+	float fLeftTrigger;
+	float fRightTrigger;
+
 	void Init();
 	void OnStateChange();
 	void Run();

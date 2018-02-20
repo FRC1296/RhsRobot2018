@@ -43,8 +43,11 @@ private:
 	void Run();
 
 	int iLeftInit;
-	int iRightInit;
 	float fCurVoltage;
+
+	int iTicks;
+
+	float fMotorSpeed;
 
 	// Arbitrary Numbers until we measure
 	const int iFloorToSwitch = 100;

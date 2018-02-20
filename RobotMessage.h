@@ -86,7 +86,7 @@ enum MessageCommand {
 
 	COMMAND_CLAW_INHALE,				//!< Grab the block
 	COMMAND_CLAW_EXHALE,				//!< Spit out block
-	COMMAND_CLAW_STOP,
+	COMMAND_CLAW_STOP,					//!< Stop rollers now!
 
 	COMMAND_CLAW_PINCH,					//!< Pinch the block
 	COMMAND_CLAW_RELEASE,				//!< Release the block
@@ -202,6 +202,7 @@ union MessageParams {
 	TankDriveParams tdrive;
 	GameDataParams gamedata;
 	ClawParams claw;
+	ElevatorParams elevator;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components
