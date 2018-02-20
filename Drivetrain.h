@@ -73,7 +73,7 @@ private:
 	void MeasuredMove();
 	void AutoMeasuredMove();
 	void AutoMeasuredTurn();
-	void RunCheezyDrive(bool, float, float, bool);
+	void RunCheesyDrive(bool, float, float, bool);
 
 	float fInitRotation;
 	float fPrevP;
@@ -115,7 +115,8 @@ private:
 	int iInitRightPos;
 
 	float fBatteryVoltage;
-	CheesyLoop *pCheezy;
+	bool bUseCheesyDrive;
+	CheesyLoop *pCheesy;
 };
 
 #endif			//COMPONENT_H

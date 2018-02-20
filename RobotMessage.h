@@ -69,6 +69,7 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
 	COMMAND_DRIVETRAIN_MTURN,			//!< Drivetrain test for Turning with just encoders
 	COMMAND_DRIVETRAIN_WAVE,			//!< Drivetrain test for sin wave for THE CLAW
+	COMMAND_DRIVETRAIN_DRIVE_CHEESY,
 	COMMAND_DRIVETRAIN_AUTOTURN,
 	COMMAND_DRIVETRAIN_AUTOMOVE,
 
@@ -126,6 +127,13 @@ struct TankDriveParams {
 struct ArcadeDriveParams {
 	float left;
 	float right;
+};
+
+
+struct CheesyDriveParams {
+	float wheel;
+	float throttle;
+	bool bQuickturn;
 };
 
 struct ClawParams {
@@ -190,6 +198,7 @@ union MessageParams {
 	TurnParams turn;
 	SystemParams system;
 	ArcadeDriveParams adrive;
+	CheesyDriveParams cheesyDrive;
 	TankDriveParams tdrive;
 	GameDataParams gamedata;
 	ClawParams claw;

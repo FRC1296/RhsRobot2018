@@ -165,7 +165,6 @@ void RhsRobot::Run() {
 			SmartDashboard::PutString("cmd","180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-#endif
 
 		if (DRIVETRAIN_BOXFILTER)
 		{
@@ -203,6 +202,20 @@ void RhsRobot::Run() {
 			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
 			pDrivetrain->SendMessage(&robotMessage);
 		}
+#endif
+		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
+		 			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL;
+		 			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE;
+		 			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
+		 			pDrivetrain->SendMessage(&robotMessage);
+
+		// delete after we link in cheesy libraries
+
+		robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
+					robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
+					robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
+					pDrivetrain->SendMessage(&robotMessage);
+
 	}
 
 	if(pClaw)

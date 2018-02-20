@@ -8,23 +8,24 @@
  * for a given subsystem.
  */
 
+#include "WPILib.h"
+
+//Robot
+
 #include "Component.h"
 #include "ComponentBase.h"
 #include "RobotParams.h"
-#include "WPILib.h"
 #include "Drivetrain.h"
 #include "RobotMessage.h"
 #include "RhsRobotBase.h"
 #include "CheesyDrive.h"
 
-#define DISTANCE 5 //robotMessage.params.mmove.fDistance
-#define DEGREES 90 //robotMessage.params.turn.fAngle
-
-//Robot
 
 Drivetrain::Drivetrain()
 : ComponentBase(DRIVETRAIN_TASKNAME, DRIVETRAIN_QUEUE, DRIVETRAIN_PRIORITY)
 {
+	bUseCheesyDrive = false;
+
 	//TODO: add member objects
 	pLeftMotor = new TalonSRX(CAN_DRIVETRAIN_TALON_LEFT);
 	pRightMotor = new TalonSRX(CAN_DRIVETRAIN_TALON_RIGHT);
@@ -119,6 +120,7 @@ Drivetrain::Drivetrain()
 	pLeftMotor->SetSelectedSensorPosition(iInitLeftPos,0,0);
 	pRightMotor->SetSelectedSensorPosition(iInitRightPos,0,0);
 
+	pCheesy = new CheesyLoop();
 	pTask = new std::thread(&Drivetrain::StartTask, this, DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
 	wpi_assert(pTask);
 };
@@ -202,6 +204,11 @@ void Drivetrain::Run()
 
 	case COMMAND_SYSTEM_CONSTANTS:
 		fBatteryVoltage = localMessage.params.system.fBattery;
+		break;
+
+	case COMMAND_DRIVETRAIN_DRIVE_CHEESY:
+		RunCheesyDrive(bUseCheesyDrive, localMessage.params.cheesyDrive.wheel,
+				localMessage.params.cheesyDrive.throttle, localMessage.params.cheesyDrive.bQuickturn);
 		break;
 
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
@@ -499,14 +506,12 @@ void Drivetrain::MeasuredTurn()
 	}
 }
 
-void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bool bQuickturn)
+void Drivetrain::RunCheesyDrive(bool bEnabled, float fWheel, float fThrottle, bool bQuickturn)
 {
     struct DrivetrainGoal Goal;
     struct DrivetrainPosition Position;
     struct DrivetrainOutput Output;
     struct DrivetrainStatus Status;
-
-
 
 	if(bQuickturn)
 	{
@@ -539,7 +544,7 @@ void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bo
     {
     	// if enabled and normal operation
 
-    	pCheezy->Update(Goal, Position, Output, Status, true);
+    	pCheesy->Update(Goal, Position, Output, Status, true);
         pLeftMotor->Set(ControlMode::PercentOutput, -Output.left_voltage / 12.0);
         pRightMotor->Set(ControlMode::PercentOutput, Output.right_voltage / 12.0);
     }
@@ -547,7 +552,7 @@ void Drivetrain::RunCheezyDrive(bool bEnabled, float fWheel, float fThrottle, bo
     {
         // if the robot is not running
 
-    	pCheezy->Update(Goal, Position, Output, Status, false);
+    	pCheesy->Update(Goal, Position, Output, Status, false);
     }
 }
 

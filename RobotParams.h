@@ -184,10 +184,10 @@ const int POV_STILL = -1;
 
 #define TANK_DRIVE_LEFT				(pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define TANK_DRIVE_RIGHT			(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
-#define CHEEZY_DRIVE_WHEEL			(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
-#define CHEEZY_DRIVE_THROTTLE		(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define CHEEZY_DRIVE_SPIN		    (-pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT) + pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
-#define CHEEZY_DRIVE_QUICKTURN		(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CHEESY_DRIVE_WHEEL			(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
+#define CHEESY_DRIVE_THROTTLE		(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
+#define CHEESY_DRIVE_SPIN		    (-pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT) + pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
+#define CHEESY_DRIVE_QUICKTURN		(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 #define ARCADE_DRIVE_LEFT			((pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 #define ARCADE_DRIVE_RIGHT			((pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
