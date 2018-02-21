@@ -202,6 +202,7 @@ union MessageParams {
 	TankDriveParams tdrive;
 	GameDataParams gamedata;
 	ClawParams claw;
+	ElevatorParams elevator;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

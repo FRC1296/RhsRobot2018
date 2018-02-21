@@ -287,6 +287,7 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 bool Autonomous::Elevator(char *pCurrLinePos)
 {
 	char *pToken;
+	float fTimeout;
 
 	// parse remainder of line to get mode
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
@@ -299,31 +300,46 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 
 	if(strncmp(pToken, "INTAKE", 6))
 	{
-
+		Message.command = COMMAND_ELEVATOR_FLOOR;
 	}
 	else if(strncmp(pToken, "SWITCH", 6))
 	{
-
+		Message.command = COMMAND_ELEVATOR_SWITCH;
 	}
 	else if(strncmp(pToken, "SCALEHI", 7))
 	{
-
+		Message.command = COMMAND_ELEVATOR_SCALE_HIGH;
+	}
+	else if(strncmp(pToken, "SCALEMID", 8))
+	{
+		Message.command = COMMAND_ELEVATOR_SCALE_MID;
 	}
 	else if(strncmp(pToken, "SCALELO", 7))
 	{
-
+		Message.command = COMMAND_ELEVATOR_SCALE_LOW;
 	}
 	else if(strncmp(pToken, "STOW", 4))
 	{
-
+		Message.command = COMMAND_ELEVATOR_FLOOR;
 	}
 	else
 	{
 		return(false);
 	}
 
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		return (false);
+	}
+
+	fTimeout = atof(pToken);
+	Message.params.elevator.fTime = fTimeout;
+
 #ifndef TEST_SCRIPTS
-	return(true);
+	return (CommandNoResponse(ELEVATOR_QUEUE));
 #else
 	printf("Elevator %s\n", pToken);
 	return(true);
