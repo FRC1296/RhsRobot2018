@@ -213,6 +213,9 @@ const int POV_STILL = -1;
 #define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
 
 #define ELEVATOR					(pControllerOperator->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
+#define ELEVATOR_SCALE				(pControllerOperator->GetRawButton(L310_BUTTON_Y))
+#define ELEVATOR_SWITCH				(pControllerOperator->GetRawButton(L310_BUTTON_B))
+#define ELEVATOR_FLOOR				(pControllerOperator->GetRawButton(L310_BUTTON_A))
 
 // TODO: Add Component Commands
 
@@ -237,6 +240,13 @@ const int POV_STILL = -1;
 #define ACCEPT_RANGE_KI				20			//Acceptable Range for adding Integral Value
 
 #define ACCEPT_RANGE_MOVE			768	//512			//Acceptable Range for "finished" PID loop for moving straight
+
+#define ACCEPT_RANGE_ELE			768
+
+/************ Elevator Constants: **************/
+#define LIFT_STOP_POS				(-18740)
+#define LIFT_FULL_POS				(-19221)
+
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

@@ -24,6 +24,7 @@
 
 class Elevator : public ComponentBase
 {
+enum EleState{ EleState_Init = -1, EleState_Floor = 1, EleState_Switch, EleState_Scale, EleState_Climb};
 public:
 	Elevator();
 	virtual ~Elevator();
@@ -39,21 +40,28 @@ private:
 	TalonSRX* pElevatorMotorLeft;
 	TalonSRX* pElevatorMotorRight;
 
+	Timer* pEleTimer;
+	Timer* pEleTimeout;
+
 	void OnStateChange();
 	void Run();
+	void Floor(int iCurrPos);
+	void Switch(int iCurrPos);
+	void Scale(int iCurrPos);
 
 	int iLeftInit;
 	float fCurVoltage;
 
-	int iTicks;
+	int iCurrPos;
+	int iStartPos;
+	int iStopPos;
+	int iEleState;
 
 	float fMotorSpeed;
+	float fMaxSpeed;
 
-	// Arbitrary Numbers until we measure
-	const int iFloorToSwitch = 100;
-	const int iFloorToLowScale = 300;
-	const int iFloorToMidScale = 350;
-	const int iFloorToHighScale = 400;
+	const int iFloorToSwitch = 16000/*-4362*/;
+	const int iFloorToScale = 35000;
 	const int iFloorToClimb = 500;
 	const int iFloorToMax = 600;
 };

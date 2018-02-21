@@ -78,9 +78,7 @@ enum MessageCommand {
 	COMMAND_ELEVATOR_MOVE,				//!< "Manual" elevator control
 	COMMAND_ELEVATOR_FLOOR,				//!< Elevator floor position
 	COMMAND_ELEVATOR_SWITCH,			//!< Elevator switch position
-	COMMAND_ELEVATOR_SCALE_LOW,			//!< Elevator scale position (tipped in our favor)
-	COMMAND_ELEVATOR_SCALE_MID,			//!< Elevator scale position (balanced)
-	COMMAND_ELEVATOR_SCALE_HIGH,		//!< Elevator scale position (tipped not in our favor)
+	COMMAND_ELEVATOR_SCALE,				//!< Elevator scale position (balanced)
 	COMMAND_ELEVATOR_CLIMB,				//!< Prepare Elevator for climbing
 
 	COMMAND_CLAW_INHALE,				//!< Grab the block

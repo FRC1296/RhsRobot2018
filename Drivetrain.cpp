@@ -202,8 +202,10 @@ void Drivetrain::Run()
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
 		if (iTurnState == TurnState_Init) {
 			SmartDashboard::PutString("Mode","ARCADEEEEEE");
-			pLeftMotor->Set(ControlMode::PercentOutput,.2*(localMessage.params.adrive.left));
-			pRightMotor->Set(ControlMode::PercentOutput,.2*(localMessage.params.adrive.right));
+			double left = pow(localMessage.params.adrive.left - localMessage.params.adrive.right,3);
+			double right = pow(localMessage.params.adrive.left + localMessage.params.adrive.right,3);
+			pLeftMotor->Set(ControlMode::PercentOutput,left);
+			pRightMotor->Set(ControlMode::PercentOutput,right);
 		}
 		break;
 

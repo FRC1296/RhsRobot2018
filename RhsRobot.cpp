@@ -200,8 +200,10 @@ void RhsRobot::Run() {
 		else
 		{
 			robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
-			robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
-			robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
+			robotMessage.params.adrive.left = TANK_DRIVE_LEFT;
+			robotMessage.params.adrive.right = CHEEZY_DRIVE_WHEEL;
+			//robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
+			//robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 	}
@@ -241,7 +243,22 @@ void RhsRobot::Run() {
 	if(pElevator)
 	{
 		SmartDashboard::PutNumber("Raw Elevator Axis",ELEVATOR);
-		if (ELEVATOR > .2 || ELEVATOR < -.2)
+		if (ELEVATOR_SWITCH)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_SWITCH;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else if (ELEVATOR_FLOOR)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_FLOOR;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else if (ELEVATOR_SCALE)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_SCALE;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else if (ELEVATOR > .2 || ELEVATOR < -.2)
 		{
 			robotMessage.command = COMMAND_ELEVATOR_MOVE;
 			robotMessage.params.elevator.fSpeed = ELEVATOR;
