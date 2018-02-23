@@ -82,9 +82,13 @@ Add more as needed.
 
 // TODO: Delegate TalonSRX numbers
 
-const int CAN_PCM = 0;
+const int CAN_PCM = 0; // Both must be zero
 const int CAN_PIGEON = 6;
-const int CAN_PDB = 19;
+const int CAN_PDB = 0; // Both must be zero
+
+const int CLAW_CHANNEL_ONE = 7;
+const int CLAW_CHANNEL_TWO = 8;
+const int CLAW_LIMIT = 20; // Claw's current limit
 
 // Had to change these, lowkey salty at mechanical ~ Jiff
 const int CAN_DRIVETRAIN_TALON_LEFT = 4;
@@ -98,8 +102,8 @@ const int CAN_CLIMBER_TALON = 1; // Arbitrary Numbers until delegated
 const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
 const int CAN_CLAW_VICTOR_LEFT = 13; // Arbitrary Numbers until delegated
 const int CAN_CLAW_VICTOR_RIGHT = 14; // See above
-const int CAN_ELEVATOR_TALON_LEFT = -1; // See above
-const int CAN_ELEVATOR_TALON_RIGHT = -1; // See above
+const int CAN_ELEVATOR_TALON_LEFT = 11; // HAS THE ENCODER ON IT
+const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
@@ -207,6 +211,14 @@ const int POV_STILL = -1;
 
 #define CLAW_INHALE 				(pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT))
 #define CLAW_EXHALE					(pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
+
+#define CLAW_PINCH					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
+
+#define ELEVATOR					(pControllerOperator->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
+#define ELEVATOR_SCALE				(pControllerOperator->GetRawButton(L310_BUTTON_Y))
+#define ELEVATOR_SWITCH				(pControllerOperator->GetRawButton(L310_BUTTON_B))
+#define ELEVATOR_FLOOR				(pControllerOperator->GetRawButton(L310_BUTTON_A))
 
 // TODO: Add Component Commands
 

@@ -69,6 +69,7 @@ void RhsRobot::Init() {
 	pDrivetrain = new Drivetrain();
 	pClaw = new Claw();
 	pAuto = new Autonomous();
+	pElevator = new Elevator();
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
@@ -80,6 +81,11 @@ void RhsRobot::Init() {
 	if(pClaw)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pClaw);
+	}
+
+	if(pElevator)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pElevator);
 	}
 
 	if(pAuto)
@@ -117,6 +123,12 @@ void RhsRobot::Run() {
 					pDrivetrail->SendMessage(&robotMessage);
 	 * 			}
 	 */
+
+	fLeftTrigger = pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT);
+	fRightTrigger = pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT);
+
+	SmartDashboard::PutNumber("Left Trigger",fLeftTrigger);
+	SmartDashboard::PutNumber("Right Trigger",fRightTrigger);
 
 	if((iLoop++ % 50) == 0)  // once every second or so
 	{
@@ -220,16 +232,26 @@ void RhsRobot::Run() {
 
 	if(pClaw)
 	{
-		if(CLAW_INHALE)
+		if(CLAW_INHALE > .1)
 		{
 			robotMessage.command = COMMAND_CLAW_INHALE;
 			robotMessage.params.claw.fClawSpeed = CLAW_INHALE;
 			pClaw->SendMessage(&robotMessage);
 		}
-		else if(CLAW_EXHALE)
+		else if(CLAW_EXHALE > .1)
 		{
 			robotMessage.command = COMMAND_CLAW_EXHALE;
 			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
+			pClaw->SendMessage(&robotMessage);
+		}
+		else if(CLAW_PINCH)
+		{
+			robotMessage.command = COMMAND_CLAW_PINCH;
+			pClaw->SendMessage(&robotMessage);
+		}
+		else if(CLAW_RELEASE)
+		{
+			robotMessage.command = COMMAND_CLAW_RELEASE;
 			pClaw->SendMessage(&robotMessage);
 		}
 		else
@@ -237,6 +259,38 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_CLAW_STOP;
 			robotMessage.params.claw.fClawSpeed = 0.0;
 			pClaw->SendMessage(&robotMessage);
+		}
+	}
+
+	if(pElevator)
+	{
+		SmartDashboard::PutNumber("Raw Elevator Axis",ELEVATOR);
+		if (ELEVATOR_SWITCH)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_SWITCH;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else if (ELEVATOR_FLOOR)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_FLOOR;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else if (ELEVATOR_SCALE)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_SCALE_LOW;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else if (ELEVATOR > .2 || ELEVATOR < -.2)
+		{
+			robotMessage.command = COMMAND_ELEVATOR_MOVE;
+			robotMessage.params.elevator.fSpeed = ELEVATOR;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_ELEVATOR_MOVE;
+			robotMessage.params.elevator.fSpeed = 0;
+			pElevator->SendMessage(&robotMessage);
 		}
 	}
 }
