@@ -181,6 +181,7 @@ void Elevator::Run()
 		}
 		break;
 
+
 	case COMMAND_ELEVATOR_SCALE:
 		if (iEleState == EleState_Init)
 		{
