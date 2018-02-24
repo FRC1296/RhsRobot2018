@@ -69,7 +69,6 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
 	COMMAND_DRIVETRAIN_MTURN,			//!< Drivetrain test for Turning with just encoders
 	COMMAND_DRIVETRAIN_WAVE,			//!< Drivetrain test for sin wave for THE CLAW
-	COMMAND_DRIVETRAIN_DRIVE_CHEESY,
 	COMMAND_DRIVETRAIN_AUTOTURN,
 	COMMAND_DRIVETRAIN_AUTOMOVE,
 
@@ -80,7 +79,7 @@ enum MessageCommand {
 	COMMAND_ELEVATOR_FLOOR,				//!< Elevator floor position
 	COMMAND_ELEVATOR_SWITCH,			//!< Elevator switch position
 	COMMAND_ELEVATOR_SCALE,				//!< Elevator scale position (balanced)
-	COMMAND_ELEVATOR_CLIMB,				//!< Prepare Elevator for climbing
+	COMMAND_ELEVATOR_CLIMB,             //!< Prepare Elevator for climbing
 
 	COMMAND_CLAW_INHALE,				//!< Grab the block
 	COMMAND_CLAW_EXHALE,				//!< Spit out block
@@ -127,13 +126,6 @@ struct ArcadeDriveParams {
 	float right;
 };
 
-
-struct CheesyDriveParams {
-	float wheel;
-	float throttle;
-	bool bQuickturn;
-};
-
 struct ClawParams {
 	float fClawSpeed;
 };
@@ -142,6 +134,7 @@ struct ElevatorParams {
 	float fDistance;
 	float fTime;
 	float fSpeed;
+	bool  bEnable;
 };
 
 struct SystemParams {
@@ -196,7 +189,6 @@ union MessageParams {
 	TurnParams turn;
 	SystemParams system;
 	ArcadeDriveParams adrive;
-	CheesyDriveParams cheesyDrive;
 	TankDriveParams tdrive;
 	GameDataParams gamedata;
 	ClawParams claw;

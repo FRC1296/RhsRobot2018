@@ -31,11 +31,6 @@ float dAvgArrays(float* Array, int LengthArr);
 
 enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn, TurnState_mMove};
 
-const double METERS_PER_INCH = 0.0254;
-const double METERS_PER_COUNT = (METERS_PER_INCH * 4096)/(PI*WHEEL_DIA);
-
-class CheesyLoop;
-
 class Drivetrain : public ComponentBase
 {
 public:
@@ -69,11 +64,9 @@ private:
 	void Run();
 //	void BoxCarFilter();
 	void GyroPIDTurn();
-	void MeasuredTurn();
 	void MeasuredMove();
 	void AutoMeasuredMove();
 	void AutoMeasuredTurn();
-	void RunCheesyDrive(bool, float, float, bool);
 
 	float fInitRotation;
 	float fPrevP;
@@ -98,8 +91,7 @@ private:
 	float fTargetCalc;
 	float fMoveAngle;
 
-	double dfAccumGyroData[3];
-	double dfRawGyroData[3];
+	double deg[3];
 	double dps[3];
 
 	int iTurnState;
@@ -114,11 +106,6 @@ private:
 
 	int iInitLeftPos;
 	int iInitRightPos;
-
-	float fBatteryVoltage;
-	bool bUseCheesyDrive;
-	bool bInAuto;
-	CheesyLoop *pCheesy;
 };
 
 #endif			//COMPONENT_H

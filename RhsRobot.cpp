@@ -55,6 +55,7 @@ void RhsRobot::Init() {
 	 */
 
 	pChooser = new frc::SendableChooser<char>();
+
 	pChooser->AddObject("Left",'L');
 	pChooser->AddObject("Center",'C');
 	pChooser->AddObject("Right",'R');
@@ -81,11 +82,6 @@ void RhsRobot::Init() {
 	if(pClaw)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pClaw);
-	}
-
-	if(pElevator)
-	{
-		nextComponent = ComponentSet.insert(nextComponent, pElevator);
 	}
 
 	if(pAuto)
@@ -177,22 +173,16 @@ void RhsRobot::Run() {
 			SmartDashboard::PutString("cmd","180 PID Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
+#endif
 
-		if (DRIVETRAIN_BOXFILTER)
+/*		if (DRIVETRAIN_BOXFILTER)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_BOXFILTER;
 			SmartDashboard::PutString("cmd","Box Filter Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-		else if (DRIVETRAIN_MTURN)
-		{
-			robotMessage.params.turn.fAngle = 90;
-			robotMessage.command = COMMAND_DRIVETRAIN_MTURN;
-			SmartDashboard::PutString("cmd","Measured Turn Called");
-			pDrivetrain->SendMessage(&robotMessage);
-		}
-		else if(PIDGEY_ROTATE_GPTURN)
+		else*/ if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
@@ -216,20 +206,6 @@ void RhsRobot::Run() {
 			//robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-#endif
-		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
-		 			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL;
-		 			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE;
-		 			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
-		 			pDrivetrain->SendMessage(&robotMessage);
-
-		// delete after we link in cheesy libraries
-
-		robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
-					robotMessage.params.adrive.left = (ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT * ARCADE_DRIVE_LEFT);
-					robotMessage.params.adrive.right = (ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT * ARCADE_DRIVE_RIGHT);
-					pDrivetrain->SendMessage(&robotMessage);
-
 	}
 
 	if(pClaw)
@@ -246,12 +222,12 @@ void RhsRobot::Run() {
 			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
 			pClaw->SendMessage(&robotMessage);
 		}
-		else if(CLAW_PINCH)
+		else if(CLAW_PINCH > .1)
 		{
 			robotMessage.command = COMMAND_CLAW_PINCH;
 			pClaw->SendMessage(&robotMessage);
 		}
-		else if(CLAW_RELEASE)
+		else if(CLAW_RELEASE > .1)
 		{
 			robotMessage.command = COMMAND_CLAW_RELEASE;
 			pClaw->SendMessage(&robotMessage);
@@ -259,7 +235,7 @@ void RhsRobot::Run() {
 		else
 		{
 			robotMessage.command = COMMAND_CLAW_STOP;
-			robotMessage.params.claw.fClawSpeed = 0.0;
+			robotMessage.params.claw.fClawSpeed = 0;
 			pClaw->SendMessage(&robotMessage);
 		}
 	}
@@ -270,11 +246,6 @@ void RhsRobot::Run() {
 		if (ELEVATOR_SWITCH)
 		{
 			robotMessage.command = COMMAND_ELEVATOR_SWITCH;
-			pElevator->SendMessage(&robotMessage);
-		}
-		else if (ELEVATOR_FLOOR)
-		{
-			robotMessage.command = COMMAND_ELEVATOR_FLOOR;
 			pElevator->SendMessage(&robotMessage);
 		}
 		else if (ELEVATOR_SCALE)
@@ -292,6 +263,17 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_ELEVATOR_MOVE;
 			robotMessage.params.elevator.fSpeed = 0;
+			pElevator->SendMessage(&robotMessage);
+		}
+		if (ELEVATOR_ENABLE)
+		{
+			robotMessage.params.elevator.bEnable = true;
+			pElevator->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_ELEVATOR_FLOOR;
+			robotMessage.params.elevator.bEnable = false;
 			pElevator->SendMessage(&robotMessage);
 		}
 	}

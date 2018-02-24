@@ -7,7 +7,6 @@
  */
 #ifndef ELEVATOR_H
 #define ELEVATOR_H
-#define ACCEPT_RANGE_ELE			768
 
 /**
 	A template class for creating new components
@@ -21,10 +20,6 @@
 //Robot
 #include "WPILib.h"
 #include "ctre\Phoenix.h"
-
-/************ Elevator Constants: **************/
-#define LIFT_STOP_POS				(-18740)
-#define LIFT_FULL_POS				(-19221)
 
 
 class Elevator : public ComponentBase
@@ -56,6 +51,8 @@ private:
 
 	int iLeftInit;
 	float fCurVoltage;
+	bool bEnable;
+	bool bFloor;
 
 	int iCurrPos;
 	int iStartPos;

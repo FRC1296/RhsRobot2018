@@ -88,8 +88,8 @@ void Claw::Run()
 			break;
 
 		case COMMAND_CLAW_STOP:
-			pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
-			pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
+			pClawVictorLeft->Set(ControlMode::PercentOutput,0);
+			pClawVictorRight->Set(ControlMode::PercentOutput,0);
 			break;
 
 		default:
