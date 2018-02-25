@@ -85,9 +85,9 @@
 
 // Logitech 310
 
-#define L310_BUTTON_A				1
-#define L310_BUTTON_B				2
-#define L310_BUTTON_X				3
+#define L310_BUTTON_X				1
+#define L310_BUTTON_A				2
+#define L310_BUTTON_B				3
 #define L310_BUTTON_Y				4
 #define L310_BUTTON_BUMPER_LEFT		5
 #define L310_BUTTON_BUMPER_RIGHT	6
@@ -98,8 +98,8 @@
 
 #define L310_THUMBSTICK_LEFT_X		0
 #define L310_THUMBSTICK_LEFT_Y		1
-#define L310_THUMBSTICK_RIGHT_X		4
-#define L310_THUMBSTICK_RIGHT_Y		5
+#define L310_THUMBSTICK_RIGHT_X		2
+#define L310_THUMBSTICK_RIGHT_Y		3
 
 #define L310_POV					1   //D-pad
 

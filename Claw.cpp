@@ -23,7 +23,10 @@ Claw::Claw()
 	//TODO: add member objects
 	pClawVictorLeft = new VictorSPX(CAN_CLAW_VICTOR_LEFT);
 	pClawVictorRight = new VictorSPX(CAN_CLAW_VICTOR_RIGHT);
-	pClawSolenoidLeft = new Solenoid(CAN_PCM, 0);
+	pClawVictorLeft->SetNeutralMode(NeutralMode::Brake);
+	pClawVictorRight->SetNeutralMode(NeutralMode::Brake);
+
+	pClawSolenoidLeft = new Solenoid(CAN_PCM, 0 );
 	pClawSolenoidRight = new Solenoid(CAN_PCM, 1);
 	pClawSolenoidLeft->Set(true);
 	pClawSolenoidRight->Set(true);
@@ -48,28 +51,17 @@ void Claw::OnStateChange()
 
 void Claw::Run()
 {
-	if (motorsStopped && !(pPDP->GetCurrent(CLAW_CHANNEL_ONE) > CLAW_LIMIT || pPDP->GetCurrent(CLAW_CHANNEL_TWO) > CLAW_LIMIT))
-		motorsStopped = false;
-
-	SmartDashboard::PutNumber("Claw Current",pPDP->GetCurrent(CLAW_CHANNEL_ONE));
+	SmartDashboard::PutNumber("Claw Current 1",pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE));
+	SmartDashboard::PutNumber("Claw Current 1",pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO));
 
 	switch(localMessage.command)			//Reads the message command
 	{
-	//TODO add command cases for Component
 		case COMMAND_COMPONENT_TEST:
 			break;
 
 		case COMMAND_CLAW_INHALE:
 			pClawVictorLeft->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
 			pClawVictorRight->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
-			SmartDashboard::PutNumber("LeftTrigger",L310_TRIGGER_LEFT);
-			SmartDashboard::PutNumber("RightTrigger",L310_TRIGGER_RIGHT);
-			if (!(motorsStopped) && (pPDP->GetCurrent(CLAW_CHANNEL_ONE) > CLAW_LIMIT || pPDP->GetCurrent(CLAW_CHANNEL_TWO) > CLAW_LIMIT))
-			{
-				pClawVictorLeft->Set(ControlMode::PercentOutput,0);
-				pClawVictorRight->Set(ControlMode::PercentOutput,0);
-				motorsStopped = true;
-			}
 			break;
 
 		case COMMAND_CLAW_EXHALE:
@@ -78,21 +70,33 @@ void Claw::Run()
 			break;
 
 		case COMMAND_CLAW_PINCH:
-			pClawSolenoidLeft->Set(true);
+			pClawSolenoidLeft->Set(false);
 			pClawSolenoidRight->Set(false);
 			break;
 
 		case COMMAND_CLAW_RELEASE:
-			pClawSolenoidLeft->Set(false);
+			pClawSolenoidLeft->Set(true);
 			pClawSolenoidRight->Set(true);
 			break;
 
 		case COMMAND_CLAW_STOP:
-			pClawVictorLeft->Set(ControlMode::PercentOutput,0);
-			pClawVictorRight->Set(ControlMode::PercentOutput,0);
+			pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
+			pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
 			break;
 
 		default:
 			break;
 		}
+
+	if ((pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE) > CLAW_LIMIT) ||
+			(pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO) > CLAW_LIMIT))
+	{
+		pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
+		pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
+		motorsStopped = true;
+	}
+	else
+	{
+		motorsStopped = false;
+	}
 };

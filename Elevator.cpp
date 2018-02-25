@@ -1,12 +1,3 @@
-/** \file
- * Example of subsystem task behavior.
- *
- * This class is derived from the standard Component base class and includes
- * initialization for the devices used to control a given subsystem.
- *
- * The task receives messages from the main robot class and implements behaviors
- * for a given subsystem.
- */
 
 #include "Component.h"
 #include "ComponentBase.h"
@@ -16,60 +7,85 @@
 
 //Robot
 
+
+/* servo notes
+ *
+ * when the elevator goes up the encoder ticks DECREASE for sure
+ *
+ * joysticks give negative numbers when you press them up, remember they were originally
+ * designed as flight controls
+ *
+ * positive motor motion makes the elevator go up for sure
+ *
+ * so we need to SetSensorPhase(true) to reverse the direction sense of the encoder ticks
+ *
+ * we do NOT need to call SetInverted(true)
+ *
+ * so why was the servo going nuts?  a bug!!  one must call ConfigPeakCurrentDuration
+ * if you are using ConfigPeakCurrentLimit!
+ *
+ *
+ */
+
+
 Elevator::Elevator()
 : ComponentBase(ELEVATOR_TASKNAME, ELEVATOR_QUEUE, ELEVATOR_PRIORITY)
 {
 	//TODO: add member objects
 	pElevatorMotorLeft = new TalonSRX(CAN_ELEVATOR_TALON_LEFT);
 	pElevatorMotorRight = new TalonSRX(CAN_ELEVATOR_TALON_RIGHT);
-
 	pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 	pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
-
-	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,0);
 	pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
 	pElevatorMotorRight->Set(ControlMode::PercentOutput,0);
+	pElevatorMotorLeft->ConfigPeakCurrentLimit(30,1000);
+	pElevatorMotorRight->ConfigPeakCurrentLimit(30,1000);
+	pElevatorMotorLeft->ConfigContinuousCurrentLimit(30,1000);
+	pElevatorMotorRight->ConfigContinuousCurrentLimit(30,1000);
+	pElevatorMotorLeft->ConfigPeakCurrentDuration(0.0,10);
+	pElevatorMotorRight->ConfigPeakCurrentDuration(0.0,10);
 	pElevatorMotorLeft->EnableCurrentLimit(true);
 	pElevatorMotorRight->EnableCurrentLimit(true);
-	pElevatorMotorLeft->ConfigContinuousCurrentLimit(30,0);
-	pElevatorMotorRight->ConfigContinuousCurrentLimit(30,0);
-	pElevatorMotorLeft->Config_kP(0,0.05,5000);
-	pElevatorMotorLeft->Config_kI(0,0,10);
-	pElevatorMotorLeft->Config_kD(0,0.3,5000);
+	pElevatorMotorLeft->SetInverted(false);
+	pElevatorMotorRight->SetInverted(false);
+	pElevatorMotorLeft->ConfigPeakOutputForward(0.75, 10);
+	pElevatorMotorLeft->ConfigPeakOutputReverse(-.25,10);
+	pElevatorMotorRight->ConfigPeakOutputForward(0.75, 10);
+	pElevatorMotorRight->ConfigPeakOutputReverse(-.25,10);
 
+	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
+	pElevatorMotorLeft->SetSensorPhase(true);
+	pElevatorMotorLeft->Config_kF(0,0.0,10);
+	pElevatorMotorLeft->Config_kP(0,0.2,10);
+	pElevatorMotorLeft->Config_kI(0,0.0,10);
+	pElevatorMotorLeft->Config_kD(0,0.0,10);
 	pElevatorMotorLeft->SelectProfileSlot(0,0);
+	pElevatorMotorLeft->ConfigAllowableClosedloopError(0, 200, 10);
 
-	pElevatorMotorLeft->ConfigPeakOutputForward(MAX_SPEED,0);
-	pElevatorMotorLeft->ConfigPeakOutputReverse(-1*MAX_SPEED,0);
-
+	Wait(1.0);
 	pElevatorMotorRight->Set(ControlMode::Follower,CAN_ELEVATOR_TALON_LEFT);
-
-	iLeftInit = pElevatorMotorLeft->GetSelectedSensorPosition(0);
-	/*pElevatorMotorLeft->SetSelectedSensorPosition(iLeftInit,0,0);*/
-
-	pElevatorMotorRight->SetInverted(true);
-	pElevatorMotorLeft->SetInverted(true);
-
-	fCurVoltage = 0;
-	fMotorSpeed = 0;
-	fMaxSpeed = 0;
-
-	bEnable = false;
-	bFloor = true;
+	pElevatorMotorLeft->Set(ControlMode::Position, pElevatorMotorLeft->GetSelectedSensorPosition(0));
+	//pElevatorMotorLeft->Set(ControlMode::PercentOutput, 0.0);
 
 	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 	iStartPos = iCurrPos;
-	iStopPos = (iStartPos + LIFT_STOP_POS);
-	iEleState = EleState_Init;
+	fCurVoltage = 0;
+	fMotorSpeed = 0;
+	fMaxSpeed = 0;
+    iMoveDelta = 0;  // for now
 
-	//pElevatorMotorLeft->SetSensorPhase(true);
-
-	pEleTimer = new Timer();
 	pEleTimeout = new Timer();
+
+	SmartDashboard::PutNumber("Elevator Speed RPM",((fMaxSpeed*600)/4096.0));
+	SmartDashboard::PutNumber("Elevator Position in Ticks",iCurrPos);
+	SmartDashboard::PutNumber("Elevator Position in Rotations",iCurrPos/4096.0);
+
+	SmartDashboard::PutNumber("Elevator Init Position",iStartPos);
+	SmartDashboard::PutNumber("Elevator Switch Position",iStartPos + iFloorToSwitch);
+	SmartDashboard::PutNumber("Elevator Scale Position",iStartPos + iFloorToScale);
 
 	pTask = new std::thread(&Elevator::StartTask, this, ELEVATOR_TASKNAME, ELEVATOR_PRIORITY);
 	wpi_assert(pTask);
-
 };
 
 Elevator::~Elevator()
@@ -85,127 +101,83 @@ void Elevator::OnStateChange()
 
 void Elevator::Run()
 {
-
-	bEnable = localMessage.params.elevator.bEnable;
-
-	SmartDashboard::PutNumber("Elevator Speed",fMotorSpeed);
+	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 
 	SmartDashboard::PutNumber("Elevator Speed RPM",((fMaxSpeed*600)/4096.0));
-	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 	SmartDashboard::PutNumber("Elevator Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Elevator Position in Rotations",iCurrPos/4096.0);
-
-	static double CurrMotorLeft = 0;// = pElevatorMotorLeft->GetOutputCurrent();
-	SmartDashboard::PutNumber("Elevator Current",CurrMotorLeft);
 
 	SmartDashboard::PutNumber("Elevator Init Position",iStartPos);
 	SmartDashboard::PutNumber("Elevator Switch Position",iStartPos + iFloorToSwitch);
 	SmartDashboard::PutNumber("Elevator Scale Position",iStartPos + iFloorToScale);
 	SmartDashboard::PutNumber("Difference",(iStartPos + iFloorToScale) - iCurrPos);
 
-	if (pElevatorMotorLeft->GetMotorOutputPercent() > MAX_SPEED || pElevatorMotorLeft->GetMotorOutputPercent() < -1*MAX_SPEED) {
-		pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-	}
-
-	/*if(CurrMotorLeft<pElevatorMotorLeft->GetOutputCurrent())
-	{
-		CurrMotorLeft = pElevatorMotorLeft->GetOutputCurrent();
-	}
-
-	if (fMaxSpeed > pElevatorMotorLeft->GetSelectedSensorVelocity(0))
-	{
-		fMaxSpeed = pElevatorMotorLeft->GetSelectedSensorVelocity(0);
-	}*/
-	SmartDashboard::PutNumber("Elevator Speed",fMaxSpeed);
-
-	switch(iEleState)
-	{
-	case EleState_Init:
-		SmartDashboard::PutString("Elevator State","Elevator Init");
-		break;
-	case EleState_Scale:
-		SmartDashboard::PutString("Elevator State","Scale Mode");
-		bFloor = false;
-		Scale(iCurrPos);
-		break;
-	case EleState_Switch:
-		bFloor = false;
-		SmartDashboard::PutString("Elevator State","Switch Mode");
-		Switch(iCurrPos);
-		break;
-	case EleState_Floor:
-		bFloor = true;
-		SmartDashboard::PutString("Elevator State","Floor Mode");
-		Floor(iCurrPos);
-		break;
-	}
-
 	switch(localMessage.command)			//Reads the message command
 	{
-	//TODO add command cases for Component
 	case COMMAND_COMPONENT_TEST:
 		break;
 
-	case COMMAND_ELEVATOR_MOVE: //{
+	case COMMAND_ELEVATOR_MOVE:
+		fMotorSpeed = localMessage.params.elevator.fSpeed;
+		//pElevatorMotorLeft->Set(ControlMode::PercentOutput, -fMotorSpeed);
 
-		if (bEnable && iEleState == EleState_Init)
+		if (fMotorSpeed > 0.2)
 		{
-			fMotorSpeed = MAX_SPEED*(localMessage.params.elevator.fSpeed);
-			if (fMotorSpeed > MAX_SPEED)
-			{
-				fMotorSpeed = MAX_SPEED;
-			}
-			if (fMotorSpeed < -1*MAX_SPEED)
-			{
-				fMotorSpeed = -1*MAX_SPEED;
-			}
-	/*		if (iCurrPos <= iStopPos && fMotorSpeed < 0){
-				fMotorSpeed = 0;
-			}
-			if (iCurrPos >= iStartPos && fMotorSpeed > 0){
-				fMotorSpeed = 0;
-			} */
-			pElevatorMotorLeft->Set(ControlMode::PercentOutput,fMotorSpeed);
-			/*			int iElevatorDiff = (iFloorToMax / 5) * fCurVoltage;
-			pElevatorMotorLeft->Set(ControlMode::Position,iLeftInit + iElevatorDiff);
-			pElevatorMotorRight->Set(ControlMode::Position,iRightInit - iElevatorDiff); */
+		    iMoveDelta -= 100;
+		    //if(iLoop % 25 == 0)
+		    //	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
 		}
+		else if(fMotorSpeed < -0.2)
+		{
+		    iMoveDelta += 100;
+		    //if(iLoop % 25 == 0)
+		    //	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
+		}
+		break;
+
+	case COMMAND_ELEVATOR_NOBUTTON:
+		iMoveDelta = 0;
+		pElevatorMotorLeft->Set(ControlMode::Position, iStartPos + iMoveDelta);
+		SmartDashboard::PutString("Button", "No Buttons Pushed");
+		pEleTimeout->Reset();
+		pEleTimeout->Start();
 		break;
 
 	case COMMAND_ELEVATOR_FLOOR:
-		if (!bFloor && iEleState == EleState_Init)
-		{
-			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos);
-			iEleState = EleState_Floor;
-			SmartDashboard::PutString("Button", "A Button Pushed");
-			pEleTimeout->Reset();
-			pEleTimeout->Start();
-	//		pEleTimer->Reset();
-		}
+		pElevatorMotorLeft->Set(ControlMode::Position, iStartPos + iMoveDelta);
+		SmartDashboard::PutString("Button", "A Button Pushed");
+		pEleTimeout->Reset();
+		pEleTimeout->Start();
 		break;
 
 	case COMMAND_ELEVATOR_SWITCH:
-		if (bEnable && iEleState == EleState_Init)
+		if( (iStartPos + iFloorToSwitch + iMoveDelta) > iFloorToMax)
 		{
-			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToSwitch);
-			iEleState = EleState_Switch;
-			SmartDashboard::PutString("Button", "B Button Pushed");
-			pEleTimeout->Reset();
-			pEleTimeout->Start();
-		//	pEleTimer->Reset();
+			pElevatorMotorLeft->Set(ControlMode::Position, iFloorToMax);
 		}
+		else
+		{
+			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToSwitch + iMoveDelta);
+		}
+
+		SmartDashboard::PutString("Button", "B Button Pushed");
+		pEleTimeout->Reset();
+		pEleTimeout->Start();
 		break;
 
-	case COMMAND_ELEVATOR_SCALE:
-		if (bEnable && iEleState == EleState_Init)
+	case COMMAND_ELEVATOR_SCALE_MID:
+		if( (iStartPos + iFloorToScale + iMoveDelta) > iFloorToMax)
 		{
-			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToScale);
-			iEleState = EleState_Scale;
-			SmartDashboard::PutString("Button", "Y Button Pushed");
-			pEleTimeout->Reset();
-			pEleTimeout->Start();
-		//	pEleTimer->Reset();
+			pElevatorMotorLeft->Set(ControlMode::Position, iFloorToMax);
 		}
+		else
+		{
+			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToScale + iMoveDelta);
+		}
+
+		SmartDashboard::PutString("Button", "Y Button Pushed");
+		pEleTimeout->Reset();
+		pEleTimeout->Start();
 		break;
 
 	case COMMAND_ELEVATOR_CLIMB:
@@ -213,85 +185,27 @@ void Elevator::Run()
 		break;
 
 	default:
-		if(iEleState == EleState_Init)
-		{
-			pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-		}
 		break;
 	}
+
+	// implement timeout
+
+	SmartDashboard::PutNumber("Closed Loop Error", pElevatorMotorLeft->GetClosedLoopError(0));
+
+	if((pElevatorMotorLeft->GetClosedLoopError(0) < 200) && (pElevatorMotorLeft->GetClosedLoopError(0) > -200))
+	{
+		// the servo has closed
+		pEleTimeout->Reset();
+		pEleTimeout->Stop();
+	}
+	else
+	{
+		if(pEleTimeout->Get() > 3)
+		{
+			// use the current position which should stop the servo
+			pElevatorMotorLeft->Set(ControlMode::Position, iCurrPos);
+		}
+	}
+
 };
 
-void Elevator::Floor(int iCurrPos) {
-	if (pEleTimeout->Get() > 3)
-	{
-		pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-		iEleState = EleState_Init;
-		pEleTimeout->Stop();
-		//pEleTimeout->Reset();
-		//return;
-	}
-	/*if ((iCurrPos <= iStartPos + ACCEPT_RANGE_ELE) && (iCurrPos >= iStartPos - ACCEPT_RANGE_ELE))
-	{
-		pEleTimer->Start();
-		if (pEleTimer->Get() > .25)
-		{
-			iEleState = EleState_Init;
-			pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-		}
-	}
-	else
-	{
-		pEleTimer->Stop();
-		pEleTimer->Reset();
-	}*/
-}
-
-void Elevator::Switch(int iCurrPos) {
-	if (pEleTimeout->Get() > 3)
-	{
-		pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-		iEleState = EleState_Init;
-		pEleTimeout->Stop();
-		//pEleTimeout->Reset();
-		//return;
-	}
-	/*if ((iCurrPos <= ((iStartPos + iFloorToSwitch) + ACCEPT_RANGE_ELE)) && (iCurrPos >= ((iStartPos + iFloorToSwitch) - ACCEPT_RANGE_ELE)))
-	{
-		pEleTimer->Start();
-		if (pEleTimer->Get() > .25)
-		{
-			iEleState = EleState_Init;
-			pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-		}
-	}
-	else
-	{
-		pEleTimer->Stop();
-		pEleTimer->Reset();
-	}*/
-}
-
-void Elevator::Scale(int iCurrPos) {
-	if (pEleTimeout->Get() > 3)
-	{
-		pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-		iEleState = EleState_Init;
-		pEleTimeout->Stop();
-		//pEleTimeout->Reset();
-		//return;
-	}
-	/*if ((iCurrPos <= ((iStartPos + iFloorToScale) + ACCEPT_RANGE_ELE)) && (iCurrPos >= ((iStartPos + iFloorToScale) - ACCEPT_RANGE_ELE)))
-	{
-		pEleTimer->Start();
-		if (pEleTimer->Get() > .25)
-		{
-			iEleState = EleState_Init;
-			pElevatorMotorLeft->Set(ControlMode::PercentOutput,0);
-		}
-	}
-	else
-	{
-		pEleTimer->Stop();
-		pEleTimer->Reset();
-	}*/
-}

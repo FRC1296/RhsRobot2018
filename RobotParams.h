@@ -24,7 +24,7 @@ const char* const ROBOT_VERSION =	"0.5";			//Version
 #define TRUNC_HUND(a)		((int)(100 * a)) * .01
 #define PRINTAUTOERROR		printf("Early Death! %s %i \n", __FILE__, __LINE__);
 
-//Task Params - Defines component task priorites relative to the default priority.
+//Task Params - Defines component task priorities relative to the default priority.
 //EXAMPLE: const int DRIVETRAIN_PRIORITY = DEFAULT_PRIORITY -2;
 const int DEFAULT_PRIORITY      = 50;
 const int COMPONENT_PRIORITY 	= DEFAULT_PRIORITY;
@@ -36,6 +36,8 @@ const int AUTOPARSER_PRIORITY 	= DEFAULT_PRIORITY;
 const int CLAW_PRIORITY 		= DEFAULT_PRIORITY;
 const int ELEVATOR_PRIORITY		= DEFAULT_PRIORITY;
 const int CLIMBER_PRIORITY		= DEFAULT_PRIORITY;
+const int CHEESY_PRIORITY 	    = DEFAULT_PRIORITY;
+const int ARM_PRIORITY			= DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -47,6 +49,8 @@ const char* const AUTOPARSER_TASKNAME	= "tParse";
 const char* const CLAW_TASKNAME 		= "tClaw";
 const char* const ELEVATOR_TASKNAME		= "tElevator";
 const char* const CLIMBER_TASKNAME		= "tClimber";
+const char* const CHEESY_TASKNAME	    = "tCheesy";
+const char* const ARM_TASKNAME			= "tArm";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
@@ -60,6 +64,7 @@ const char* const AUTOPARSER_QUEUE 	= "/tmp/qParse";
 const char* const CLAW_QUEUE 		= "/tmp/qClaw";
 const char* const ELEVATOR_QUEUE	= "/tmp/qElevator";
 const char* const CLIMBER_QUEUE		= "/tmp/qClimber";
+const char* const ARM_QUEUE			= "/tmp/qArm";
 
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
@@ -81,27 +86,23 @@ Add more as needed.
 // TODO: Delegate TalonSRX numbers
 
 const int CAN_PCM = 0; // Both must be zero
-const int CAN_PIGEON = 6;
 const int CAN_PDB = 0; // Both must be zero
 
-const int CLAW_CHANNEL_ONE = 7;
-const int CLAW_CHANNEL_TWO = 8;
-const int CLAW_LIMIT = 20; // Claw's current limit
-
 // Had to change these, lowkey salty at mechanical ~ Jiff
-const int CAN_DRIVETRAIN_TALON_LEFT = 4;
-const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 5;
-const int CAN_DRIVETRAIN_TALON_LEFT2 = 6;
 const int CAN_DRIVETRAIN_TALON_RIGHT = 1;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 2;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT2 = 3;
+const int CAN_DRIVETRAIN_TALON_LEFT = 4;
+const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 5;
+const int CAN_DRIVETRAIN_TALON_LEFT2 = 6;
+const int CAN_ELEVATOR_TALON_LEFT = 11; // HAS THE ENCODER ON IT
+const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
+const int CAN_CLAW_VICTOR_LEFT = 13;
+const int CAN_CLAW_VICTOR_RIGHT = 14;
+const int CAN_ARM_TALON = 16;
 
 const int CAN_CLIMBER_TALON = 1; // Arbitrary Numbers until delegated
 const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
-const int CAN_CLAW_VICTOR_LEFT = 13; // Arbitrary Numbers until delegated
-const int CAN_CLAW_VICTOR_RIGHT = 14; // See above
-const int CAN_ELEVATOR_TALON_LEFT = 11; // HAS THE ENCODER ON IT
-const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
@@ -109,7 +110,6 @@ const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
 
 //Digital I/O - Assigns names to Digital I/O ports 1-14 on the roboRio
 //EXAMPLE: const int DIO_DRIVETRAIN_BEAM_BREAK = 0;
-
 
 //Solenoid - Assigns names to Solenoid ports 1-8 on the roboRio
 //EXAMPLE: const int SOL_DRIVETRAIN_SOLENOID_SHIFT_IN = 1;
@@ -120,9 +120,12 @@ const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
 //Analog I/O - Assigns names to Analog I/O ports 1-8 on the roboRio
 //EXAMPLE: const int AIO_BATTERY = 8;
 
-
 //Relay I/O - Assigns names to Realy I/O ports 1-8 on the roboRio
 //EXAMPLE: const int RELAY_LED = 0;
+
+// PDB Channels
+const int PDB_CLAW_CHANNEL_ONE = 7;
+const int PDB_CLAW_CHANNEL_TWO = 8;
 
 
 //Joystick Input Device Counts - used by the listener to watch buttons and axis
@@ -186,10 +189,10 @@ const int POV_STILL = -1;
 
 #define TANK_DRIVE_LEFT				(pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define TANK_DRIVE_RIGHT			(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
-#define CHEEZY_DRIVE_WHEEL			(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
-#define CHEEZY_DRIVE_THROTTLE		(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
-#define CHEEZY_DRIVE_SPIN		    (-pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT) + pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
-#define CHEEZY_DRIVE_QUICKTURN		(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CHEESY_DRIVE_WHEEL			(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))
+#define CHEESY_DRIVE_THROTTLE		(-pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
+#define CHEESY_DRIVE_SPIN		    (-pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT) + pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT))
+#define CHEESY_DRIVE_QUICKTURN		(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 #define ARCADE_DRIVE_LEFT			((pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) + (-1*(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
 #define ARCADE_DRIVE_RIGHT			((pControllerDriver->GetRawAxis(L310_THUMBSTICK_LEFT_Y)) - (-1*(pControllerDriver->GetRawAxis(L310_THUMBSTICK_RIGHT_X))))
@@ -200,11 +203,12 @@ const int POV_STILL = -1;
 #define PIDGEY_ROTATE_RIGHT90		(pControllerDriver->GetRawButton(L310_BUTTON_B))
 #define PIDGEY_ROTATE_180			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 
-// #define DRIVETRAIN_BOXFILTER		(pControllerDriver->GetRawButton(L310_BUTTON_X))
+#define DRIVETRAIN_BOXFILTER		(pControllerDriver->GetRawButton(L310_BUTTON_X))
 #define PIDGEY_ROTATE_GPTURN		(pControllerDriver->GetRawButton(L310_BUTTON_B))
+#define DRIVETRAIN_MTURN			(pControllerDriver->GetRawButton(L310_BUTTON_A))
 
 #define DRIVETRAIN_MMOVE			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
-#define CLIMBER_PULL_UP				(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
+#define CLIMBER_PULL_UP				(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
 #define CLAW_INHALE 				(pControllerOperator->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CLAW_EXHALE					(pControllerOperator->GetRawAxis(L310_TRIGGER_LEFT))
@@ -212,11 +216,12 @@ const int POV_STILL = -1;
 #define CLAW_PINCH					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
 #define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define ELEVATOR					(pControllerOperator->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
-#define ELEVATOR_CLIMB				(pControllerOperator->GetRawButton(L310_BUTTON_Y))
-#define ELEVATOR_SCALE				(pControllerOperator->GetRawButton(L310_BUTTON_B))
-#define ELEVATOR_SWITCH				(pControllerOperator->GetRawButton(L310_BUTTON_A))
-#define ELEVATOR_ENABLE				(pControllerOperator->GetRawButton(L310_BUTTON_BACK))
+#define CLAW_MOVE					(pControllerOperator->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
+
+#define ELEVATOR_DELTA				(pControllerOperator->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
+#define ELEVATOR_SCALE				(pControllerOperator->GetRawButton(L310_BUTTON_Y))
+#define ELEVATOR_SWITCH				(pControllerOperator->GetRawButton(L310_BUTTON_B))
+#define ELEVATOR_FLOOR				(pControllerOperator->GetRawButton(L310_BUTTON_A))
 
 // TODO: Add Component Commands
 
@@ -225,8 +230,8 @@ const int POV_STILL = -1;
 #define PI							3.14159
 #define ROBOT_WIDTH					26.0		// Width of the drivetrain in inches
 #define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
-#define DRIVETRAIN_CONST_KI			(1.0/1500.0) // Constant I value for PID loops
-#define DRIVETRAIN_CONST_KD			(1.0/30.0)  // Constant D value for PID loops
+#define DRIVETRAIN_CONST_KI			(1.0/1000.0) // Constant I value for PID loops
+#define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
 #define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
 #define UPDATE_RATE					.02			// Update loop rate for drive train
 #define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second
@@ -242,13 +247,7 @@ const int POV_STILL = -1;
 
 #define ACCEPT_RANGE_MOVE			768	//512			//Acceptable Range for "finished" PID loop for moving straight
 
-#define ACCEPT_RANGE_ELE			768
-
-/************ Elevator Constants: **************/
-#define LIFT_STOP_POS				(-18740)
-#define LIFT_FULL_POS				(-19221)
-#define MAX_SPEED					.5
-
+#define MAX_ARM_SPEED				0.5
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

@@ -23,6 +23,8 @@
 #include "ctre\Phoenix.h"
 #include "Solenoid.h"
 
+const int CLAW_LIMIT = 20; // Claw's current limit
+
 
 class Claw : public ComponentBase
 {

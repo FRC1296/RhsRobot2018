@@ -69,6 +69,7 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_MMOVE, 			//!< Moves a specified distance
 	COMMAND_DRIVETRAIN_MTURN,			//!< Drivetrain test for Turning with just encoders
 	COMMAND_DRIVETRAIN_WAVE,			//!< Drivetrain test for sin wave for THE CLAW
+	COMMAND_DRIVETRAIN_DRIVE_CHEESY,
 	COMMAND_DRIVETRAIN_AUTOTURN,
 	COMMAND_DRIVETRAIN_AUTOMOVE,
 
@@ -78,15 +79,23 @@ enum MessageCommand {
 	COMMAND_ELEVATOR_MOVE,				//!< "Manual" elevator control
 	COMMAND_ELEVATOR_FLOOR,				//!< Elevator floor position
 	COMMAND_ELEVATOR_SWITCH,			//!< Elevator switch position
-	COMMAND_ELEVATOR_SCALE,				//!< Elevator scale position (balanced)
-	COMMAND_ELEVATOR_CLIMB,             //!< Prepare Elevator for climbing
+	COMMAND_ELEVATOR_SCALE_LOW,			//!< Elevator scale position (tipped in our favor)
+	COMMAND_ELEVATOR_SCALE_MID,			//!< Elevator scale position (balanced)
+	COMMAND_ELEVATOR_SCALE_HIGH,		//!< Elevator scale position (tipped not in our favor)
+	COMMAND_ELEVATOR_CLIMB,				//!< Prepare Elevator for climbing
+	COMMAND_ELEVATOR_NOBUTTON,
 
 	COMMAND_CLAW_INHALE,				//!< Grab the block
 	COMMAND_CLAW_EXHALE,				//!< Spit out block
 	COMMAND_CLAW_STOP,					//!< Stop rollers now!
-
 	COMMAND_CLAW_PINCH,					//!< Pinch the block
 	COMMAND_CLAW_RELEASE,				//!< Release the block
+
+	COMMAND_ARM_MOVE,
+	COMMAND_ARM_OPEN,
+	COMMAND_ARM_SHOOT,
+	COMMAND_ARM_STOW,
+
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST
@@ -126,15 +135,25 @@ struct ArcadeDriveParams {
 	float right;
 };
 
+
+struct CheesyDriveParams {
+	float wheel;
+	float throttle;
+	bool bQuickturn;
+};
+
 struct ClawParams {
 	float fClawSpeed;
+};
+
+struct ArmParams {
+	float fArmSpeed;
 };
 
 struct ElevatorParams {
 	float fDistance;
 	float fTime;
 	float fSpeed;
-	bool  bEnable;
 };
 
 struct SystemParams {
@@ -189,9 +208,11 @@ union MessageParams {
 	TurnParams turn;
 	SystemParams system;
 	ArcadeDriveParams adrive;
+	CheesyDriveParams cheesyDrive;
 	TankDriveParams tdrive;
 	GameDataParams gamedata;
 	ClawParams claw;
+	ArmParams arm;
 	ElevatorParams elevator;
 };
 

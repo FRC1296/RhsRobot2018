@@ -7,6 +7,7 @@
  */
 #ifndef ELEVATOR_H
 #define ELEVATOR_H
+#define ACCEPT_RANGE_ELE			768
 
 /**
 	A template class for creating new components
@@ -24,7 +25,6 @@
 
 class Elevator : public ComponentBase
 {
-enum EleState{ EleState_Init = -1, EleState_Floor = 1, EleState_Switch, EleState_Scale, EleState_Climb};
 public:
 	Elevator();
 	virtual ~Elevator();
@@ -40,32 +40,24 @@ private:
 	TalonSRX* pElevatorMotorLeft;
 	TalonSRX* pElevatorMotorRight;
 
-	Timer* pEleTimer;
 	Timer* pEleTimeout;
 
 	void OnStateChange();
 	void Run();
-	void Floor(int iCurrPos);
-	void Switch(int iCurrPos);
-	void Scale(int iCurrPos);
 
-	int iLeftInit;
 	float fCurVoltage;
-	bool bEnable;
-	bool bFloor;
 
 	int iCurrPos;
 	int iStartPos;
-	int iStopPos;
-	int iEleState;
+	int iMoveDelta;
 
 	float fMotorSpeed;
 	float fMaxSpeed;
 
-	const int iFloorToSwitch = 16000/*-4362*/;
-	const int iFloorToScale = 35000;
-	const int iFloorToClimb = 500;
-	const int iFloorToMax = 600;
+	const int iFloorToSwitch = 8000;
+	const int iFloorToScale = 21500;
+	const int iFloorToClimb = 17500;
+	const int iFloorToMax = 25500;
 };
 
 #endif			//COMPONENT_H

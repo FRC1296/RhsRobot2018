@@ -13,6 +13,7 @@
 #include "Drivetrain.h"
 #include "Claw.h"
 #include "Elevator.h"
+#include "Arm.h"
 #include "ctre/Phoenix.h"
 
 class RhsRobot : public RhsRobotBase
@@ -34,6 +35,7 @@ private:
 	Drivetrain* pDrivetrain;
 	Claw* pClaw;
 	Elevator* pElevator;
+	Arm* pArm;
 
 	string gameData = "XXX";
 	string gameDataPrev = "XXX";

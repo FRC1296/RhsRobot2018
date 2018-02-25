@@ -10,7 +10,7 @@
 
 #include "CheesyDrive.h"
 
-
+#if 0
 void CheezyInit1296(void)
 {
 
@@ -24,6 +24,8 @@ void CheezyIterate1296(
 {
 
 }
+#endif
+
 
 CheesyLoop::CheesyLoop()
 {
