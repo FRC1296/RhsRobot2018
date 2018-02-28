@@ -29,10 +29,13 @@ public:
 		return(NULL);
 	}
 
-private:
-	TalonSRX* pArmMotor;
 
+private:
+
+	TalonSRX* pArmMotor;
 	Timer* pArmTimeout;
+
+	Solenoid* pClawSolenoid;
 
 	void OnStateChange();
 	void Run();

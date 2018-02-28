@@ -48,6 +48,8 @@ Arm::Arm()
 	pArmMotor->SelectProfileSlot(0,0);
 	pArmMotor->ConfigAllowableClosedloopError(0, 50, 10);
 
+	pArmMotor->ConfigReverseLimitSwitchSource(LimitSwitchSource::LimitSwitchSource_RemoteTalonSRX,LimitSwitchNormal::LimitSwitchNormal_Disabled,0);
+
 	Wait(1.0);
 	pArmMotor->Set(ControlMode::Position, pArmMotor->GetSelectedSensorPosition(0));
 	//pArmMotor->Set(ControlMode::Velocity, 0.0);
@@ -57,9 +59,12 @@ Arm::Arm()
 	fCurVoltage = 0;
 	fMotorSpeed = 0;
 	fMaxSpeed = 0;
-    iMoveDelta = 0;  // for now
+	iMoveDelta = 0;  // for now
 
 	pArmTimeout = new Timer();
+
+	pClawSolenoid = new Solenoid(CAN_PCM, 0 );
+	pClawSolenoid->Set(true);
 
 	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
@@ -96,68 +101,84 @@ void Arm::Run()
 	SmartDashboard::PutNumber("Arm Open Position",iStartPos + iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos + iStartToShoot);
 
+	if (pArmMotor->GetSensorCollection().IsRevLimitSwitchClosed())
+	{
+		pClawSolenoid->Set(true);
+	}
+
+
 	switch(localMessage.command)			//Reads the message command
 	{
-		case COMMAND_COMPONENT_TEST:
-			break;
+	case COMMAND_COMPONENT_TEST:
+		break;
 
-		case COMMAND_ARM_MOVE:
-			fMotorSpeed = localMessage.params.arm.fArmSpeed;
+	case COMMAND_ARM_MOVE:
+		fMotorSpeed = localMessage.params.arm.fArmSpeed;
 
-			if (fMotorSpeed > 0.2)
-			{
-				iMoveDelta -= 10;
-			}
-			else if(fMotorSpeed < -0.2)
-			{
-				iMoveDelta += 10;
-			}
-			break;
+		if (fMotorSpeed > 0.2)
+		{
+			iMoveDelta -= 10;
+		}
+		else if(fMotorSpeed < -0.2)
+		{
+			iMoveDelta += 10;
+		}
+		break;
 
-		case COMMAND_ARM_OPEN:
-			if( (iStartPos + iStartToOpen + iMoveDelta) > iStartToMax)
-			{
-				pArmMotor->Set(ControlMode::Position, iStartToMax);
-			}
-			else
-			{
-				pArmMotor->Set(ControlMode::Position,iStartPos + iStartToOpen + iMoveDelta);
-			}
+	case COMMAND_ARM_OPEN:
+		if( (iStartPos + iStartToOpen + iMoveDelta) > iStartToMax)
+		{
+			pArmMotor->Set(ControlMode::Position, iStartToMax);
+		}
+		else
+		{
+			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToOpen + iMoveDelta);
+		}
 
-			pArmTimeout->Reset();
-			pArmTimeout->Start();
-			break;
+		pArmTimeout->Reset();
+		pArmTimeout->Start();
+		break;
 
-		case COMMAND_ARM_SHOOT:
-			if( (iStartPos + iStartToShoot + iMoveDelta) > iStartToMax)
-			{
-				pArmMotor->Set(ControlMode::Position, iStartToMax);
-			}
-			else
-			{
-				pArmMotor->Set(ControlMode::Position,iStartPos + iStartToShoot + iMoveDelta);
-			}
 
-			pArmTimeout->Reset();
-			pArmTimeout->Start();
-			break;
 
-		case COMMAND_ARM_STOW:
-			if( (iStartPos + iStartToStow + iMoveDelta) > iStartToMax)
-			{
-				pArmMotor->Set(ControlMode::Position, iStartToMax);
-			}
-			else
-			{
-				pArmMotor->Set(ControlMode::Position,iStartPos + iStartToStow + iMoveDelta);
-			}
+	case COMMAND_CLAW_PINCH:
+		pClawSolenoid->Set(true);
+		break;
 
-			pArmTimeout->Reset();
-			pArmTimeout->Start();
-			break;
+	case COMMAND_CLAW_RELEASE:
+		pClawSolenoid->Set(false);
+		break;
 
-		default:
-			break;
+	case COMMAND_ARM_SHOOT:
+		if( (iStartPos + iStartToShoot + iMoveDelta) > iStartToMax)
+		{
+			pArmMotor->Set(ControlMode::Position, iStartToMax);
+		}
+		else
+		{
+			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToShoot + iMoveDelta);
+		}
+
+		pArmTimeout->Reset();
+		pArmTimeout->Start();
+		break;
+
+	case COMMAND_ARM_STOW:
+		if( (iStartPos + iStartToStow + iMoveDelta) > iStartToMax)
+		{
+			pArmMotor->Set(ControlMode::Position, iStartToMax);
+		}
+		else
+		{
+			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToStow + iMoveDelta);
+		}
+
+		pArmTimeout->Reset();
+		pArmTimeout->Start();
+		break;
+
+	default:
+		break;
 	}
 
 	// implement timeout

@@ -42,8 +42,6 @@ public:
 private:
 	VictorSPX* pClawVictorLeft;
 	VictorSPX* pClawVictorRight;
-	Solenoid* pClawSolenoidLeft;
-	Solenoid* pClawSolenoidRight;
 
 	PowerDistributionPanel* pPDP;
 
