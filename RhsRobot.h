@@ -28,6 +28,7 @@ private:
 	Joystick* pControllerDriver;
 	Joystick* pControllerOperator;
 	Compressor* pCompressor;
+	PowerDistributionPanel* pPDP;
 
 	frc::SendableChooser<char> *pChooser;
 
@@ -36,6 +37,7 @@ private:
 	Claw* pClaw;
 	Elevator* pElevator;
 	Arm* pArm;
+	cs::UsbCamera camera;
 
 	string gameData = "XXX";
 	string gameDataPrev = "XXX";
@@ -44,12 +46,15 @@ private:
 
 	float fLeftTrigger;
 	float fRightTrigger;
+	RobotMessage lastMessage;
+	RobotMessage maxMessage;
 
 	void Init();
 	void OnStateChange();
 	void Run();
 	void UpdateGameData();
 	void UpdateSystemData();
+	void MonitorPDB();
 
 	int iLoop;
 };

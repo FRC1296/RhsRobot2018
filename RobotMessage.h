@@ -50,6 +50,7 @@ enum MessageCommand {
 	COMMAND_SYSTEM_ERROR,				//!< COMMAND_SYSTEM_ERROR
 	COMMAND_SYSTEM_CONSTANTS,
 	COMMAND_SYSTEM_GAMEDATA,
+	COMMAND_SYSTEM_PDBDATA,
 
 	COMMAND_ROBOT_STATE_DISABLED,		//!< Tells all components that the robot is disabled
 	COMMAND_ROBOT_STATE_AUTONOMOUS,		//!< Tells all components that the robot is in auto
@@ -160,6 +161,18 @@ struct SystemParams {
 	float fBattery;
 };
 
+struct PdbParams {
+	unsigned char ldrive1;
+	unsigned char ldrive2;
+	unsigned char ldrive3;
+	unsigned char rdrive1;
+	unsigned char rdrive2;
+	unsigned char rdrive3;
+	unsigned char lclaw;
+	unsigned char rclaw;
+};
+
+
 enum GamePieceSides
 {
 	GAMEPIECESIDE_LEFT,
@@ -214,6 +227,7 @@ union MessageParams {
 	ClawParams claw;
 	ArmParams arm;
 	ElevatorParams elevator;
+	PdbParams pdb;
 };
 
 ///A structure containing a command, a set of parameters, and a reply id, sent between components

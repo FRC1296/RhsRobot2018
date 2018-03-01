@@ -124,6 +124,14 @@ const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
 //EXAMPLE: const int RELAY_LED = 0;
 
 // PDB Channels
+
+const int PDB_DRIVE_CHANNEL_L1 = 0;
+const int PDB_DRIVE_CHANNEL_L2 = 1;
+const int PDB_DRIVE_CHANNEL_L3 = 2;
+const int PDB_DRIVE_CHANNEL_R1 = 15;
+const int PDB_DRIVE_CHANNEL_R2 = 14;
+const int PDB_DRIVE_CHANNEL_R3 = 13;
+
 const int PDB_CLAW_CHANNEL_ONE = 7;
 const int PDB_CLAW_CHANNEL_TWO = 8;
 

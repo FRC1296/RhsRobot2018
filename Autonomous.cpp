@@ -392,6 +392,16 @@ bool Autonomous::Claw(char *pCurrLinePos)
 		Message.command = COMMAND_CLAW_STOP;
 		Message.params.claw.fClawSpeed = 0.0;
 	}
+	else if(strncmp(pToken, "PINCH", 5))
+	{
+		Message.command = COMMAND_CLAW_PINCH;
+		Message.params.claw.fClawSpeed = 0.0;
+	}
+	else if(strncmp(pToken, "RELEASE", 7))
+	{
+		Message.command = COMMAND_CLAW_RELEASE;
+		Message.params.claw.fClawSpeed = 0.0;
+	}
 	else
 	{
 		return(false);

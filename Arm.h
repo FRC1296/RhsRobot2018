@@ -31,7 +31,6 @@ public:
 
 private:
 	TalonSRX* pArmMotor;
-
 	Timer* pArmTimeout;
 
 	void OnStateChange();

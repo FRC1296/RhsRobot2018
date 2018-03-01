@@ -28,6 +28,10 @@ RhsRobot::RhsRobot() {
 	pElevator = NULL;
 	pArm = NULL;
 
+	memset( &lastMessage, 0, sizeof(lastMessage));
+	memset( &maxMessage, 0, sizeof(maxMessage));
+	memset( &robotMessage, 0, sizeof(robotMessage));
+
 	iLoop = 0;            // a helpful little loop counter
 }
 
@@ -64,14 +68,18 @@ void RhsRobot::Init() {
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
-	//pCompressor = new Compressor(CAN_PCM);
-	//pCompressor->SetClosedLoopControl(true);
+	pCompressor = new Compressor(CAN_PCM);
+	pCompressor->SetClosedLoopControl(true);
+	pPDP = new PowerDistributionPanel(CAN_PDB);
 
 	pDrivetrain = new Drivetrain();
 	pClaw = new Claw();
 	pElevator = new Elevator();
 	pArm = new Arm();
 	pAuto = new Autonomous();
+
+	camera = CameraServer::GetInstance()->StartAutomaticCapture();
+	camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
@@ -137,9 +145,14 @@ void RhsRobot::Run() {
 	SmartDashboard::PutNumber("Left Trigger",fLeftTrigger);
 	SmartDashboard::PutNumber("Right Trigger",fRightTrigger);
 
-	if((iLoop++ % 50) == 0)  // once every second or so
+	if((iLoop % 50) == 0)   // once every second or so
 	{
 		UpdateSystemData();
+	}
+
+	if((iLoop++ % 5) == 0)  // ten times per second or so
+	{
+		MonitorPDB();
 	}
 
 	UpdateGameData();
@@ -324,6 +337,83 @@ void RhsRobot::Run() {
 			pArm->SendMessage(&robotMessage);
 		}
 	}
+}
+
+void RhsRobot::MonitorPDB(void)
+{
+	robotMessage.command = COMMAND_SYSTEM_PDBDATA;
+	robotMessage.params.pdb.lclaw = pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE);
+	robotMessage.params.pdb.rclaw = pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO);
+
+	if(pClaw)
+	{
+		robotMessage.params.pdb.lclaw = pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE);
+		robotMessage.params.pdb.rclaw = pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO);
+		pClaw->SendMessage(&robotMessage);
+	}
+
+	if(pDrivetrain)
+	{
+		robotMessage.params.pdb.ldrive1 = pPDP->GetCurrent(PDB_DRIVE_CHANNEL_L1);
+		robotMessage.params.pdb.ldrive2 = pPDP->GetCurrent(PDB_DRIVE_CHANNEL_L2);
+		robotMessage.params.pdb.ldrive3 = pPDP->GetCurrent(PDB_DRIVE_CHANNEL_L3);
+		robotMessage.params.pdb.rdrive1 = pPDP->GetCurrent(PDB_DRIVE_CHANNEL_R1);
+		robotMessage.params.pdb.rdrive2 = pPDP->GetCurrent(PDB_DRIVE_CHANNEL_R2);
+		robotMessage.params.pdb.rdrive3 = pPDP->GetCurrent(PDB_DRIVE_CHANNEL_R3);
+		pDrivetrain->SendMessage(&robotMessage);
+	}
+
+	lastMessage = robotMessage;
+
+	if(lastMessage.params.pdb.lclaw > maxMessage.params.pdb.lclaw)
+	{
+		maxMessage.params.pdb.lclaw = lastMessage.params.pdb.lclaw;
+	}
+
+	if(lastMessage.params.pdb.rclaw > maxMessage.params.pdb.rclaw)
+	{
+		maxMessage.params.pdb.rclaw = lastMessage.params.pdb.rclaw;
+	}
+
+	if(lastMessage.params.pdb.ldrive1 > maxMessage.params.pdb.ldrive1)
+	{
+		maxMessage.params.pdb.ldrive1 = lastMessage.params.pdb.ldrive1;
+	}
+
+	if(lastMessage.params.pdb.ldrive2 > maxMessage.params.pdb.ldrive2)
+	{
+		maxMessage.params.pdb.ldrive2 = lastMessage.params.pdb.ldrive2;
+	}
+
+	if(lastMessage.params.pdb.ldrive3 > maxMessage.params.pdb.ldrive3)
+	{
+		maxMessage.params.pdb.ldrive3 = lastMessage.params.pdb.ldrive3;
+	}
+
+	if(lastMessage.params.pdb.rdrive1 > maxMessage.params.pdb.rdrive1)
+	{
+		maxMessage.params.pdb.rdrive1 = lastMessage.params.pdb.rdrive1;
+	}
+
+	if(lastMessage.params.pdb.rdrive2 > maxMessage.params.pdb.rdrive2)
+	{
+		maxMessage.params.pdb.rdrive2 = lastMessage.params.pdb.rdrive2;
+	}
+
+	if(lastMessage.params.pdb.rdrive3 > maxMessage.params.pdb.rdrive3)
+	{
+		maxMessage.params.pdb.rdrive3 = lastMessage.params.pdb.rdrive3;
+	}
+
+	SmartDashboard::PutNumber("Claw Motor Left Max Amps", maxMessage.params.pdb.lclaw);
+	SmartDashboard::PutNumber("Claw Motor Right Max Amps", maxMessage.params.pdb.rclaw);
+	SmartDashboard::PutNumber("Drive Motor Left #1 Max Amps", maxMessage.params.pdb.ldrive1);
+	SmartDashboard::PutNumber("Drive Motor Left #2 Max Amps", maxMessage.params.pdb.ldrive2);
+	SmartDashboard::PutNumber("Drive Motor Left #3 Max Amps", maxMessage.params.pdb.ldrive3);
+	SmartDashboard::PutNumber("Drive Motor Right #1 Max Amps", maxMessage.params.pdb.rdrive1);
+	SmartDashboard::PutNumber("Drive Motor Right #2 Max Amps", maxMessage.params.pdb.rdrive2);
+	SmartDashboard::PutNumber("Drive Motor Right #3 Max Amps", maxMessage.params.pdb.rdrive3);
+
 }
 
 void RhsRobot::UpdateGameData(void)

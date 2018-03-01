@@ -45,10 +45,6 @@ private:
 	Solenoid* pClawSolenoidLeft;
 	Solenoid* pClawSolenoidRight;
 
-	PowerDistributionPanel* pPDP;
-
-	bool motorsStopped;
-
 	void OnStateChange();
 	void Run();
 };

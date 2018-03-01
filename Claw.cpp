@@ -20,7 +20,6 @@
 Claw::Claw()
 : ComponentBase(CLAW_TASKNAME, CLAW_QUEUE, CLAW_PRIORITY)
 {
-	//TODO: add member objects
 	pClawVictorLeft = new VictorSPX(CAN_CLAW_VICTOR_LEFT);
 	pClawVictorRight = new VictorSPX(CAN_CLAW_VICTOR_RIGHT);
 	pClawVictorLeft->SetNeutralMode(NeutralMode::Brake);
@@ -30,10 +29,6 @@ Claw::Claw()
 	pClawSolenoidRight = new Solenoid(CAN_PCM, 1);
 	pClawSolenoidLeft->Set(true);
 	pClawSolenoidRight->Set(true);
-
-	pPDP = new PowerDistributionPanel(CAN_PDB);
-
-	motorsStopped = false;
 
 	pTask = new std::thread(&Component::StartTask, this, CLAW_TASKNAME, CLAW_PRIORITY);
 	wpi_assert(pTask);
@@ -51,9 +46,6 @@ void Claw::OnStateChange()
 
 void Claw::Run()
 {
-	SmartDashboard::PutNumber("Claw Current 1",pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE));
-	SmartDashboard::PutNumber("Claw Current 1",pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO));
-
 	switch(localMessage.command)			//Reads the message command
 	{
 		case COMMAND_COMPONENT_TEST:
@@ -88,15 +80,4 @@ void Claw::Run()
 			break;
 		}
 
-	if ((pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE) > CLAW_LIMIT) ||
-			(pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO) > CLAW_LIMIT))
-	{
-		pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
-		pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
-		motorsStopped = true;
-	}
-	else
-	{
-		motorsStopped = false;
-	}
 };
