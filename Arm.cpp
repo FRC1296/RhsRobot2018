@@ -139,16 +139,6 @@ void Arm::Run()
 		pArmTimeout->Start();
 		break;
 
-
-
-	case COMMAND_CLAW_PINCH:
-		pClawSolenoid->Set(true);
-		break;
-
-	case COMMAND_CLAW_RELEASE:
-		pClawSolenoid->Set(false);
-		break;
-
 	case COMMAND_ARM_SHOOT:
 		if( (iStartPos + iStartToShoot + iMoveDelta) > iStartToMax)
 		{
@@ -175,6 +165,14 @@ void Arm::Run()
 
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
+		break;
+
+	case COMMAND_CLAW_PINCH:
+		pClawSolenoid->Set(true);
+		break;
+
+	case COMMAND_CLAW_RELEASE:
+		pClawSolenoid->Set(false);
 		break;
 
 	default:

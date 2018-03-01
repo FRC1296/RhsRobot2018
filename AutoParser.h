@@ -24,6 +24,7 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_TURN,				//!<R	turn <degrees:float> <timeout:float>
 	AUTO_TOKEN_ELEVATOR,			//!<R	elevator <INTAKE|SWITCH|SCALEHI|SCALELO|STOW> <timeout:float>
 	AUTO_TOKEN_CLAW,                //!<R	claw <IN|OUT|STOP>
+	AUTO_TOKEN_ARM,                 //!<R	arm <PINCH|RELEASE>
 	AUTO_TOKEN_LAST
 } AUTO_COMMAND_TOKENS;
 

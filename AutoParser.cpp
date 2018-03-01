@@ -31,8 +31,9 @@ const char *szTokens[] = {
 		"MOVE",				//!<(left speed) (right speed)
 		"MMOVE",	        //!<(speed) (distance:inches) (timeout)
 		"TURN",				//!<(degrees) (timeout)
-		"ELEVATOR",			//!<(degrees) (timeout)
-		"CLAW",		    	//!<(degrees) (timeout)
+		"ELEVATOR",
+		"CLAW",
+		"ARM",
 		"NOP" };
 
 bool Autonomous::Evaluate(std::string rStatement) {
@@ -226,6 +227,20 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			if(bModeFound)
 			{
 				if (!Claw(pCurrLinePos))
+				{
+					rStatus.append("claw error");
+				}
+				else
+				{
+					rStatus.append("claw");
+				}
+			}
+			break;
+
+		case AUTO_TOKEN_ARM:
+			if(bModeFound)
+			{
+				if (!Arm(pCurrLinePos))
 				{
 					rStatus.append("claw error");
 				}

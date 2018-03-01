@@ -73,6 +73,7 @@ private:
 	bool Turn(char *);
 	bool Elevator(char *);
 	bool Claw(char *);
+	bool Arm(char *);
 
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);

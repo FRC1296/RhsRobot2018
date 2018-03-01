@@ -31,10 +31,6 @@ public:
 
 
 private:
-<<<<<<< HEAD
-=======
-
->>>>>>> aa710d53e701c5c22cad4869abea0d89b224560f
 	TalonSRX* pArmMotor;
 	Timer* pArmTimeout;
 

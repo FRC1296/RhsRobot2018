@@ -392,6 +392,37 @@ bool Autonomous::Claw(char *pCurrLinePos)
 		Message.command = COMMAND_CLAW_STOP;
 		Message.params.claw.fClawSpeed = 0.0;
 	}
+	else
+	{
+		return(false);
+	}
+
+#ifndef TEST_SCRIPTS
+	return (CommandNoResponse(CLAW_QUEUE));
+#else
+	printf("Claw %0.2f\n", Message.params.claw.fClawSpeed);
+	return(true);
+#endif
+}
+
+bool Autonomous::Arm(char *pCurrLinePos)
+{
+	char *pToken;
+
+	// parse remainder of line to get mode
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		return (false);
+	}
+
+	if(strncmp(pToken, "STOP", 4))
+	{
+		Message.command = COMMAND_CLAW_STOP;
+		Message.params.claw.fClawSpeed = 0.0;
+	}
 	else if(strncmp(pToken, "PINCH", 5))
 	{
 		Message.command = COMMAND_CLAW_PINCH;
@@ -408,7 +439,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 	}
 
 #ifndef TEST_SCRIPTS
-	return (CommandNoResponse(CLAW_QUEUE));
+	return (CommandNoResponse(ARM_QUEUE));
 #else
 	printf("Claw %0.2f\n", Message.params.claw.fClawSpeed);
 	return(true);
