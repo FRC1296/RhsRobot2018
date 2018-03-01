@@ -236,10 +236,10 @@ void RhsRobot::Run() {
 		}
 #endif
 		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
-		 			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL;
-		 			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE;
-		 			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
-		 			pDrivetrain->SendMessage(&robotMessage);
+		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL;
+		robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE;
+		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
+		pDrivetrain->SendMessage(&robotMessage);
 
 		// delete after we link in cheesy libraries
 
@@ -269,16 +269,26 @@ void RhsRobot::Run() {
 			robotMessage.params.claw.fClawSpeed = 0.0;
 			pClaw->SendMessage(&robotMessage);
 		}
+	}
 
+
+	if(pArm)
+	{
 		if(CLAW_PINCH)
 		{
 			robotMessage.command = COMMAND_CLAW_PINCH;
-			pClaw->SendMessage(&robotMessage);
+			pArm->SendMessage(&robotMessage);
 		}
 		else if(CLAW_RELEASE)
 		{
 			robotMessage.command = COMMAND_CLAW_RELEASE;
-			pClaw->SendMessage(&robotMessage);
+			pArm->SendMessage(&robotMessage);
+		}
+		// testing this button
+		if(pControllerOperator->GetRawButton(1))
+		{
+			robotMessage.command = COMMAND_ARM_STOW;
+			pArm->SendMessage(&robotMessage);
 		}
 	}
 
@@ -300,12 +310,6 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_ELEVATOR_FLOOR;
 			pElevator->SendMessage(&robotMessage);
-
-			if(pArm)
-			{
-				robotMessage.command = COMMAND_ARM_OPEN;
-				pArm->SendMessage(&robotMessage);
-			}
 		}
 		else
 		{
@@ -324,17 +328,6 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_ELEVATOR_MOVE;
 			robotMessage.params.elevator.fSpeed = 0;
 			pElevator->SendMessage(&robotMessage);
-		}
-	}
-
-	// just testing this button
-
-	if(pArm)
-	{
-		if(pControllerOperator->GetRawButton(1))
-		{
-			robotMessage.command = COMMAND_ARM_STOW;
-			pArm->SendMessage(&robotMessage);
 		}
 	}
 }

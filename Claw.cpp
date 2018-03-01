@@ -13,6 +13,7 @@
 #include "RobotParams.h"
 #include "WPILib.h"
 #include "Claw.h"
+#include "Arm.h"
 #include "RobotMessage.h"
 
 //Robot
@@ -25,10 +26,22 @@ Claw::Claw()
 	pClawVictorLeft->SetNeutralMode(NeutralMode::Brake);
 	pClawVictorRight->SetNeutralMode(NeutralMode::Brake);
 
+<<<<<<< HEAD
 	pClawSolenoidLeft = new Solenoid(CAN_PCM, 0 );
 	pClawSolenoidRight = new Solenoid(CAN_PCM, 1);
 	pClawSolenoidLeft->Set(true);
 	pClawSolenoidRight->Set(true);
+=======
+	pPDP = new PowerDistributionPanel(CAN_PDB);
+
+	motorsStopped = false;
+
+	/* *************
+	 * All the pArmMotor stuff is only in here because of the way the Limit Switch
+	 * is currently wired for pneumatics. This may change, but we aren't in charge
+	 * of how electrical wires things so RIP.
+	 */
+>>>>>>> aa710d53e701c5c22cad4869abea0d89b224560f
 
 	pTask = new std::thread(&Component::StartTask, this, CLAW_TASKNAME, CLAW_PRIORITY);
 	wpi_assert(pTask);
@@ -59,16 +72,6 @@ void Claw::Run()
 		case COMMAND_CLAW_EXHALE:
 			pClawVictorLeft->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
 			pClawVictorRight->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
-			break;
-
-		case COMMAND_CLAW_PINCH:
-			pClawSolenoidLeft->Set(false);
-			pClawSolenoidRight->Set(false);
-			break;
-
-		case COMMAND_CLAW_RELEASE:
-			pClawSolenoidLeft->Set(true);
-			pClawSolenoidRight->Set(true);
 			break;
 
 		case COMMAND_CLAW_STOP:

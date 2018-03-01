@@ -54,10 +54,10 @@ private:
 	float fMotorSpeed;
 	float fMaxSpeed;
 
-	const int iFloorToSwitch = 8000;
-	const int iFloorToScale = 21500;
-	const int iFloorToClimb = 17500;
-	const int iFloorToMax = 25500;
+	const int iFloorToSwitch = 10288;
+	const int iFloorToScale = 22870;
+	const int iFloorToClimb = 17500; // Needs updating
+	const int iFloorToMax = 27982;
 };
 
 #endif			//COMPONENT_H
