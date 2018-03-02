@@ -28,6 +28,8 @@ RhsRobot::RhsRobot() {
 	pElevator = NULL;
 	pArm = NULL;
 
+	bLimitSpeedWhileElevatorIsUp = false;
+
 	memset( &lastMessage, 0, sizeof(lastMessage));
 	memset( &maxMessage, 0, sizeof(maxMessage));
 	memset( &robotMessage, 0, sizeof(robotMessage));
@@ -65,6 +67,8 @@ void RhsRobot::Init() {
 	pChooser->AddObject("Right",'R');
 	pChooser->AddDefault("Simple", 'X');
 	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
+
+	pSpeedTimer = new Timer();
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
@@ -239,6 +243,12 @@ void RhsRobot::Run() {
 		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL;
 		robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE;
 		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
+
+		if(bLimitSpeedWhileElevatorIsUp)
+		{
+			robotMessage.params.cheesyDrive.throttle /= 2.0;
+		}
+
 		pDrivetrain->SendMessage(&robotMessage);
 
 		// delete after we link in cheesy libraries
@@ -305,16 +315,21 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_ELEVATOR_SCALE_MID;
 			pElevator->SendMessage(&robotMessage);
+			bLimitSpeedWhileElevatorIsUp = true;
 		}
 		else if(ELEVATOR_FLOOR)
 		{
 			robotMessage.command = COMMAND_ELEVATOR_FLOOR;
 			pElevator->SendMessage(&robotMessage);
+			pSpeedTimer->Reset();
+			pSpeedTimer->Start();
 		}
 		else
 		{
 			robotMessage.command = COMMAND_ELEVATOR_NOBUTTON;
 			pElevator->SendMessage(&robotMessage);
+			pSpeedTimer->Reset();
+			pSpeedTimer->Start();
 		}
 
 		if ((ELEVATOR_DELTA > .2) || (ELEVATOR_DELTA < -.2))
@@ -329,6 +344,12 @@ void RhsRobot::Run() {
 			robotMessage.params.elevator.fSpeed = 0;
 			pElevator->SendMessage(&robotMessage);
 		}
+	}
+
+	if (pSpeedTimer->Get() >= 1.0)
+	{
+		pSpeedTimer->Stop();
+		bLimitSpeedWhileElevatorIsUp = false;
 	}
 }
 

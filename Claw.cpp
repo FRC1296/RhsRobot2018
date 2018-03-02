@@ -64,6 +64,5 @@ void Claw::Run()
 
 		default:
 			break;
-		}
-
+	}
 };

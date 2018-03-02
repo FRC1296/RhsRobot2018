@@ -29,6 +29,7 @@ private:
 	Joystick* pControllerOperator;
 	Compressor* pCompressor;
 	PowerDistributionPanel* pPDP;
+	Timer *pSpeedTimer;
 
 	frc::SendableChooser<char> *pChooser;
 
@@ -43,6 +44,7 @@ private:
 	string gameDataPrev = "XXX";
 	char sStartLocation = 'X';
 	char sStartLocationLast = 'X';
+	bool bLimitSpeedWhileElevatorIsUp;
 
 	float fLeftTrigger;
 	float fRightTrigger;
