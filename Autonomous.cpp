@@ -409,20 +409,21 @@ bool Autonomous::Arm(char *pCurrLinePos)
 		return (false);
 	}
 
-	if(!strncmp(pToken, "STOP", 4))
-	{
-		Message.command = COMMAND_CLAW_STOP;
-		Message.params.claw.fClawSpeed = 0.0;
-	}
-	else if(!strncmp(pToken, "PINCH", 5))
+	if(!strncmp(pToken, "PINCH", 5))
 	{
 		Message.command = COMMAND_CLAW_PINCH;
-		Message.params.claw.fClawSpeed = 0.0;
 	}
 	else if(!strncmp(pToken, "RELEASE", 7))
 	{
 		Message.command = COMMAND_CLAW_RELEASE;
-		Message.params.claw.fClawSpeed = 0.0;
+	}
+	else if(!strncmp(pToken, "SHOOT", 5))
+	{
+		Message.command = COMMAND_ARM_SHOOT;
+	}
+	else if(!strncmp(pToken, "FLOOR", 5))
+	{
+		Message.command = COMMAND_ARM_FLOOR;
 	}
 	else
 	{
