@@ -105,36 +105,66 @@ MODE LLLL
     CLAW STOP
     MMOVE 0.5 -24 5.0
     ELEVATOR STOW 2.0
+	
 MODE LLRR
-# Just drive straight
+# Just drive straight for now
     MMOVE 0.5 120.0 5.0
-MODE LLRL
-# Just drive straight
-    MMOVE 0.5 120.0 5.0
-ODE LRRR
-# Just drive straight
-    MMOVE 0.5 120.0 5.0
-    
-# Highly ambitious opposite-side scale
-#   MMOVE 0.5 154 5.0
-#   TURN -90.0 5.0
-#   MMOVE 0.5 225 5.0
-#   TURN 90.0 5.0
+# possible start left to opposite side auto to try
+#   MMOVE 0.5 120 5.0
+#   MMOVE 0.5 120 5.0
+#   TURN -80.0 5.0
+#   MMOVE 100.0 5.0
+#   MMOVE 92.0 5.0
+#   TURN 80.0 5.0
 #   ELEVATOR SCALE 5.0
-#   MMOVE 0.5 70 5.0
+#   MMOVE 0.5 48 5.0
 #   CLAW OUT 1.0
 #   DELAY 2.0
 #   CLAW STOP
-#   MMOVE 0.5 -40 5.0
+#   MMOVE 0.5 -24 5.0
 #   ELEVATOR STOW
-#   TURN -180.0 5.0
+
+MODE LLRL
+# Just drive straight for now
+    MMOVE 0.5 120.0 5.0
+	
+MODE LRRR
+# Just drive straight for now
+    MMOVE 0.5 120.0 5.0
+    
 #modes with robot starting just right of switch
 MODE RLRL
+    MMOVE 0.5 150 5.0
+    MMOVE 0.5 150 5.0
+    TURN 80.0 5.0
+    ELEVATOR SCALE 2.0
+    DELAY 2.0
+    MMOVE 0.5 24 5.0
+    CLAW OUT 1.0
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.5 -24 5.0
+    ELEVATOR STOW 2.0
 MODE RRLR
+# Just drive straight for now
+    MMOVE 0.5 120.0 5.0
 MODE RLLL
+# Just drive straight for now
+    MMOVE 0.5 120.0 5.0
 MODE RRRR
+    MMOVE 0.5 150 5.0
+    MMOVE 0.5 150 5.0
+    TURN 80.0 5.0
+    ELEVATOR SCALE 2.0
+    DELAY 2.0
+    MMOVE 0.5 24 5.0
+    CLAW OUT 1.0
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.5 -24 5.0
+    ELEVATOR STOW 2.0
 
-#modes where we just run forward
+#modes where we always run forward
 MODE XLRL
 MMOVE 0.5 120.0 5.0
 MODE XRLR
