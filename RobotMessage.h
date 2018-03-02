@@ -96,6 +96,8 @@ enum MessageCommand {
 	COMMAND_ARM_OPEN,
 	COMMAND_ARM_SHOOT,
 	COMMAND_ARM_STOW,
+	COMMAND_ARM_FLOOR,
+	COMMAND_ARM_STOP,
 
 	//add new component messages here
 

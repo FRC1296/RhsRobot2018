@@ -26,6 +26,8 @@ Claw::Claw()
 	pClawVictorLeft->SetNeutralMode(NeutralMode::Brake);
 	pClawVictorRight->SetNeutralMode(NeutralMode::Brake);
 
+	motorsStopped = false;
+
 	pTask = new std::thread(&Component::StartTask, this, CLAW_TASKNAME, CLAW_PRIORITY);
 	wpi_assert(pTask);
 };
@@ -47,22 +49,56 @@ void Claw::Run()
 		case COMMAND_COMPONENT_TEST:
 			break;
 
+		case COMMAND_SYSTEM_PDBDATA:
+			if ((localMessage.params.pdb.lclaw > CLAW_LIMIT) ||
+					(localMessage.params.pdb.rclaw > CLAW_LIMIT))
+			{
+				pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
+				pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
+				motorsStopped = true;
+			}
+			else
+			{
+				motorsStopped = false;
+			}
+			break;
+
 		case COMMAND_CLAW_INHALE:
-			pClawVictorLeft->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
-			pClawVictorRight->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
+			if(motorsStopped == false)
+			{
+				pClawVictorLeft->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
+				pClawVictorRight->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
+			}
 			break;
 
 		case COMMAND_CLAW_EXHALE:
-			pClawVictorLeft->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
-			pClawVictorRight->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
+			if(motorsStopped == false)
+			{
+				pClawVictorLeft->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
+				pClawVictorRight->Set(ControlMode::PercentOutput,localMessage.params.claw.fClawSpeed);
+			}
 			break;
 
 		case COMMAND_CLAW_STOP:
 			pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
 			pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
+			motorsStopped = false;
 			break;
 
 		default:
 			break;
+		}
+/*
+	if ((pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE) > CLAW_LIMIT) ||
+			(pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO) > CLAW_LIMIT))
+	{
+		pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
+		pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
+		motorsStopped = true;
 	}
+	else
+	{
+		motorsStopped = false;
+	}
+*/
 };

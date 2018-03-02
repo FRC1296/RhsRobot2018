@@ -42,6 +42,7 @@ public:
 private:
 	VictorSPX* pClawVictorLeft;
 	VictorSPX* pClawVictorRight;
+	bool motorsStopped;
 
 	void OnStateChange();
 	void Run();

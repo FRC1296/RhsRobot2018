@@ -51,7 +51,7 @@ Arm::Arm()
 	pArmMotor->ConfigReverseLimitSwitchSource(LimitSwitchSource::LimitSwitchSource_RemoteTalonSRX,LimitSwitchNormal::LimitSwitchNormal_Disabled,0);
 
 	Wait(1.0);
-	pArmMotor->Set(ControlMode::Position, pArmMotor->GetSelectedSensorPosition(0));
+	//	pArmMotor->Set(ControlMode::Position, pArmMotor->GetSelectedSensorPosition(0));
 	//pArmMotor->Set(ControlMode::Velocity, 0.0);
 
 	iCurrPos = pArmMotor->GetSelectedSensorPosition(0);
@@ -73,6 +73,8 @@ Arm::Arm()
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
 	SmartDashboard::PutNumber("Arm Open Position",iStartPos + iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos + iStartToShoot);
+
+	//pArmMotor->Set(ControlMode::Position, iStartPos + iStartToShoot);
 
 	pTask = new std::thread(&Arm::StartTask, this, ARM_TASKNAME, ARM_PRIORITY);
 	wpi_assert(pTask);
@@ -140,9 +142,9 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_SHOOT:
-		if( (iStartPos + iStartToShoot + iMoveDelta) > iStartToMax)
+		if( (iStartPos + iStartToShoot + iMoveDelta) >iStartPos + iStartToMax)
 		{
-			pArmMotor->Set(ControlMode::Position, iStartToMax);
+			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToMax);
 		}
 		else
 		{
@@ -154,15 +156,28 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_STOW:
-		if( (iStartPos + iStartToStow + iMoveDelta) > iStartToMax)
+		if( (iStartPos + iStartToStow + iMoveDelta) > iStartPos + iStartToMax)
 		{
-			pArmMotor->Set(ControlMode::Position, iStartToMax);
+			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToMax);
 		}
 		else
 		{
 			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToStow + iMoveDelta);
 		}
 
+		pArmTimeout->Reset();
+		pArmTimeout->Start();
+		break;
+
+	case COMMAND_ARM_FLOOR:
+		if( (iStartPos + iStartToOpen + iMoveDelta) >iStartPos + iStartToMax)
+		{
+			pArmMotor->Set(ControlMode::Position, iStartPos +iStartToMax);
+		}
+		else
+		{
+			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToOpen + iMoveDelta);
+		}
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;

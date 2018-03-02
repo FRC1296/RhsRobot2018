@@ -20,7 +20,8 @@ RhsRobot::RhsRobot() {
 	// set new object pointers to NULL here
 	pControllerDriver = NULL;
 	pControllerOperator = NULL;
-	pChooser = NULL;
+	pChooser1 = NULL;
+	pChooser2 = NULL;
 
 	pAuto = NULL;
 	pDrivetrain = NULL;
@@ -61,12 +62,19 @@ void RhsRobot::Init() {
 	 * 			drivetrain = new Drivetrain(); (in RhsRobot::Init())
 	 */
 
-	pChooser = new frc::SendableChooser<char>();
-	pChooser->AddObject("Left",'L');
-	pChooser->AddObject("Center",'C');
-	pChooser->AddObject("Right",'R');
-	pChooser->AddDefault("Simple", 'X');
-	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
+	pChooser1 = new frc::SendableChooser<char>();
+	pChooser1->AddObject("Left",'L');
+	pChooser1->AddObject("Center",'C');
+	pChooser1->AddObject("Right",'R');
+	pChooser1->AddDefault("Simple", 'X');
+	SmartDashboard::PutData("Autonomous mode chooser", pChooser1);
+
+	pChooser2 = new frc::SendableChooser<char>();
+	pChooser2->AddDefault("One",'1');
+	pChooser2->AddObject("Two",'2');
+	pChooser2->AddObject("Three",'3');
+	pChooser2->AddObject("Foor", '4');
+	SmartDashboard::PutData("Multi-cube Auto", pChooser2);
 
 	pSpeedTimer = new Timer();
 
@@ -239,16 +247,21 @@ void RhsRobot::Run() {
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 #endif
-		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
-		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL;
-		robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE;
-		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
 
 		if(bLimitSpeedWhileElevatorIsUp)
 		{
-			robotMessage.params.cheesyDrive.throttle /= 2.0;
+			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 2.25;
+			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE / 2.5;
+			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
+		}
+		else
+		{
+			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
+			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE / 1.0;
+			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
 		}
 
+		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
 		pDrivetrain->SendMessage(&robotMessage);
 
 		// delete after we link in cheesy libraries
@@ -281,7 +294,6 @@ void RhsRobot::Run() {
 		}
 	}
 
-
 	if(pArm)
 	{
 		if(CLAW_PINCH)
@@ -294,10 +306,15 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_CLAW_RELEASE;
 			pArm->SendMessage(&robotMessage);
 		}
-		// testing this button
-		if(pControllerOperator->GetRawButton(1))
+
+		if(CLAW_MOVE > .5)
 		{
-			robotMessage.command = COMMAND_ARM_STOW;
+			robotMessage.command = COMMAND_ARM_FLOOR;
+			pArm->SendMessage(&robotMessage);
+		}
+		if(CLAW_MOVE <-.5)
+		{
+			robotMessage.command = COMMAND_ARM_SHOOT;
 			pArm->SendMessage(&robotMessage);
 		}
 	}
@@ -441,7 +458,7 @@ void RhsRobot::UpdateGameData(void)
 		return;
 	}
 
-	sStartLocation = (char) pChooser->GetSelected();
+	sStartLocation = (char) pChooser1->GetSelected();
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
 	{
@@ -544,7 +561,8 @@ void RhsRobot::UpdateGameData(void)
 
 		gameDataPrev = gameData;
 		sStartLocationLast = sStartLocation;
-		SmartDashboard::PutData("Autonomous mode chooser", pChooser);
+		SmartDashboard::PutData("Autonomous mode chooser", pChooser1);
+		SmartDashboard::PutData("Multi-cube Auto", pChooser2);
 	}
 }
 

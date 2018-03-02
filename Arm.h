@@ -31,6 +31,7 @@ public:
 
 
 private:
+
 	TalonSRX* pArmMotor;
 	Timer* pArmTimeout;
 
@@ -48,10 +49,10 @@ private:
 	float fMotorSpeed;
 	float fMaxSpeed;
 
-	const int iStartToOpen = 3500;
-	const int iStartToStow = 1500;
-	const int iStartToShoot = 1500;
-	const int iStartToMax = 3700;
+	const int iStartToOpen = 5320;
+	const int iStartToStow = 2975;
+	const int iStartToShoot = 2975;
+	const int iStartToMax = 5320;
 };
 
 #endif			//ARM_H

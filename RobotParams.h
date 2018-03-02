@@ -224,7 +224,7 @@ const int POV_STILL = -1;
 #define CLAW_PINCH					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
 #define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 
-#define CLAW_MOVE					(pControllerOperator->GetRawAxis(L310_THUMBSTICK_RIGHT_Y))
+#define CLAW_MOVE					(pControllerOperator->GetRawAxis(5))
 
 #define ELEVATOR_DELTA				(pControllerOperator->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
 #define ELEVATOR_SCALE				(pControllerOperator->GetRawButton(L310_BUTTON_Y))
@@ -253,7 +253,7 @@ const int POV_STILL = -1;
 #define ACCEPT_RANGE_DEGR			2			//Acceptable Range for "finished" PID loop in degrees
 #define ACCEPT_RANGE_KI				20			//Acceptable Range for adding Integral Value
 
-#define ACCEPT_RANGE_MOVE			768	//512			//Acceptable Range for "finished" PID loop for moving straight
+#define ACCEPT_RANGE_MOVE			4095	//512			//Acceptable Range for "finished" PID loop for moving straight
 
 #define MAX_ARM_SPEED				0.5
 
