@@ -16,12 +16,9 @@
 // standard practice in embedded systems.
 
 RhsRobot::RhsRobot() {
-
-	// set new object pointers to NULL here
 	pControllerDriver = NULL;
 	pControllerOperator = NULL;
-	pChooser1 = NULL;
-	pChooser2 = NULL;
+	pChooser = NULL;
 
 	pAuto = NULL;
 	pDrivetrain = NULL;
@@ -62,19 +59,12 @@ void RhsRobot::Init() {
 	 * 			drivetrain = new Drivetrain(); (in RhsRobot::Init())
 	 */
 
-	pChooser1 = new frc::SendableChooser<char>();
-	pChooser1->AddObject("Left",'L');
-	pChooser1->AddObject("Center",'C');
-	pChooser1->AddObject("Right",'R');
-	pChooser1->AddDefault("Simple", 'X');
-	SmartDashboard::PutData("Autonomous mode chooser", pChooser1);
-
-	pChooser2 = new frc::SendableChooser<char>();
-	pChooser2->AddDefault("One",'1');
-	pChooser2->AddObject("Two",'2');
-	pChooser2->AddObject("Three",'3');
-	pChooser2->AddObject("Foor", '4');
-	SmartDashboard::PutData("Multi-cube Auto", pChooser2);
+	pChooser = new frc::SendableChooser<char>();
+	pChooser->AddObject("Left",'L');
+	pChooser->AddObject("Center",'C');
+	pChooser->AddObject("Right",'R');
+	pChooser->AddDefault("Simple", 'X');
+	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 
 	pSpeedTimer = new Timer();
 
@@ -90,8 +80,8 @@ void RhsRobot::Init() {
 	pArm = new Arm();
 	pAuto = new Autonomous();
 
-	camera = CameraServer::GetInstance()->StartAutomaticCapture();
-	camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
+	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
+	//camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
 
 	std::vector<ComponentBase *>::iterator nextComponent = ComponentSet.begin();
 
@@ -330,7 +320,7 @@ void RhsRobot::Run() {
 		}
 		else if (ELEVATOR_SCALE)
 		{
-			robotMessage.command = COMMAND_ELEVATOR_SCALE_MID;
+			robotMessage.command = COMMAND_ELEVATOR_SCALE;
 			pElevator->SendMessage(&robotMessage);
 			bLimitSpeedWhileElevatorIsUp = true;
 		}
@@ -458,7 +448,7 @@ void RhsRobot::UpdateGameData(void)
 		return;
 	}
 
-	sStartLocation = (char) pChooser1->GetSelected();
+	sStartLocation = (char) pChooser->GetSelected();
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
 	{
@@ -561,8 +551,7 @@ void RhsRobot::UpdateGameData(void)
 
 		gameDataPrev = gameData;
 		sStartLocationLast = sStartLocation;
-		SmartDashboard::PutData("Autonomous mode chooser", pChooser1);
-		SmartDashboard::PutData("Multi-cube Auto", pChooser2);
+		SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 	}
 }
 

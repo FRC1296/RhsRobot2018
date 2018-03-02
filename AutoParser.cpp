@@ -81,7 +81,6 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	for(iCommand = AUTO_TOKEN_MODE; iCommand < AUTO_TOKEN_LAST; iCommand++)
 	{
-		//printf("comparing %s to %s\n", pToken, szTokens[iCommand]);
 		if(!strncmp(pToken, szTokens[iCommand], strlen(szTokens[iCommand])))
 		{
 			break;

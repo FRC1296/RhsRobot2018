@@ -15,8 +15,8 @@
 
 //Robot Params
 const char* const ROBOT_NAME =		"RhsRobot2018";	//Formal name
-const char* const ROBOT_NICKNAME =  "Unknown";		//Nickname
-const char* const ROBOT_VERSION =	"0.5";			//Version
+const char* const ROBOT_NICKNAME =  "Parzival";		//Nickname
+const char* const ROBOT_VERSION =	"0.8";			//Version
 
 //Utility Functions - Define commonly used operations here
 #define ABLIMIT(a,b)		if(a > b) a = b; else if(a < -b) a = -b;

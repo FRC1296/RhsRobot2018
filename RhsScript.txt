@@ -39,92 +39,108 @@
 #CLAW IN 1.0
 #CLAW OUT 1.0
 #CLAW STOP
-
 BEGIN
 DEBUG 1
-
 #modes with robot starting in the center
 MODE CLRL
-	MMOVE 0.5 36 5.0
-	TURN 90.0 5.0
-	MMOVE 0.5 60 5.0
-	ELEVATOR SWITCH 5.0
-	TURN -90.0 5.0
-	MMOVE 0.5 60 5.0
-	CLAW OUT 1.0
-	DELAY 2.0
-	CLAW STOP
-	MMOVE 0.5 -36 5.0
-	ELEVATOR STOW 5.0
-
+    MMOVE 0.5 36 5.0
+    TURN 90.0 5.0
+    MMOVE 0.5 60 5.0
+    ELEVATOR SWITCH 5.0
+    TURN -90.0 5.0
+    MMOVE 0.5 60 5.0
+    CLAW OUT 1.0
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.5 -36 5.0
+    ELEVATOR STOW 5.0
 MODE CRLR
-	MMOVE 0.5 36 5.0
-	TURN -90.0 5.0
-	MMOVE 0.5 60 5.0
-	ELEVATOR SWITCH 5.0
-	TURN 90.0 5.0
-	MMOVE 0.5 60 5.0
-	CLAW OUT 1.0
-	DELAY 2.0
-	CLAW STOP
-	MMOVE 0.5 -36 5.0
-	ELEVATOR STOW 5.0
-
+    MMOVE 0.5 36 5.0
+    TURN -90.0 5.0
+    MMOVE 0.5 60 5.0
+    ELEVATOR SWITCH 5.0
+    TURN 90.0 5.0
+    MMOVE 0.5 60 5.0
+    CLAW OUT 1.0
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.5 -36 5.0
+    ELEVATOR STOW 5.0
 MODE CLLL
-	MMOVE 0.5 36 5.0
-	TURN 90.0 5.0
-	MMOVE 0.5 60 5.0
-	ELEVATOR SWITCH 5.0
-	TURN -90.0 5.0
-	MMOVE 0.5 60 5.0
-	CLAW OUT 1.0
-	DELAY 2.0
-	CLAW STOP
-	MMOVE 0.5 -36 5.0
-	ELEVATOR STOW 5.0
-
+    MMOVE 0.5 36 5.0
+    TURN 90.0 5.0
+    MMOVE 0.5 60 5.0
+    ELEVATOR SWITCH 5.0
+    TURN -90.0 5.0
+    MMOVE 0.5 60 5.0
+    CLAW OUT 1.0
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.5 -36 5.0
+    ELEVATOR STOW 5.0
 MODE CRRR
-	MMOVE 0.5 36 5.0
-	TURN -90.0 5.0
-	MMOVE 0.5 60 5.0
-	ELEVATOR SWITCH 5.0
-	TURN 90.0 5.0
-	MMOVE 0.5 60 5.0
-	CLAW OUT 1.0
-	DELAY 2.0
-	CLAW STOP
-	MMOVE 0.5 -36 5.0
-	ELEVATOR STOW 5.0
+    MMOVE 0.5 36 5.0
+    TURN -90.0 5.0
+    MMOVE 0.5 60 5.0
+    ELEVATOR SWITCH 5.0
+    TURN 90.0 5.0
+    MMOVE 0.5 60 5.0
+    CLAW OUT 1.0
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.5 -36 5.0
+    ELEVATOR STOW 5.0
  
 #modes with robot starting just left of switch
-
-MODE LLRL
-MODE LRLR
 MODE LLLL
-MODE LRRR
-
+# 27 feet minus half width of scale
+    MMOVE 0.5 150 5.0
+    MMOVE 0.5 150 5.0
+    TURN -80.0 5.0
+    ELEVATOR SCALE 2.0
+    DELAY 2.0
+    MMOVE 0.5 24 5.0
+    CLAW OUT 1.0
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.5 -24 5.0
+    ELEVATOR STOW 2.0
+MODE LLRR
+# Just drive straight
+    MMOVE 0.5 120.0 5.0
+MODE LLRL
+# Just drive straight
+    MMOVE 0.5 120.0 5.0
+ODE LRRR
+# Just drive straight
+    MMOVE 0.5 120.0 5.0
+    
+# Highly ambitious opposite-side scale
+#   MMOVE 0.5 154 5.0
+#   TURN -90.0 5.0
+#   MMOVE 0.5 225 5.0
+#   TURN 90.0 5.0
+#   ELEVATOR SCALE 5.0
+#   MMOVE 0.5 70 5.0
+#   CLAW OUT 1.0
+#   DELAY 2.0
+#   CLAW STOP
+#   MMOVE 0.5 -40 5.0
+#   ELEVATOR STOW
+#   TURN -180.0 5.0
 #modes with robot starting just right of switch
-
 MODE RLRL
 MODE RRLR
 MODE RLLL
 MODE RRRR
 
 #modes where we just run forward
-
 MODE XLRL
 MMOVE 0.5 120.0 5.0
-
 MODE XRLR
 MMOVE 0.5 120.0 5.0
-
 MODE XLLL
 MMOVE 0.5 120.0 5.0
-
 MODE XRRR
 MMOVE 0.5 120.0 5.0
-
 END
-
-
-

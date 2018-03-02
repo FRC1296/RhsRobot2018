@@ -165,7 +165,7 @@ void Elevator::Run()
 		pEleTimeout->Start();
 		break;
 
-	case COMMAND_ELEVATOR_SCALE_MID:
+	case COMMAND_ELEVATOR_SCALE:
 		if( (iStartPos + iFloorToScale + iMoveDelta) > iFloorToMax)
 		{
 			pElevatorMotorLeft->Set(ControlMode::Position, iFloorToMax);

@@ -31,8 +31,7 @@ private:
 	PowerDistributionPanel* pPDP;
 	Timer *pSpeedTimer;
 
-	frc::SendableChooser<char> *pChooser1;
-	frc::SendableChooser<char> *pChooser2;
+	frc::SendableChooser<char> *pChooser;
 
 	Autonomous *pAuto;
 	Drivetrain* pDrivetrain;

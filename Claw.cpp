@@ -88,17 +88,4 @@ void Claw::Run()
 		default:
 			break;
 		}
-/*
-	if ((pPDP->GetCurrent(PDB_CLAW_CHANNEL_ONE) > CLAW_LIMIT) ||
-			(pPDP->GetCurrent(PDB_CLAW_CHANNEL_TWO) > CLAW_LIMIT))
-	{
-		pClawVictorLeft->Set(ControlMode::PercentOutput, 0.0);
-		pClawVictorRight->Set(ControlMode::PercentOutput, 0.0);
-		motorsStopped = true;
-	}
-	else
-	{
-		motorsStopped = false;
-	}
-*/
 };

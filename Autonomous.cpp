@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <math.h>
 
 #include "WPILib.h"
@@ -298,27 +297,19 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 		return (false);
 	}
 
-	if(strncmp(pToken, "INTAKE", 6))
+	if(!strncmp(pToken, "INTAKE", 6))
 	{
 		Message.command = COMMAND_ELEVATOR_FLOOR;
 	}
-	else if(strncmp(pToken, "SWITCH", 6))
+	else if(!strncmp(pToken, "SWITCH", 6))
 	{
 		Message.command = COMMAND_ELEVATOR_SWITCH;
 	}
-	else if(strncmp(pToken, "SCALEHI", 7))
+	else if(!strncmp(pToken, "SCALE", 5))
 	{
-		Message.command = COMMAND_ELEVATOR_SCALE_HIGH;
+		Message.command = COMMAND_ELEVATOR_SCALE;
 	}
-	else if(strncmp(pToken, "SCALEMID", 8))
-	{
-		Message.command = COMMAND_ELEVATOR_SCALE_MID;
-	}
-	else if(strncmp(pToken, "SCALELO", 7))
-	{
-		Message.command = COMMAND_ELEVATOR_SCALE_LOW;
-	}
-	else if(strncmp(pToken, "STOW", 4))
+	else if(!strncmp(pToken, "STOW", 4))
 	{
 		Message.command = COMMAND_ELEVATOR_FLOOR;
 	}
@@ -359,7 +350,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 		return (false);
 	}
 
-	if(strncmp(pToken, "IN", 2))
+	if(!strncmp(pToken, "IN", 2))
 	{
 		// parse remainder of line to get the speed
 		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
@@ -373,7 +364,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 		Message.command = COMMAND_CLAW_INHALE;
 		Message.params.claw.fClawSpeed = atof(pToken);
 	}
-	else if(strncmp(pToken, "OUT", 3))
+	else if(!strncmp(pToken, "OUT", 3))
 	{
 		// parse remainder of line to get the speed
 		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
@@ -387,7 +378,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 		Message.command = COMMAND_CLAW_EXHALE;
 		Message.params.claw.fClawSpeed = atof(pToken);
 	}
-	else if(strncmp(pToken, "STOP", 4))
+	else if(!strncmp(pToken, "STOP", 4))
 	{
 		Message.command = COMMAND_CLAW_STOP;
 		Message.params.claw.fClawSpeed = 0.0;
@@ -418,17 +409,17 @@ bool Autonomous::Arm(char *pCurrLinePos)
 		return (false);
 	}
 
-	if(strncmp(pToken, "STOP", 4))
+	if(!strncmp(pToken, "STOP", 4))
 	{
 		Message.command = COMMAND_CLAW_STOP;
 		Message.params.claw.fClawSpeed = 0.0;
 	}
-	else if(strncmp(pToken, "PINCH", 5))
+	else if(!strncmp(pToken, "PINCH", 5))
 	{
 		Message.command = COMMAND_CLAW_PINCH;
 		Message.params.claw.fClawSpeed = 0.0;
 	}
-	else if(strncmp(pToken, "RELEASE", 7))
+	else if(!strncmp(pToken, "RELEASE", 7))
 	{
 		Message.command = COMMAND_CLAW_RELEASE;
 		Message.params.claw.fClawSpeed = 0.0;

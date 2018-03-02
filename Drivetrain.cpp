@@ -208,6 +208,7 @@ void Drivetrain::Run()
 	SmartDashboard::PutNumber("Target Angle",fTargetCalc);
 	SmartDashboard::PutNumber("CurrAngle",dfAccumGyroData[2]);
 
+#if 0
 	switch (iTurnState)
 	{
 	case TurnState_gpTurn:
@@ -222,6 +223,7 @@ void Drivetrain::Run()
 	default:
 		break;
 	}
+#endif
 
 	switch(localMessage.command)			//Reads the message command
 	{
