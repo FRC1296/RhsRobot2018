@@ -221,8 +221,8 @@ const int POV_STILL = -1;
 #define CLAW_INHALE 				(pControllerOperator->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CLAW_EXHALE					(pControllerOperator->GetRawAxis(L310_TRIGGER_LEFT))
 
-#define CLAW_PINCH					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
-#define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CLAW_PINCH					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+#define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
 
 #define CLAW_MOVE					(pControllerOperator->GetRawAxis(5))
 

@@ -19,13 +19,7 @@
 //#define TEST_SCRIPTS
 
 // if you have more than this many lines in your script, THEY WILL NOT RUN! Change if needed.
-const int AUTONOMOUS_SCRIPT_LINES = 150;
-const int AUTONOMOUS_CHECKLIST_LINES = 150;
 const char* const AUTONOMOUS_SCRIPT_FILEPATH = "/home/lvuser/RhsScript.txt";
-
-//from 2014
-const float MAX_VELOCITY_PARAM = 1.0;
-const float MAX_DISTANCE_PARAM = 100.0;
 
 class Autonomous : public ComponentBase
 {
@@ -54,7 +48,7 @@ protected:
 	bool bPauseAutoMode;
 
 private:
-	std::string script[AUTONOMOUS_SCRIPT_LINES];	//Autonomous script
+	std::vector<std::string> script;
 	int lineNumber;
 	int iAutoDebugMode;
 	std::thread *pScript;

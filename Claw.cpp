@@ -25,6 +25,8 @@ Claw::Claw()
 	pClawVictorRight = new VictorSPX(CAN_CLAW_VICTOR_RIGHT);
 	pClawVictorLeft->SetNeutralMode(NeutralMode::Brake);
 	pClawVictorRight->SetNeutralMode(NeutralMode::Brake);
+	pClawVictorLeft->SetInverted(true);
+	pClawVictorRight->SetInverted(true);
 
 	motorsStopped = false;
 

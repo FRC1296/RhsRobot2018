@@ -155,21 +155,15 @@ bool Autonomous::LoadScriptFile()
 	bool bReturn = true;
 	printf("Auto Script Filepath: [%s]\n", AUTONOMOUS_SCRIPT_FILEPATH);
 	ifstream scriptStream;
-	scriptStream.open(AUTONOMOUS_SCRIPT_FILEPATH);
+	scriptStream.open(AUTONOMOUS_SCRIPT_FILEPATH, ios::in);
+	string newLine;
 
 	if(scriptStream.is_open())//not working
 	{
-		for(int i = 0; i < AUTONOMOUS_SCRIPT_LINES; ++i)
+		while(getline(scriptStream, newLine))
 		{
-			if(!scriptStream.eof())
-			{
-				getline(scriptStream, script[i]);
-				cout << script[i] << endl;
-			}
-			else
-			{
-				script[i].clear();
-			}
+			cout << newLine << endl;
+			script.push_back(newLine);
 		}
 
 		printf("Autonomous script loaded\n");
@@ -194,78 +188,49 @@ void Autonomous::DoScript()
 
 	// executes autos over and over again
 
-	//while(true)
-	//{
-		// first load a script file
-
-		while(true)
+	while(true)
+	{
+		if(LoadScriptFile() == false)
 		{
-			lineNumber = 0;
-			SmartDashboard::PutNumber("Script Line Number", lineNumber);
+			// wait a little and try again, really only useful if when practicing
 
-			if(LoadScriptFile() == false)
-			{
-				// wait a little and try again, really only useful if when practicing
-
-				SmartDashboard::PutBoolean("Script File Found", false);
-				Wait(1.0);
-			}
-			else
-			{
-				SmartDashboard::PutBoolean("Script File Found", true);
-				lineNumber = 0;
-				break;
-			}
+			SmartDashboard::PutBoolean("Script File Found", false);
+			Wait(1.0);
 		}
-
-		// if there is a script we will execute it some heck or high water!
-		while (!bInAutoMode)
+		else
 		{
-			Wait(0.1);
+			SmartDashboard::PutBoolean("Script File Found", true);
+			break;
 		}
+	}
 
-		while (!bInAutoMode)
+	// if there is a script we will execute it some heck or high water!
+	while (!bInAutoMode)
+	{
+		Wait(0.1);
+	}
+
+	while (bInAutoMode)
+	{
+		std::vector<std::string>::iterator nextLine;
+
+		if (!bPauseAutoMode)
 		{
-			Wait(0.1);
-		}
-
-		while (bInAutoMode)
-		{
-			SmartDashboard::PutNumber("Script Line Number", lineNumber);
-
-			if (!bPauseAutoMode)
+			for(nextLine = script.begin(); nextLine != script.end(); ++nextLine)
 			{
-				if (lineNumber < AUTONOMOUS_SCRIPT_LINES)
+				// handle pausing in the Evaluate method
+
+				if (Evaluate(*nextLine))
 				{
-					// can we have empty lines?  at the end I guess
-
-					if (script[lineNumber].empty() == false)
-					{
-						// handle pausing in the Evaluate method
-
-						SmartDashboard::PutString("Script Line", script[lineNumber].c_str());
-
-						if (Evaluate(script[lineNumber]))
-						{
-							// error executing this line or end of script
-							SmartDashboard::PutString("Script Line", "<NOT RUNNING>");
-							break;
-						}
-					}
-
-					lineNumber++;
-				}
-				else
-				{
-					// the script is too long
-
+					// error executing this line or end of script
+					SmartDashboard::PutString("Script Line", "<NOT RUNNING>");
 					break;
 				}
 			}
 		}
+	}
 
-		bInAutoMode = false;
-	//}
+	bInAutoMode = false;
 }
 
 

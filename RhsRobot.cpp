@@ -264,19 +264,31 @@ void RhsRobot::Run() {
 
 	if(pClaw)
 	{
-		if(CLAW_INHALE > .1)
+		if(CLAW_INHALE > .1)// Intake cube
 		{
 			robotMessage.command = COMMAND_CLAW_INHALE;
 			robotMessage.params.claw.fClawSpeed = CLAW_INHALE;
 			pClaw->SendMessage(&robotMessage);
 		}
-		else if(CLAW_EXHALE > .1)
+		else if(CLAW_EXHALE > .1)// Exhaust cube
 		{
 			robotMessage.command = COMMAND_CLAW_EXHALE;
 			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
 			pClaw->SendMessage(&robotMessage);
 		}
-		else
+		/*
+		else if (CLAW_EXHALE >= 0.1 && CLAW_EXHALE < 0.7) {
+			robotMessage.command = COMMAND_CLAW_EXHALE;
+			robotMessage.params.claw.fClawSpeed = 0.3;
+			pClaw->SendMessage(&robotMessage);
+		}
+		else if (CLAW_EXHALE >= 0.7) {
+			robotMessage.command = COMMAND_CLAW_EXHALE;
+			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
+			pClaw->SendMessage(&robotMessage);
+		}
+		*/
+		else// Slowly rotate intake in to hold cube
 		{
 			robotMessage.command = COMMAND_CLAW_STOP;
 			robotMessage.params.claw.fClawSpeed = 0.0;

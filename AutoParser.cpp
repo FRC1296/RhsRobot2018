@@ -49,7 +49,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	rStatement.erase(0, rStatement.find_first_not_of(" \r\n\t"));
 
 	if(rStatement.empty()) {
-		printf("statement is empty");
+		//printf("statement is empty");
 		return (bReturn);
 	}
 
@@ -81,6 +81,9 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	for(iCommand = AUTO_TOKEN_MODE; iCommand < AUTO_TOKEN_LAST; iCommand++)
 	{
+		if(bModeFound)
+			printf("Comparing %s to %s\n", pToken, szTokens[iCommand]);
+
 		if(!strncmp(pToken, szTokens[iCommand], strlen(szTokens[iCommand])))
 		{
 			break;
@@ -239,6 +242,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		case AUTO_TOKEN_ARM:
 			if(bModeFound)
 			{
+printf("process AUTO_TOKEN_ARM\n");
 				if (!Arm(pCurrLinePos))
 				{
 					rStatus.append("claw error");

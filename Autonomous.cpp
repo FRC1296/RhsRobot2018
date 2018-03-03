@@ -176,12 +176,6 @@ bool Autonomous::Move(char *pCurrLinePos) {
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 	fRight = atof(pToken);
 
-	if ((fabs(fLeft) > MAX_VELOCITY_PARAM)
-			|| (fabs(fRight) > MAX_VELOCITY_PARAM))
-	{
-		return (false);
-	}
-
 	Message.command = COMMAND_DRIVETRAIN_RUN_TANK;
 	Message.params.tdrive.left =  -fLeft;
 	Message.params.tdrive.right = fRight;
@@ -409,21 +403,27 @@ bool Autonomous::Arm(char *pCurrLinePos)
 		return (false);
 	}
 
+	printf("comparing %s ...\n", pToken);
+
 	if(!strncmp(pToken, "PINCH", 5))
 	{
+		printf("COMMAND_CLAW_PINCH\n");
 		Message.command = COMMAND_CLAW_PINCH;
 	}
 	else if(!strncmp(pToken, "RELEASE", 7))
 	{
+		printf("COMMAND_CLAW_RELEASE\n");
 		Message.command = COMMAND_CLAW_RELEASE;
-	}
-	else if(!strncmp(pToken, "SHOOT", 5))
-	{
-		Message.command = COMMAND_ARM_SHOOT;
 	}
 	else if(!strncmp(pToken, "FLOOR", 5))
 	{
+		printf("COMMAND_ARM_FLOOR\n");
 		Message.command = COMMAND_ARM_FLOOR;
+	}
+	else if(!strncmp(pToken, "SHOOT", 5))
+	{
+		printf("COMMAND_ARM_SHOOT\n");
+		Message.command = COMMAND_ARM_SHOOT;
 	}
 	else
 	{

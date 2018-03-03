@@ -63,16 +63,16 @@ Arm::Arm()
 
 	pArmTimeout = new Timer();
 
-	pClawSolenoid = new Solenoid(CAN_PCM, 0 );
-	pClawSolenoid->Set(true);
+	pClawSolenoid = new Solenoid(CAN_PCM,1);
+	pClawSolenoid->Set(false);
 
 	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
 
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
-	SmartDashboard::PutNumber("Arm Open Position",iStartPos + iStartToOpen);
-	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos + iStartToShoot);
+	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
+	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
 	//pArmMotor->Set(ControlMode::Position, iStartPos + iStartToShoot);
 
@@ -100,12 +100,12 @@ void Arm::Run()
 	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
 
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
-	SmartDashboard::PutNumber("Arm Open Position",iStartPos + iStartToOpen);
-	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos + iStartToShoot);
+	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
+	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
 	if (pArmMotor->GetSensorCollection().IsRevLimitSwitchClosed())
 	{
-		pClawSolenoid->Set(true);
+		pClawSolenoid->Set(false);
 	}
 
 
@@ -130,11 +130,11 @@ void Arm::Run()
 	case COMMAND_ARM_OPEN:
 		if( (iStartPos + iStartToOpen + iMoveDelta) > iStartToMax)
 		{
-			pArmMotor->Set(ControlMode::Position, iStartToMax);
+			pArmMotor->Set(ControlMode::Position, iStartPos - iStartToMax);
 		}
 		else
 		{
-			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToOpen + iMoveDelta);
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen - iMoveDelta);
 		}
 
 		pArmTimeout->Reset();
@@ -142,13 +142,13 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_SHOOT:
-		if( (iStartPos + iStartToShoot + iMoveDelta) >iStartPos + iStartToMax)
+		if( (iStartPos - iStartToShoot - iMoveDelta) < iStartPos - iStartToMax)
 		{
-			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToMax);
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToMax);
 		}
 		else
 		{
-			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToShoot + iMoveDelta);
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToShoot - iMoveDelta);
 		}
 
 		pArmTimeout->Reset();
@@ -156,13 +156,13 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_STOW:
-		if( (iStartPos + iStartToStow + iMoveDelta) > iStartPos + iStartToMax)
+		if( (iStartPos - iStartToStow - iMoveDelta) < iStartPos - iStartToMax)
 		{
-			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToMax);
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToMax);
 		}
 		else
 		{
-			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToStow + iMoveDelta);
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToStow - iMoveDelta);
 		}
 
 		pArmTimeout->Reset();
@@ -170,24 +170,24 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_FLOOR:
-		if( (iStartPos + iStartToOpen + iMoveDelta) >iStartPos + iStartToMax)
+		if( (iStartPos - iStartToOpen - iMoveDelta) < iStartPos - iStartToMax)
 		{
-			pArmMotor->Set(ControlMode::Position, iStartPos +iStartToMax);
+			pArmMotor->Set(ControlMode::Position, iStartPos -iStartToMax);
 		}
 		else
 		{
-			pArmMotor->Set(ControlMode::Position,iStartPos + iStartToOpen + iMoveDelta);
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen - iMoveDelta);
 		}
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
 
 	case COMMAND_CLAW_PINCH:
-		pClawSolenoid->Set(true);
+		pClawSolenoid->Set(false);
 		break;
 
 	case COMMAND_CLAW_RELEASE:
-		pClawSolenoid->Set(false);
+		pClawSolenoid->Set(true);
 		break;
 
 	default:
