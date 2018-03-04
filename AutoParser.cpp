@@ -125,7 +125,12 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			else
 			{
 				// this is not chosen mode
-				bModeFound = false;
+				if (bModeFound)
+				{
+					// we were executing so rtime to exit
+
+					bReturn = true;
+				}
 			}
 			rStatus.append("mode");
 			break;

@@ -36,13 +36,13 @@ Arm::Arm()
 	pArmMotor->ConfigPeakCurrentDuration(0.0,10);
 	pArmMotor->EnableCurrentLimit(true);
 	pArmMotor->SetInverted(false);
-	pArmMotor->ConfigPeakOutputForward(1.0, 10);
-	pArmMotor->ConfigPeakOutputReverse(-1.0,10);
+	pArmMotor->ConfigPeakOutputForward(0.65, 10);
+	pArmMotor->ConfigPeakOutputReverse(-0.65,10);
 
 	pArmMotor->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pArmMotor->SetSensorPhase(false);
 	pArmMotor->Config_kF(0,0.0,10);
-	pArmMotor->Config_kP(0,0.2,10);
+	pArmMotor->Config_kP(0,0.325,10);
 	pArmMotor->Config_kI(0,0.0,10);
 	pArmMotor->Config_kD(0,0.0,10);
 	pArmMotor->SelectProfileSlot(0,0);

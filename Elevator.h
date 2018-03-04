@@ -50,12 +50,14 @@ private:
 	int iCurrPos;
 	int iStartPos;
 	int iMoveDelta;
+	int iPrevDelta;
+	int iHoldPos;
 
 	float fMotorSpeed;
 	float fMaxSpeed;
 
 	const int iFloorToSwitch = 10288;
-	const int iFloorToScale = 22870;
+	const int iFloorToScale = 25250;
 	const int iFloorToClimb = 17500; // Needs updating
 	const int iFloorToMax = 27982;
 };

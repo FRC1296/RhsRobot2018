@@ -307,6 +307,10 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 	{
 		Message.command = COMMAND_ELEVATOR_FLOOR;
 	}
+	else if(!strncmp(pToken, "FLOOR", 5))
+	{
+		Message.command = COMMAND_ELEVATOR_FLOOR;
+	}
 	else
 	{
 		return(false);

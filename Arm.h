@@ -49,10 +49,10 @@ private:
 	float fMotorSpeed;
 	float fMaxSpeed;
 
-	const int iStartToOpen = 5320;
-	const int iStartToStow = 2975;
-	const int iStartToShoot = 2975;
-	const int iStartToMax = 5320;
+	const int iStartToOpen = 5387;
+	const int iStartToStow = 1525;
+	const int iStartToShoot = 1525;
+	const int iStartToMax = 5387;
 };
 
 #endif			//ARM_H

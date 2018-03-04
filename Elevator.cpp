@@ -49,9 +49,9 @@ Elevator::Elevator()
 	pElevatorMotorLeft->SetInverted(false);
 	pElevatorMotorRight->SetInverted(false);
 	pElevatorMotorLeft->ConfigPeakOutputForward(0.82, 10);
-	pElevatorMotorLeft->ConfigPeakOutputReverse(-.35,10);
+	pElevatorMotorLeft->ConfigPeakOutputReverse(-.1,10);
 	pElevatorMotorRight->ConfigPeakOutputForward(0.82, 10);
-	pElevatorMotorRight->ConfigPeakOutputReverse(-.35,10);
+	pElevatorMotorRight->ConfigPeakOutputReverse(-.1,10);
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pElevatorMotorLeft->SetSensorPhase(true);
@@ -72,7 +72,9 @@ Elevator::Elevator()
 	fCurVoltage = 0;
 	fMotorSpeed = 0;
 	fMaxSpeed = 0;
-    iMoveDelta = 0;  // for now
+	iMoveDelta = 0;  // for now
+	iPrevDelta = 0;
+	iHoldPos = 0;
 
 	pEleTimeout = new Timer();
 
@@ -101,6 +103,7 @@ void Elevator::OnStateChange()
 
 void Elevator::Run()
 {
+	static bool prevPressed = false;
 	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 
 	SmartDashboard::PutNumber("Elevator Speed RPM",((fMaxSpeed*600)/4096.0));
@@ -111,6 +114,7 @@ void Elevator::Run()
 	SmartDashboard::PutNumber("Elevator Switch Position",iStartPos + iFloorToSwitch);
 	SmartDashboard::PutNumber("Elevator Scale Position",iStartPos + iFloorToScale);
 	SmartDashboard::PutNumber("Difference",(iStartPos + iFloorToScale) - iCurrPos);
+	SmartDashboard::PutNumber("MoveDelta",iMoveDelta);
 
 	switch(localMessage.command)			//Reads the message command
 	{
@@ -121,22 +125,25 @@ void Elevator::Run()
 		fMotorSpeed = localMessage.params.elevator.fSpeed;
 		//pElevatorMotorLeft->Set(ControlMode::PercentOutput, -fMotorSpeed);
 
-		if (fMotorSpeed > 0.2)
+		if (fMotorSpeed > 0.2 && iCurrPos > iStartPos)
 		{
-		    iMoveDelta -= 100;
-		    //if(iLoop % 25 == 0)
-		    //	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
+			iMoveDelta -= 75;
+			//if(iLoop % 25 == 0)
+			//	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
 		}
-		else if(fMotorSpeed < -0.2)
+		else if(fMotorSpeed < -0.2 && iCurrPos < iStartPos + iFloorToMax)
 		{
-		    iMoveDelta += 100;
-		    //if(iLoop % 25 == 0)
-		    //	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
+			iMoveDelta += 75;
+			//if(iLoop % 25 == 0)
+			//	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
 		}
 		break;
 
 	case COMMAND_ELEVATOR_NOBUTTON:
+		prevPressed = false;
 		iMoveDelta = 0;
+		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
 		pElevatorMotorLeft->Set(ControlMode::Position, iStartPos + iMoveDelta);
 		SmartDashboard::PutString("Button", "No Buttons Pushed");
 		pEleTimeout->Reset();
@@ -144,19 +151,61 @@ void Elevator::Run()
 		break;
 
 	case COMMAND_ELEVATOR_FLOOR:
-		pElevatorMotorLeft->Set(ControlMode::Position, iStartPos + iMoveDelta);
+		if(!prevPressed) iMoveDelta = 0;
+		prevPressed = true;
+
+		if(iPrevDelta== iMoveDelta)
+		{
+			iMoveDelta = 0;
+			if(iHoldPos == 0)
+				iHoldPos = iCurrPos;
+			//break;
+		}
+		else
+		{
+			iHoldPos = 0;
+		}
+
+		if(( (iCurrPos + iMoveDelta) < (iStartPos + iFloorToMax)) &&( (iCurrPos + iMoveDelta) > iStartPos))
+		{
+			if(iMoveDelta==0)
+			{
+				pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
+				pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
+				pElevatorMotorLeft->Set(ControlMode::Position, iHoldPos + iMoveDelta);
+			}
+			else
+			{
+				pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
+				pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
+				pElevatorMotorLeft->Set(ControlMode::Position, iCurrPos + iMoveDelta);
+			}
+		}
+		else
+		{
+			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
+			pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
+			pElevatorMotorLeft->Set(ControlMode::Position,iCurrPos);
+		}
 		SmartDashboard::PutString("Button", "A Button Pushed");
 		pEleTimeout->Reset();
 		pEleTimeout->Start();
+
+		iPrevDelta = iMoveDelta;
 		break;
 
 	case COMMAND_ELEVATOR_SWITCH:
+		prevPressed = false;
 		if( (iStartPos + iFloorToSwitch + iMoveDelta) > iFloorToMax)
 		{
+			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+			pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
 			pElevatorMotorLeft->Set(ControlMode::Position, iFloorToMax);
 		}
 		else
 		{
+			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+			pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
 			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToSwitch + iMoveDelta);
 		}
 
@@ -166,12 +215,17 @@ void Elevator::Run()
 		break;
 
 	case COMMAND_ELEVATOR_SCALE:
+		prevPressed = false;
 		if( (iStartPos + iFloorToScale + iMoveDelta) > iFloorToMax)
 		{
+			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+			pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
 			pElevatorMotorLeft->Set(ControlMode::Position, iFloorToMax);
 		}
 		else
 		{
+			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+			pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
 			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToScale + iMoveDelta);
 		}
 
@@ -181,10 +235,14 @@ void Elevator::Run()
 		break;
 
 	case COMMAND_ELEVATOR_CLIMB:
-	//	pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToClimb);
+		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
+		prevPressed = false;
+		//	pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToClimb);
 		break;
 
 	default:
+		prevPressed = false;
 		break;
 	}
 
