@@ -235,6 +235,13 @@ void Drivetrain::Run()
 		fBatteryVoltage = localMessage.params.system.fBattery;
 		break;
 
+	case COMMAND_AUTONOMOUS_COMPLETE:
+		bInAuto = false;
+		bUseCheesyDrive = true;
+		pLeftMotor->Set(ControlMode::PercentOutput, 0);
+		pRightMotor->Set(ControlMode::PercentOutput, 0);
+		break;
+
 	case COMMAND_DRIVETRAIN_DRIVE_CHEESY:
 		RunCheesyDrive(bUseCheesyDrive, localMessage.params.cheesyDrive.wheel,
 				localMessage.params.cheesyDrive.throttle, localMessage.params.cheesyDrive.bQuickturn);

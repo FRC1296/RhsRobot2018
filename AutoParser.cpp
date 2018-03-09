@@ -127,8 +127,9 @@ bool Autonomous::Evaluate(std::string rStatement) {
 				// this is not chosen mode
 				if (bModeFound)
 				{
-					// we were executing so rtime to exit
+					// we were executing so time to exit
 
+					End(pCurrLinePos);
 					bReturn = true;
 				}
 			}

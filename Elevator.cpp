@@ -24,7 +24,6 @@
  * so why was the servo going nuts?  a bug!!  one must call ConfigPeakCurrentDuration
  * if you are using ConfigPeakCurrentLimit!
  *
- *
  */
 
 
@@ -55,12 +54,27 @@ Elevator::Elevator()
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pElevatorMotorLeft->SetSensorPhase(true);
+
 	pElevatorMotorLeft->Config_kF(0,0.0,10);
 	pElevatorMotorLeft->Config_kP(0,0.2,10);
 	pElevatorMotorLeft->Config_kI(0,0.0,10);
 	pElevatorMotorLeft->Config_kD(0,0.0,10);
-	pElevatorMotorLeft->SelectProfileSlot(0,0);
 	pElevatorMotorLeft->ConfigAllowableClosedloopError(0, 200, 10);
+
+	//pElevatorMotorLeft->Config_kF(1,0.0,10);
+	//pElevatorMotorLeft->Config_kP(1,0.2,10);
+	//pElevatorMotorLeft->Config_kI(1,0.0,10);
+	//pElevatorMotorLeft->Config_kD(1,0.0,10);
+	//pElevatorMotorLeft->ConfigAllowableClosedloopError(0, 200, 10);
+	pElevatorMotorLeft->Config_kF(1,0.0,10);
+	pElevatorMotorLeft->Config_kP(1,0.0,10);
+	pElevatorMotorLeft->Config_kI(1,0.2,10);
+	pElevatorMotorLeft->ConfigMaxIntegralAccumulator(1, 8092, 10);
+	pElevatorMotorLeft->Config_kD(1,0.05,10);
+	pElevatorMotorLeft->ConfigAllowableClosedloopError(1, 100, 10);
+
+	iCurrentPid = 0;
+	pElevatorMotorLeft->SelectProfileSlot(iCurrentPid,0);
 
 	Wait(1.0);
 	pElevatorMotorRight->Set(ControlMode::Follower,CAN_ELEVATOR_TALON_LEFT);
@@ -69,6 +83,7 @@ Elevator::Elevator()
 
 	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 	iStartPos = iCurrPos;
+	iCurrTgt = iCurrPos;
 	fCurVoltage = 0;
 	fMotorSpeed = 0;
 	fMaxSpeed = 0;
@@ -106,15 +121,39 @@ void Elevator::Run()
 	static bool prevPressed = false;
 	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 
-	SmartDashboard::PutNumber("Elevator Speed RPM",((fMaxSpeed*600)/4096.0));
+	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(iCurrentPid);
+	iCurrTgt = pElevatorMotorLeft->GetClosedLoopTarget(iCurrentPid);
+
 	SmartDashboard::PutNumber("Elevator Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Elevator Position in Rotations",iCurrPos/4096.0);
-
-	SmartDashboard::PutNumber("Elevator Init Position",iStartPos);
-	SmartDashboard::PutNumber("Elevator Switch Position",iStartPos + iFloorToSwitch);
-	SmartDashboard::PutNumber("Elevator Scale Position",iStartPos + iFloorToScale);
-	SmartDashboard::PutNumber("Difference",(iStartPos + iFloorToScale) - iCurrPos);
 	SmartDashboard::PutNumber("MoveDelta",iMoveDelta);
+
+	if((iCurrTgt - iCurrPos) > 200)
+	{
+		// change the PIS cojnstants for upward motion
+	SmartDashboard::PutNumber("MoveDelta",iMoveDelta);
+
+		if(iCurrentPid == 1)
+		{
+			printf("going up\n");
+		}
+
+		iCurrentPid = 0;
+	}
+	else if((iCurrTgt - iCurrPos) < -200)
+	{
+		// change the PID constants for downward motion
+
+		if(iCurrentPid == 0)
+		{
+			printf("going up\n");
+		}
+
+		iCurrentPid = 1;
+	}
+
+	pElevatorMotorLeft->SelectProfileSlot(iCurrentPid,0);
+
 
 	switch(localMessage.command)			//Reads the message command
 	{
@@ -123,19 +162,14 @@ void Elevator::Run()
 
 	case COMMAND_ELEVATOR_MOVE:
 		fMotorSpeed = localMessage.params.elevator.fSpeed;
-		//pElevatorMotorLeft->Set(ControlMode::PercentOutput, -fMotorSpeed);
 
 		if (fMotorSpeed > 0.2 && iCurrPos > iStartPos)
 		{
-			iMoveDelta -= 75;
-			//if(iLoop % 25 == 0)
-			//	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
+			iMoveDelta -= iMoveDeltaIncrement;
 		}
 		else if(fMotorSpeed < -0.2 && iCurrPos < iStartPos + iFloorToMax)
 		{
-			iMoveDelta += 75;
-			//if(iLoop % 25 == 0)
-			//	printf("Joystick %0.2f speed %0.2f pos %d\n", fMotorSpeed, -fMotorSpeed, iCurrPos);
+			iMoveDelta += iMoveDeltaIncrement;
 		}
 		break;
 
@@ -145,7 +179,6 @@ void Elevator::Run()
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
 		pElevatorMotorLeft->Set(ControlMode::Position, iStartPos + iMoveDelta);
-		SmartDashboard::PutString("Button", "No Buttons Pushed");
 		pEleTimeout->Reset();
 		pEleTimeout->Start();
 		break;
@@ -166,28 +199,25 @@ void Elevator::Run()
 			iHoldPos = 0;
 		}
 
+		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
+
 		if(( (iCurrPos + iMoveDelta) < (iStartPos + iFloorToMax)) &&( (iCurrPos + iMoveDelta) > iStartPos))
 		{
 			if(iMoveDelta==0)
 			{
-				pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
-				pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
 				pElevatorMotorLeft->Set(ControlMode::Position, iHoldPos + iMoveDelta);
 			}
 			else
 			{
-				pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
-				pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
 				pElevatorMotorLeft->Set(ControlMode::Position, iCurrPos + iMoveDelta);
 			}
 		}
 		else
 		{
-			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
-			pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
 			pElevatorMotorLeft->Set(ControlMode::Position,iCurrPos);
 		}
-		SmartDashboard::PutString("Button", "A Button Pushed");
+
 		pEleTimeout->Reset();
 		pEleTimeout->Start();
 
@@ -196,6 +226,10 @@ void Elevator::Run()
 
 	case COMMAND_ELEVATOR_SWITCH:
 		prevPressed = false;
+
+		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
+
 		if( (iStartPos + iFloorToSwitch + iMoveDelta) > iFloorToMax)
 		{
 			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
@@ -209,13 +243,16 @@ void Elevator::Run()
 			pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToSwitch + iMoveDelta);
 		}
 
-		SmartDashboard::PutString("Button", "B Button Pushed");
 		pEleTimeout->Reset();
 		pEleTimeout->Start();
 		break;
 
 	case COMMAND_ELEVATOR_SCALE:
 		prevPressed = false;
+
+		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
+
 		if( (iStartPos + iFloorToScale + iMoveDelta) > iFloorToMax)
 		{
 			pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
@@ -237,6 +274,7 @@ void Elevator::Run()
 	case COMMAND_ELEVATOR_CLIMB:
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
+
 		prevPressed = false;
 		//	pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToClimb);
 		break;

@@ -336,6 +336,8 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_ELEVATOR_SCALE;
 			pElevator->SendMessage(&robotMessage);
 			bLimitSpeedWhileElevatorIsUp = true;
+			pSpeedTimer->Reset();
+			pSpeedTimer->Stop();
 		}
 		else if(ELEVATOR_FLOOR)
 		{
@@ -343,7 +345,6 @@ void RhsRobot::Run() {
 			pElevator->SendMessage(&robotMessage);
 			pSpeedTimer->Reset();
 			pSpeedTimer->Start();
-			bLimitSpeedWhileElevatorIsUp = false;
 		}
 		else
 		{

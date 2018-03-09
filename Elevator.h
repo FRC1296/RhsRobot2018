@@ -48,10 +48,12 @@ private:
 	float fCurVoltage;
 
 	int iCurrPos;
+	int iCurrTgt;
 	int iStartPos;
 	int iMoveDelta;
 	int iPrevDelta;
 	int iHoldPos;
+	int iCurrentPid;
 
 	float fMotorSpeed;
 	float fMaxSpeed;
@@ -60,6 +62,7 @@ private:
 	const int iFloorToScale = 25250;
 	const int iFloorToClimb = 17500; // Needs updating
 	const int iFloorToMax = 27982;
+	const int iMoveDeltaIncrement = 75;
 };
 
 #endif			//COMPONENT_H
