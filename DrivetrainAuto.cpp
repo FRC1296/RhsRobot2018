@@ -104,6 +104,7 @@ void Drivetrain::AutoMeasuredTurn()
 		if (!bInAuto)
 		{
 			break;
+
 		}
 
 		// give up if we are taking more than 3 seconds

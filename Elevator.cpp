@@ -305,3 +305,12 @@ void Elevator::Run()
 
 };
 
+bool Elevator::LimitSpeed() // Very quick and dirty speed limit function
+{
+	if (pElevatorMotorLeft->GetSelectedSensorPosition(0) - iStartPos > iFloorToSpeedLimit)
+	{
+		return true;
+	}
+	return false;
+}
+

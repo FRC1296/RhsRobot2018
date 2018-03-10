@@ -368,11 +368,21 @@ void RhsRobot::Run() {
 		}
 	}
 
-	if (pSpeedTimer->Get() >= 1.0)
+	if (pSpeedTimer->Get() >= 2.0)
 	{
 		pSpeedTimer->Stop();
 		bLimitSpeedWhileElevatorIsUp = false;
 	}
+	/* If the timer no longer works for some reason
+	 * if (pElevator->LimitSpeed())
+	 * {
+	 * 		bLimitSpeedWhileElevatorIsUp = true;
+	 * }
+	 * else
+	 * { // Perhaps do the timer here instead of changing it back but with a shorter timeout?
+	 * 		bLimitSpeedWhileElevatorIsUp = false;
+	 * }
+	 */
 }
 
 void RhsRobot::MonitorPDB(void)
