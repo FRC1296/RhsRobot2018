@@ -42,6 +42,10 @@ void Drivetrain::AutoMeasuredMove()
 	while(true)
 	{
 		// have we timed out?
+		if (!bInAuto)
+		{
+			break;
+		}
 
 		if (pPIDTimerMove->Get() >= fMMoveTime)
 		{
@@ -96,6 +100,11 @@ void Drivetrain::AutoMeasuredTurn()
 		pIdgey->GetGeneralStatus(genStatus);
 		pIdgey->GetAccumGyro(dfAccumGyroData);
 		pIdgey->GetRawGyro(dfRawGyroData);
+
+		if (!bInAuto)
+		{
+			break;
+		}
 
 		// give up if we are taking more than 3 seconds
 
