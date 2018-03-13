@@ -21,8 +21,10 @@ Climber::Climber()
 {
 	pUpMotor = new TalonSRX(CAN_CLIMBER_TALON);
 	pUpSlave = new VictorSPX(CAN_CLIMBER_VICTOR);
+
+	fSpeed = 0.0;
 	//TODO: add member objects
-	pTask = new std::thread(&Component::StartTask, this, COMPONENT_TASKNAME, COMPONENT_PRIORITY);
+	pTask = new std::thread(&Climber::StartTask, this, CLIMBER_TASKNAME, CLIMBER_PRIORITY);
 	wpi_assert(pTask);
 
 	pUpMotor->Set(ControlMode::PercentOutput,0);
@@ -43,6 +45,8 @@ void Climber::OnStateChange()
 
 void Climber::Run()
 {
+	fSpeed = localMessage.params.climb.fClimbSpeed;
+
 	switch(localMessage.command)			//Reads the message command
 	{
 
@@ -50,6 +54,14 @@ void Climber::Run()
 
 	//TODO add command cases for Component
 		case COMMAND_COMPONENT_TEST:
+			break;
+
+		case COMMAND_CLIMB_UP:
+			pUpMotor->Set(ControlMode::PercentOutput,fSpeed);
+			break;
+
+		case COMMAND_CLIMB_STOP:
+			pUpMotor->Set(ControlMode::PercentOutput,0.0);
 			break;
 
 		default:

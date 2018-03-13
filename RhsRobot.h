@@ -14,6 +14,7 @@
 #include "Claw.h"
 #include "Elevator.h"
 #include "Arm.h"
+#include "Climber.h"
 #include "ctre/Phoenix.h"
 
 class RhsRobot : public RhsRobotBase
@@ -38,6 +39,7 @@ private:
 	Claw* pClaw;
 	Elevator* pElevator;
 	Arm* pArm;
+	Climber* pClimber;
 	cs::UsbCamera camera;
 
 	string gameData = "XXX";
@@ -48,6 +50,9 @@ private:
 
 	float fLeftTrigger;
 	float fRightTrigger;
+	float fHeightPercent;
+	float fDrivetrainSpeed;
+
 	RobotMessage lastMessage;
 	RobotMessage maxMessage;
 

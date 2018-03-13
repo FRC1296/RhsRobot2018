@@ -90,12 +90,15 @@ enum MessageCommand {
 	COMMAND_CLAW_PINCH,					//!< Pinch the block
 	COMMAND_CLAW_RELEASE,				//!< Release the block
 
-	COMMAND_ARM_MOVE,
-	COMMAND_ARM_OPEN,
-	COMMAND_ARM_SHOOT,
-	COMMAND_ARM_STOW,
-	COMMAND_ARM_FLOOR,
-	COMMAND_ARM_STOP,
+	COMMAND_ARM_MOVE,					//!< Move arm manually
+	COMMAND_ARM_OPEN,					//!< Open arm?
+	COMMAND_ARM_SHOOT,					//!< Arm to shoot position
+	COMMAND_ARM_STOW,					//!< Arm to stow position
+	COMMAND_ARM_FLOOR,					//!< Arm to floor position
+	COMMAND_ARM_STOP,					//!< Stop arm from moving
+
+	COMMAND_CLIMB_UP,					//!< Move climb motors up
+	COMMAND_CLIMB_STOP,					//!< Stop climb motors
 
 	//add new component messages here
 
@@ -213,6 +216,10 @@ struct AutonomousParams {
 	float driveTime;
 };
 
+struct ClimberParams {
+	float fClimbSpeed;
+};
+
 ///Contains all the parameter structures contained in a message
 union MessageParams {
 	MoveParams move;
@@ -227,6 +234,7 @@ union MessageParams {
 	ClawParams claw;
 	ArmParams arm;
 	ElevatorParams elevator;
+	ClimberParams climb;
 	PdbParams pdb;
 };
 

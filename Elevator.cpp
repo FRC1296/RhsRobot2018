@@ -314,3 +314,17 @@ bool Elevator::LimitSpeed() // Very quick and dirty speed limit function
 	return false;
 }
 
+float Elevator::PercentHeight() // Very quick and dirty function to get elevator's height as % of scale height
+{
+	float fPercent = 0.0;
+	if ((pElevatorMotorLeft->GetSelectedSensorPosition(0) - iStartPos) > iFloorToSwitch)
+	{
+		// Divides the current elevator position by distance between switch and scale iff elevator is above switch height
+		fPercent = (float)(pElevatorMotorLeft->GetSelectedSensorPosition(0) - (iStartPos + iFloorToSwitch)) / (float)(iSwitchToScale);
+	}
+	if (fPercent > 1.0)
+	{
+		fPercent = 1.0;
+	}
+	return fPercent;
+}

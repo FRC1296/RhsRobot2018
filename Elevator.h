@@ -36,6 +36,9 @@ public:
 		return(NULL);
 	}
 
+	bool LimitSpeed();
+	float PercentHeight();
+
 private:
 	TalonSRX* pElevatorMotorLeft;
 	TalonSRX* pElevatorMotorRight;
@@ -44,7 +47,6 @@ private:
 
 	void OnStateChange();
 	void Run();
-	bool LimitSpeed();
 
 	float fCurVoltage;
 
@@ -64,6 +66,7 @@ private:
 	const int iFloorToScale = 25250;
 	const int iFloorToClimb = 17500; // Needs updating
 	const int iFloorToMax = 27982;
+	const int iSwitchToScale = iFloorToScale - iFloorToSwitch;
 	const int iMoveDeltaIncrement = 75;
 };
 

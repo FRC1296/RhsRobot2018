@@ -28,15 +28,17 @@ class Climber : public ComponentBase
 public:
 	Climber();
 	virtual ~Climber();
-	static void *StartTask(void *pThis, const char* szClimberName, int iPriority)
+	static void *StartTask(void *pThis, const char* szComponentName, int iPriority)
 	{
-		pthread_setname_np(pthread_self(), szClimberName);
+		pthread_setname_np(pthread_self(), szComponentName);
 		pthread_setschedprio(pthread_self(), iPriority);
 		((Climber *)pThis)->DoWork();
 		return(NULL);
 	}
 
 private:
+	float fSpeed;
+
 	TalonSRX* pUpMotor;
 	VictorSPX* pUpSlave;
 	void OnStateChange();

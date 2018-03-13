@@ -369,8 +369,6 @@ void Drivetrain::Run()
 	default:
 		break;
 	}
-
-
 };
 
 void Drivetrain::MeasuredMove()

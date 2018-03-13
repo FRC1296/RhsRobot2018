@@ -101,8 +101,8 @@ const int CAN_CLAW_VICTOR_LEFT = 13;
 const int CAN_CLAW_VICTOR_RIGHT = 14;
 const int CAN_ARM_TALON = 16;
 
-const int CAN_CLIMBER_TALON = 1; // Arbitrary Numbers until delegated
-const int CAN_CLIMBER_VICTOR = -1; // Arbitrary Numbers until delegated
+const int CAN_CLIMBER_TALON = 15;
+const int CAN_CLIMBER_VICTOR = 17;
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
@@ -216,7 +216,8 @@ const int POV_STILL = -1;
 #define DRIVETRAIN_MTURN			(pControllerDriver->GetRawButton(L310_BUTTON_A))
 
 #define DRIVETRAIN_MMOVE			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
-#define CLIMBER_PULL_UP				(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
+#define CLIMBER_UP					(pControllerDriver->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
 
 #define CLAW_INHALE 				(pControllerOperator->GetRawAxis(L310_TRIGGER_RIGHT))
 #define CLAW_EXHALE					(pControllerOperator->GetRawAxis(L310_TRIGGER_LEFT))
@@ -256,6 +257,8 @@ const int POV_STILL = -1;
 #define ACCEPT_RANGE_MOVE			4095	//512			//Acceptable Range for "finished" PID loop for moving straight
 
 #define MAX_ARM_SPEED				0.5
+
+#define CLIMBER_SPEED				1.0			// Speed (in PercentOutput) the Climber climbs
 
 #endif // USE_L310_FOR_CONTROLLER_1
 

@@ -25,6 +25,10 @@ RhsRobot::RhsRobot() {
 	pClaw = NULL;
 	pElevator = NULL;
 	pArm = NULL;
+	pClimber = NULL;
+
+	fHeightPercent = 0.0;
+	fDrivetrainSpeed = 1.0;
 
 	bLimitSpeedWhileElevatorIsUp = false;
 
@@ -79,6 +83,7 @@ void RhsRobot::Init() {
 	pElevator = new Elevator();
 	pArm = new Arm();
 	pAuto = new Autonomous();
+	pClimber = new Climber();
 
 	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
 	//camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
@@ -108,6 +113,10 @@ void RhsRobot::Init() {
 	if(pAuto)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pAuto);
+	}
+	if(pClimber)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pClimber);
 	}
 
 	// instantiate our other objects here
@@ -143,6 +152,10 @@ void RhsRobot::Run() {
 
 	fLeftTrigger = pControllerDriver->GetRawAxis(L310_TRIGGER_LEFT);
 	fRightTrigger = pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT);
+
+	fHeightPercent = pElevator->PercentHeight();
+	fDrivetrainSpeed = (1.0 - (.75*fHeightPercent));
+	SmartDashboard::PutNumber("Elevator Switch2Scale Percent",fHeightPercent);
 
 	SmartDashboard::PutNumber("Left Trigger",fLeftTrigger);
 	SmartDashboard::PutNumber("Right Trigger",fRightTrigger);
@@ -238,7 +251,7 @@ void RhsRobot::Run() {
 		}
 #endif
 
-		if(bLimitSpeedWhileElevatorIsUp)
+/*		if(bLimitSpeedWhileElevatorIsUp)
 		{
 			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 2.25;
 			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE / 2.5;
@@ -249,7 +262,11 @@ void RhsRobot::Run() {
 			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
 			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE / 1.0;
 			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
-		}
+		} */
+
+		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
+		robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
+		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
 
 		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
 		pDrivetrain->SendMessage(&robotMessage);
@@ -368,6 +385,22 @@ void RhsRobot::Run() {
 		}
 	}
 
+	if (pClimber)
+	{
+		if (CLIMBER_UP)
+		{
+			robotMessage.command = COMMAND_CLIMB_UP;
+			robotMessage.params.climb.fClimbSpeed = CLIMBER_SPEED;
+			pClimber->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.command = COMMAND_CLIMB_STOP;
+			robotMessage.params.climb.fClimbSpeed = 0.0;
+			pClimber->SendMessage(&robotMessage);
+		}
+	}
+
 	if (pSpeedTimer->Get() >= 2.0)
 	{
 		pSpeedTimer->Stop();
@@ -380,6 +413,7 @@ void RhsRobot::Run() {
 	 * }
 	 * else
 	 * { // Perhaps do the timer here instead of changing it back but with a shorter timeout?
+	 *   // Alternatively we could do some sort of ramping here
 	 * 		bLimitSpeedWhileElevatorIsUp = false;
 	 * }
 	 */
