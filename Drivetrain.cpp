@@ -225,6 +225,12 @@ void Drivetrain::Run()
 	}
 #endif
 
+	// Testing for new PID values
+	if (iTurnState == TurnState_gpTurn)
+	{
+		GyroPIDTurn();
+	}
+
 	switch(localMessage.command)			//Reads the message command
 	{
 	//TODO add command cases for Component

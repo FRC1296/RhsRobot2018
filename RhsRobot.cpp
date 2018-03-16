@@ -251,7 +251,7 @@ void RhsRobot::Run() {
 		}
 #endif
 
-/*		if(bLimitSpeedWhileElevatorIsUp)
+		/*		if(bLimitSpeedWhileElevatorIsUp)
 		{
 			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 2.25;
 			robotMessage.params.cheesyDrive.throttle = CHEESY_DRIVE_THROTTLE / 2.5;
@@ -264,13 +264,23 @@ void RhsRobot::Run() {
 			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
 		} */
 
-		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
-		robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
-		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
+		// Testing for new PID values
+		if(PIDGEY_ROTATE_GPTURN)
+		{
+			robotMessage.params.turn.fAngle = 90;
+			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
+			SmartDashboard::PutString("cmd","PID Turn Called");
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else
+		{
+			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
+			robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
+			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
 
-		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
-		pDrivetrain->SendMessage(&robotMessage);
-
+			robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
 		// delete after we link in cheesy libraries
 
 		//robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
@@ -304,7 +314,7 @@ void RhsRobot::Run() {
 			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
 			pClaw->SendMessage(&robotMessage);
 		}
-		*/
+		 */
 		else// Slowly rotate intake in to hold cube
 		{
 			robotMessage.command = COMMAND_CLAW_STOP;

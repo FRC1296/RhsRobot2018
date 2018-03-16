@@ -38,6 +38,7 @@ const int ELEVATOR_PRIORITY		= DEFAULT_PRIORITY;
 const int CLIMBER_PRIORITY		= DEFAULT_PRIORITY;
 const int CHEESY_PRIORITY 	    = DEFAULT_PRIORITY;
 const int ARM_PRIORITY			= DEFAULT_PRIORITY;
+const int PUNCHER_PRIORITY		= DEFAULT_PRIORITY;
 
 //Task Names - Used when you view the task list but used by the operating system
 //EXAMPLE: const char* DRIVETRAIN_TASKNAME = "tDrive";
@@ -51,6 +52,7 @@ const char* const ELEVATOR_TASKNAME		= "tElevator";
 const char* const CLIMBER_TASKNAME		= "tClimber";
 const char* const CHEESY_TASKNAME	    = "tCheesy";
 const char* const ARM_TASKNAME			= "tArm";
+const char* const PUNCHER_TASKNAME		= "tPuncher";
 
 //TODO change these variables throughout the code to PIPE or whatever instead  of QUEUE
 //Queue Names - Used when you want to open the message queue for any task
@@ -65,6 +67,7 @@ const char* const CLAW_QUEUE 		= "/tmp/qClaw";
 const char* const ELEVATOR_QUEUE	= "/tmp/qElevator";
 const char* const CLIMBER_QUEUE		= "/tmp/qClimber";
 const char* const ARM_QUEUE			= "/tmp/qArm";
+const char* const PUNCHER_QUEUE		= "/tmp/qPuncher";
 
 //PWM Channels - Assigns names to PWM ports 1-10 on the Roborio
 //EXAMPLE: const int PWM_DRIVETRAIN_FRONT_LEFT_MOTOR = 1;
@@ -98,7 +101,7 @@ const int CAN_DRIVETRAIN_TALON_LEFT2 = 6;
 const int CAN_ELEVATOR_TALON_LEFT = 11; // HAS THE ENCODER ON IT
 const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
 const int CAN_CLAW_VICTOR_LEFT = 13;
-const int CAN_CLAW_VICTOR_RIGHT = 14;
+const int CAN_CLAW_TALON_RIGHT = 14;
 const int CAN_ARM_TALON = 16;
 
 const int CAN_CLIMBER_TALON = 15;

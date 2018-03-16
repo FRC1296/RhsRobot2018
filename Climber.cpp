@@ -31,6 +31,8 @@ Climber::Climber()
 	pUpSlave->Follow(*pUpMotor);
 	pUpMotor->EnableCurrentLimit(true);
 	pUpMotor->ConfigContinuousCurrentLimit(30,0);
+	pUpMotor->SetNeutralMode(NeutralMode::Brake);
+	pUpSlave->SetNeutralMode(NeutralMode::Brake);
 };
 
 Climber::~Climber()

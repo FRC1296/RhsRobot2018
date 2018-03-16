@@ -22,7 +22,7 @@ Claw::Claw()
 : ComponentBase(CLAW_TASKNAME, CLAW_QUEUE, CLAW_PRIORITY)
 {
 	pClawVictorLeft = new VictorSPX(CAN_CLAW_VICTOR_LEFT);
-	pClawVictorRight = new VictorSPX(CAN_CLAW_VICTOR_RIGHT);
+	pClawVictorRight = new TalonSRX(CAN_CLAW_TALON_RIGHT);
 	pClawVictorLeft->SetNeutralMode(NeutralMode::Brake);
 	pClawVictorRight->SetNeutralMode(NeutralMode::Brake);
 	pClawVictorLeft->SetInverted(true);
