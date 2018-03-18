@@ -70,7 +70,7 @@ void RhsRobot::Init() {
 	pChooser->AddObject("Center",'C');
 	pChooser->AddObject("Right",'R');
 	pChooser->AddDefault("Simple", 'X');
-	SmartDashboard::PutData("Autonomous mode chooser", pChooser);
+	SmartDashboard::PutData("Autonomous Mode Chooser", pChooser);
 
 	pSpeedTimer = new Timer();
 
@@ -87,6 +87,7 @@ void RhsRobot::Init() {
 	pAuto = new Autonomous();
 	pClimber = new Climber();
 	pPuncher = new Puncher();
+
 
 	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
 	//camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
@@ -191,6 +192,8 @@ void RhsRobot::Run() {
 
 	if(pDrivetrain)
 	{
+
+
 #if 0
 		if(WAVE_DASH)
 		{
@@ -272,7 +275,7 @@ void RhsRobot::Run() {
 		} */
 
 		// Testing for new PID values
-		/*		if(PIDGEY_ROTATE_GPTURN)
+/*		if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
@@ -288,7 +291,7 @@ void RhsRobot::Run() {
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 		else
-		{ */
+		{*/
 		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
 		robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
 		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;

@@ -197,7 +197,7 @@ void Drivetrain::AutoVelocityMove()
 	static const float kPPR = .61;
 	static const float kPGL = 700;
 	static const float kPGR = 700;
-	fMMoveTime = localMessage.params.mmove.fTime;
+	fVMoveTime = localMessage.params.mmove.fTime;
 	iTargetDistance = localMessage.params.mmove.fDistance;
 	iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
 	iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
@@ -206,10 +206,14 @@ void Drivetrain::AutoVelocityMove()
 	fInitRotation = dfAccumGyroData[2];
 
 	printf("AutoVelocityMove time %0.3f distance %d ticks %d left %d right %d rotation %f\n",
-			fMMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight,fInitRotation);
+			fVMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight,fInitRotation);
 
+
+	SmartDashboard::PutNumber("Time out", fVMoveTime);
 	pPIDTimerMove->Reset();
 	pPIDTimerMove->Start();
+
+
 
 	while(true)
 	{
@@ -225,8 +229,9 @@ void Drivetrain::AutoVelocityMove()
 			break;
 		}
 
-		if (pPIDTimerMove->Get() >= fMMoveTime)
+		if (pPIDTimerMove->Get() >= fVMoveTime)
 		{
+			printf("VMOVE TIMED OUT:: dist = %d , timeout = %f , time = %f\n", iTargetDistance, fVMoveTime, pPIDTimerMove->Get());
 			break;
 		}
 

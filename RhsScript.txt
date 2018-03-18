@@ -206,30 +206,29 @@ MODE LRRR
 
 MODE RRRR
 #start on right and score in right scale
-    VMOVE 0.5 -150 15.0
+    VMOVE 0.5 -150 5.0
     PUNCH LEFT
     DELAY 0.5
     PUNCH RESET
     ARM FLOOR
     VMOVE 0.5 -80 5.0
     TURN -37.0 5.0
-    DELAY 0.5
     ARM RELEASE
-    DELAY 0.5
+    DELAY 0.1
     CLAW IN 0.9
-    MMOVE 0.6 23.0 5.0
-    DELAY 0.5
+    MMOVE 0.8 23.0 5.0
+    DELAY 0.25
     ARM PINCH
     DELAY 0.25
     CLAW IN 0.5
     DELAY 0.2
     ELEVATOR SWITCH 5.0
-    MMOVE 0.6 -23.0 5.0
-    TURN -100.0 5.0
+    MMOVE 0.8 -52.0 5.0
+    TURN -80.0 5.0
     DELAY 0.25
     ELEVATOR SCALE 5.0
-    MMOVE 0.6 24.0 5.0
-    DELAY 1.0
+    MMOVE 0.8 15.0 5.0
+    DELAY .5
     CLAW OUT 0.7
     DELAY 2.0
     CLAW STOP
