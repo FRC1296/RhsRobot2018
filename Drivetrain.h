@@ -74,6 +74,7 @@ private:
 	void AutoMeasuredMove();
 	void AutoMeasuredTurn();
 	void RunCheesyDrive(bool, float, float, bool);
+	void AutoVelocityMove();
 
 	float fInitRotation;
 	float fPrevP;

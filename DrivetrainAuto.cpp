@@ -12,6 +12,7 @@
 #include "Drivetrain.h"
 #include "RobotMessage.h"
 #include "RhsRobotBase.h"
+#include <Math.h>
 
 void Drivetrain::AutoMeasuredMove()
 {
@@ -35,9 +36,9 @@ void Drivetrain::AutoMeasuredMove()
 	pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 	pRightMotor->Set(ControlMode::Position,iFinalPosRight);
 
-	//SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
-	//SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
-	//SmartDashboard::PutNumber("iTicks", iTicks);
+	SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
+	SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
+	SmartDashboard::PutNumber("iTicks", iTicks);
 
 	while(true)
 	{
@@ -58,9 +59,9 @@ void Drivetrain::AutoMeasuredMove()
 				(pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) &&
 				(pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) &&
 				(pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
-			{
-				break;
-			}
+		{
+			break;
+		}
 
 		//SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
 		//SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
@@ -183,4 +184,103 @@ void Drivetrain::AutoMeasuredTurn()
 	SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 }
 
+void Drivetrain::AutoVelocityMove()
+{
+	static float fCurAngle;
+	static float fPGL;
+	static float fPGR;
+	static float fSpeedLeft;
+	static float fSpeedRight;
+	static int iPPL;
+	static int iPPR;
+	static const float kPPL = .61;
+	static const float kPPR = .61;
+	static const float kPGL = 700;
+	static const float kPGR = 700;
+	fMMoveTime = localMessage.params.mmove.fTime;
+	iTargetDistance = localMessage.params.mmove.fDistance;
+	iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
+	iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
+	iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
+
+	fInitRotation = dfAccumGyroData[2];
+
+	printf("AutoVelocityMove time %0.3f distance %d ticks %d left %d right %d rotation %f\n",
+			fMMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight,fInitRotation);
+
+	pPIDTimerMove->Reset();
+	pPIDTimerMove->Start();
+
+	while(true)
+	{
+		pIdgey->GetAccumGyro(dfAccumGyroData);
+		fCurAngle = dfAccumGyroData[2];
+		SmartDashboard::PutNumber("Current Auto Angle",fCurAngle);
+		SmartDashboard::PutNumber("The Angle Difference",fCurAngle - fInitRotation);
+		SmartDashboard::PutNumber("The Angle init",fInitRotation);
+
+		// have we timed out?
+		if (!bInAuto)
+		{
+			break;
+		}
+
+		if (pPIDTimerMove->Get() >= fMMoveTime)
+		{
+			break;
+		}
+
+		// check to see if we have arrived
+
+		if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) &&
+				(pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) &&
+				(pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) &&
+				(pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
+		{
+			iPPL = iPPR = 0;
+			break;
+		}
+
+		// check to see if we're off course
+
+		if (abs(fCurAngle - fInitRotation) > 0.5)
+		{
+			fPGL = /*fCurAngle - */fInitRotation - fCurAngle;
+			fPGR = /*fInitRotation - */fCurAngle - fInitRotation;
+		}
+		else
+		{
+			fPGL = fPGR = 0;
+		}
+
+		// movement + angle correction
+
+		iPPL = iFinalPosLeft - pLeftMotor->GetSelectedSensorPosition(0);
+		iPPR = iFinalPosRight - pRightMotor->GetSelectedSensorPosition(0);
+
+
+		fSpeedLeft = (iPPL * kPPL) + (fPGL * kPGL);
+		fSpeedRight = (iPPR * kPPR) + (fPGR * kPGR);
+
+		pLeftMotor->Set(ControlMode::Velocity,fSpeedLeft);
+		pRightMotor->Set(ControlMode::Velocity,fSpeedRight);
+
+
+		//SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
+		//SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
+		Wait(0.02);
+	}
+
+	pPIDTimerMove->Stop();
+
+	pLeftMotor->Set(ControlMode::PercentOutput ,0.0);
+	pRightMotor->Set(ControlMode::PercentOutput, 0.0);
+
+	pLeftMotor->ConfigPeakOutputForward(1.0, 0.0);
+	pLeftMotor->ConfigPeakOutputReverse(-1.0, 0.0);
+	pRightMotor->ConfigPeakOutputForward(1.0, 0.0);
+	pRightMotor->ConfigPeakOutputReverse(-1.0, 0.0);
+
+	SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
+}
 

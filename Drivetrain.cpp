@@ -370,6 +370,11 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_AUTOMOVE:
 		AutoMeasuredMove();
+		//AutoVelocityMove();
+		break;
+
+	case COMMAND_DRIVETRAIN_AUTO_LONGMOVE:
+		AutoVelocityMove();
 		break;
 
 	default:

@@ -64,10 +64,12 @@ private:
 	void Delay(float);
 	bool Move(char *);
 	bool MeasuredMove(char *);
+	bool VelocityMove(char *);
 	bool Turn(char *);
 	bool Elevator(char *);
 	bool Claw(char *);
 	bool Arm(char *);
+	bool Punch(char *);
 
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);

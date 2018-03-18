@@ -49,6 +49,9 @@ private:
 	float fMotorSpeed;
 	float fMaxSpeed;
 
+	bool bClawOpen;
+	bool bTogglePressed;
+
 	const int iStartToOpen = 5387;
 	const int iStartToStow = 1525;
 	const int iStartToShoot = 1525;

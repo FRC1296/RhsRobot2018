@@ -237,6 +237,60 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 #endif
 }
 
+bool Autonomous::VelocityMove(char *pCurrLinePos) {
+
+	char *pToken;
+	float fDistance;
+	float fSpeed;
+	float fTime;
+
+	// parse remainder of line to get length to move
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fSpeed = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fDistance = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
+	// send the message to the drive train
+
+	Message.command = COMMAND_DRIVETRAIN_AUTO_LONGMOVE;
+	Message.params.mmove.fSpeed = fSpeed;
+	Message.params.mmove.fDistance = fDistance;
+	Message.params.mmove.fTime = fTime;
+
+#ifndef TEST_SCRIPTS
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+#else
+	printf("COMMAND_DRIVETRAIN_VMOVE %0.2f %0.2f %0.2f\n", fSpeed, fDistance, fTime);
+	return(true);
+#endif
+}
+
 bool Autonomous::Turn(char *pCurrLinePos) {
 	char *pToken;
 	float fAngle;
@@ -422,6 +476,7 @@ bool Autonomous::Arm(char *pCurrLinePos)
 	else if(!strncmp(pToken, "FLOOR", 5))
 	{
 		printf("COMMAND_ARM_FLOOR\n");
+		SmartDashboard::PutString("Arm Status","Auto GoToFloor");
 		Message.command = COMMAND_ARM_FLOOR;
 	}
 	else if(!strncmp(pToken, "SHOOT", 5))
@@ -442,3 +497,40 @@ bool Autonomous::Arm(char *pCurrLinePos)
 #endif
 }
 
+bool Autonomous::Punch(char *pCurrLinePos)
+{
+	char *pToken;
+
+	// parse remainder of line to get mode
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		return (false);
+	}
+
+	printf("comparing %s ...\n", pToken);
+
+	if(!strncmp(pToken, "LEFT", 4))
+	{
+		Message.command = COMMAND_PUNCH_LEFT;
+	}
+	else if(!strncmp(pToken, "RIGHT", 5))
+	{
+		Message.command = COMMAND_PUNCH_RIGHT;
+	}
+	else if(!strncmp(pToken, "RESET", 5))
+	{
+		Message.command = COMMAND_PUNCH_RESET;
+	}
+	else
+	{
+		return(false);
+	}
+#ifndef TEST_SCRIPTS
+	return (CommandNoResponse(PUNCHER_QUEUE));
+#else
+	return(true);
+#endif
+}

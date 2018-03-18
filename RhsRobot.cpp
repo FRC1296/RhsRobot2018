@@ -26,9 +26,11 @@ RhsRobot::RhsRobot() {
 	pElevator = NULL;
 	pArm = NULL;
 	pClimber = NULL;
+	pPuncher = NULL;
 
 	fHeightPercent = 0.0;
 	fDrivetrainSpeed = 1.0;
+	fExhaustLimit = 1.0;
 
 	bLimitSpeedWhileElevatorIsUp = false;
 
@@ -84,6 +86,7 @@ void RhsRobot::Init() {
 	pArm = new Arm();
 	pAuto = new Autonomous();
 	pClimber = new Climber();
+	pPuncher = new Puncher();
 
 	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
 	//camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
@@ -117,6 +120,10 @@ void RhsRobot::Init() {
 	if(pClimber)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pClimber);
+	}
+	if(pPuncher)
+	{
+		nextComponent = ComponentSet.insert(nextComponent, pPuncher);
 	}
 
 	// instantiate our other objects here
@@ -154,7 +161,7 @@ void RhsRobot::Run() {
 	fRightTrigger = pControllerDriver->GetRawAxis(L310_TRIGGER_RIGHT);
 
 	fHeightPercent = pElevator->PercentHeight();
-	fDrivetrainSpeed = (1.0 - (.75*fHeightPercent));
+	fDrivetrainSpeed = (float)(1.0 / ((2*fHeightPercent) + 1));
 	SmartDashboard::PutNumber("Elevator Switch2Scale Percent",fHeightPercent);
 
 	SmartDashboard::PutNumber("Left Trigger",fLeftTrigger);
@@ -265,22 +272,30 @@ void RhsRobot::Run() {
 		} */
 
 		// Testing for new PID values
-		if(PIDGEY_ROTATE_GPTURN)
+		/*		if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
 			SmartDashboard::PutString("cmd","PID Turn Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-		else
+		else if(DRIVETRAIN_MMOVE)
 		{
-			robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
-			robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
-			robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
-
-			robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
+			robotMessage.params.mmove.fDistance = -1*(36*2);
+			robotMessage.params.mmove.fTime = 3;
+			robotMessage.command = COMMAND_DRIVETRAIN_MMOVE;
+			SmartDashboard::PutString("cmd","PID Move Called");
 			pDrivetrain->SendMessage(&robotMessage);
 		}
+		else
+		{ */
+		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
+		robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
+		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
+
+		robotMessage.command = COMMAND_DRIVETRAIN_DRIVE_CHEESY;
+		pDrivetrain->SendMessage(&robotMessage);
+		//		}
 		// delete after we link in cheesy libraries
 
 		//robotMessage.command  = COMMAND_DRIVETRAIN_RUN_ARCADE;
@@ -300,7 +315,7 @@ void RhsRobot::Run() {
 		else if(CLAW_EXHALE > .1)// Exhaust cube
 		{
 			robotMessage.command = COMMAND_CLAW_EXHALE;
-			robotMessage.params.claw.fClawSpeed = CLAW_EXHALE;
+			robotMessage.params.claw.fClawSpeed = (CLAW_EXHALE * fExhaustLimit);
 			pClaw->SendMessage(&robotMessage);
 		}
 		/*
@@ -335,7 +350,11 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_CLAW_RELEASE;
 			pArm->SendMessage(&robotMessage);
 		}
-
+/*		if(CLAW_TOGGLE)
+		{
+			robotMessage.command = COMMAND_CLAW_TOGGLE;
+			pArm->SendMessage(&robotMessage);
+		} */
 		if(CLAW_MOVE > .5)
 		{
 			robotMessage.command = COMMAND_ARM_FLOOR;
@@ -356,15 +375,21 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_ELEVATOR_SWITCH;
 			pElevator->SendMessage(&robotMessage);
+//			robotMessage.command = COMMAND_ARM_FLOOR;
+//			pArm->SendMessage(&robotMessage);
 			bLimitSpeedWhileElevatorIsUp = false;
+			fExhaustLimit = .75;
 		}
 		else if (ELEVATOR_SCALE)
 		{
 			robotMessage.command = COMMAND_ELEVATOR_SCALE;
 			pElevator->SendMessage(&robotMessage);
+//			robotMessage.command = COMMAND_ARM_FLOOR;
+//			pArm->SendMessage(&robotMessage);
 			bLimitSpeedWhileElevatorIsUp = true;
 			pSpeedTimer->Reset();
 			pSpeedTimer->Stop();
+			fExhaustLimit = .6;
 		}
 		else if(ELEVATOR_FLOOR)
 		{
@@ -372,6 +397,7 @@ void RhsRobot::Run() {
 			pElevator->SendMessage(&robotMessage);
 			pSpeedTimer->Reset();
 			pSpeedTimer->Start();
+			fExhaustLimit = 1.0;
 		}
 		else
 		{
@@ -379,6 +405,7 @@ void RhsRobot::Run() {
 			pElevator->SendMessage(&robotMessage);
 			pSpeedTimer->Reset();
 			pSpeedTimer->Start();
+			fExhaustLimit = 1.0;
 		}
 
 		if ((ELEVATOR_DELTA > .2) || (ELEVATOR_DELTA < -.2))

@@ -76,6 +76,8 @@ Arm::Arm()
 
 	//pArmMotor->Set(ControlMode::Position, iStartPos + iStartToShoot);
 
+	bClawOpen = false;
+
 	pTask = new std::thread(&Arm::StartTask, this, ARM_TASKNAME, ARM_PRIORITY);
 	wpi_assert(pTask);
 };
@@ -106,6 +108,11 @@ void Arm::Run()
 	if (pArmMotor->GetSensorCollection().IsRevLimitSwitchClosed())
 	{
 		pClawSolenoid->Set(false);
+	}
+
+	if (!(localMessage.command == COMMAND_CLAW_TOGGLE))
+	{
+		bTogglePressed = false;
 	}
 
 
@@ -188,6 +195,21 @@ void Arm::Run()
 
 	case COMMAND_CLAW_RELEASE:
 		pClawSolenoid->Set(true);
+		break;
+
+	case COMMAND_CLAW_TOGGLE:
+		if (!bTogglePressed && !bClawOpen)
+		{
+			bTogglePressed = true;
+			pClawSolenoid->Set(true);
+			bClawOpen = true;
+		}
+		else if (!bTogglePressed)
+		{
+			bTogglePressed = true;
+			pClawSolenoid->Set(false);
+			bClawOpen = false;
+		}
 		break;
 
 	default:

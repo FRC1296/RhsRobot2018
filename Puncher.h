@@ -37,6 +37,8 @@ public:
 	}
 
 private:
+	Solenoid* pPunchSolenoid;
+
 	void OnStateChange();
 	void Run();
 };

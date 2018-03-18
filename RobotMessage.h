@@ -73,6 +73,7 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_DRIVE_CHEESY,
 	COMMAND_DRIVETRAIN_AUTOTURN,
 	COMMAND_DRIVETRAIN_AUTOMOVE,
+	COMMAND_DRIVETRAIN_AUTO_LONGMOVE,
 
 	COMMAND_DRIVETRAIN_GPTURN,			//!< Drivetrain test for Gyro rotation with a PID loop
 	COMMAND_DRIVETRAIN_BOXFILTER,		//!< Drivetrain test for Boxfilter turning
@@ -89,6 +90,7 @@ enum MessageCommand {
 	COMMAND_CLAW_STOP,					//!< Stop rollers now!
 	COMMAND_CLAW_PINCH,					//!< Pinch the block
 	COMMAND_CLAW_RELEASE,				//!< Release the block
+	COMMAND_CLAW_TOGGLE,				//!< Toggle the pinchers
 
 	COMMAND_ARM_MOVE,					//!< Move arm manually
 	COMMAND_ARM_OPEN,					//!< Open arm?
@@ -99,6 +101,10 @@ enum MessageCommand {
 
 	COMMAND_CLIMB_UP,					//!< Move climb motors up
 	COMMAND_CLIMB_STOP,					//!< Stop climb motors
+
+	COMMAND_PUNCH_LEFT,					//!< Punches the cube left
+	COMMAND_PUNCH_RIGHT,				//!< Punches the cube right
+	COMMAND_PUNCH_RESET,				//!< Resets the puncher piston
 
 	//add new component messages here
 

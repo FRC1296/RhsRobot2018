@@ -48,9 +48,9 @@ Elevator::Elevator()
 	pElevatorMotorLeft->SetInverted(false);
 	pElevatorMotorRight->SetInverted(false);
 	pElevatorMotorLeft->ConfigPeakOutputForward(0.82, 10);
-	pElevatorMotorLeft->ConfigPeakOutputReverse(-.1,10);
+	pElevatorMotorLeft->ConfigPeakOutputReverse(-.2,10);
 	pElevatorMotorRight->ConfigPeakOutputForward(0.82, 10);
-	pElevatorMotorRight->ConfigPeakOutputReverse(-.1,10);
+	pElevatorMotorRight->ConfigPeakOutputReverse(-.2,10);
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pElevatorMotorLeft->SetSensorPhase(true);
@@ -317,10 +317,12 @@ bool Elevator::LimitSpeed() // Very quick and dirty speed limit function
 float Elevator::PercentHeight() // Very quick and dirty function to get elevator's height as % of scale height
 {
 	float fPercent = 0.0;
-	if ((pElevatorMotorLeft->GetSelectedSensorPosition(0) - iStartPos) > iFloorToSwitch)
+	float fCurPos = pElevatorMotorLeft->GetSelectedSensorPosition(0) - iStartPos;
+	float fLimitLow = (float)(pElevatorMotorLeft->GetSelectedSensorPosition(0) - (iStartPos + iFloorToSwitch));
+	if ((fCurPos) > iFloorToSwitch)
 	{
 		// Divides the current elevator position by distance between switch and scale iff elevator is above switch height
-		fPercent = (float)(pElevatorMotorLeft->GetSelectedSensorPosition(0) - (iStartPos + iFloorToSwitch)) / (float)(iSwitchToScale);
+		fPercent = fLimitLow / (float)(iSwitchToScale);
 	}
 	if (fPercent > 1.0)
 	{

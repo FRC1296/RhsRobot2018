@@ -228,6 +228,8 @@ const int POV_STILL = -1;
 #define CLAW_PINCH					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
 #define CLAW_RELEASE				(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_RIGHT))
 
+#define CLAW_TOGGLE					(pControllerOperator->GetRawButton(L310_BUTTON_BUMPER_LEFT))
+
 #define CLAW_MOVE					(pControllerOperator->GetRawAxis(5))
 
 #define ELEVATOR_DELTA				(pControllerOperator->GetRawAxis(L310_THUMBSTICK_LEFT_Y))
@@ -241,7 +243,7 @@ const int POV_STILL = -1;
 #define WHEEL_DIA					4.0			//Wheel Diameter in inches
 #define PI							3.14159
 #define ROBOT_WIDTH					26.0		// Width of the drivetrain in inches
-#define DRIVETRAIN_CONST_KP			(1.0/120.0) // Constant P value for PID loops
+#define DRIVETRAIN_CONST_KP			(1.0/105.0) // Constant P value for PID loops
 #define DRIVETRAIN_CONST_KI			(1.0/1000.0) // Constant I value for PID loops
 #define DRIVETRAIN_CONST_KD			(1.0/40.0)  // Constant D value for PID loops
 #define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
@@ -257,7 +259,7 @@ const int POV_STILL = -1;
 #define ACCEPT_RANGE_DEGR			2			//Acceptable Range for "finished" PID loop in degrees
 #define ACCEPT_RANGE_KI				20			//Acceptable Range for adding Integral Value
 
-#define ACCEPT_RANGE_MOVE			4095	//512			//Acceptable Range for "finished" PID loop for moving straight
+#define ACCEPT_RANGE_MOVE			2048		//Acceptable Range for "finished" PID loop for moving straight
 
 #define MAX_ARM_SPEED				0.5
 

@@ -20,6 +20,8 @@
 Puncher::Puncher()
 : ComponentBase(PUNCHER_TASKNAME, PUNCHER_QUEUE, PUNCHER_PRIORITY)
 {
+	pPunchSolenoid = new Solenoid(CAN_PCM,7);
+	pPunchSolenoid->Set(false);
 	//TODO: add member objects
 	pTask = new std::thread(&Component::StartTask, this, PUNCHER_TASKNAME, PUNCHER_PRIORITY);
 	wpi_assert(pTask);
@@ -42,6 +44,14 @@ void Puncher::Run()
 	{
 	//TODO add command cases for Component
 		case COMMAND_COMPONENT_TEST:
+			break;
+
+		case COMMAND_PUNCH_LEFT:
+			pPunchSolenoid->Set(true);
+			break;
+
+		case COMMAND_PUNCH_RESET:
+			pPunchSolenoid->Set(false);
 			break;
 
 		default:

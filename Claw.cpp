@@ -76,8 +76,8 @@ void Claw::Run()
 		case COMMAND_CLAW_EXHALE:
 			if(motorsStopped == false)
 			{
-				pClawVictorLeft->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-.6);
-				pClawVictorRight->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*.6);
+				pClawVictorLeft->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed)*-1);
+				pClawVictorRight->Set(ControlMode::PercentOutput,(localMessage.params.claw.fClawSpeed));
 			}
 			break;
 
