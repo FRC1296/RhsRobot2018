@@ -497,11 +497,15 @@ bool Autonomous::Arm(char *pCurrLinePos)
 #endif
 }
 
-bool Autonomous::Punch(char *pCurrLinePos)
-{
-	char *pToken;
+bool Autonomous::SPunch(char *pCurrLinePos) {
 
-	// parse remainder of line to get mode
+	char *pToken;
+	float fDistance;
+	float fSpeed;
+	float fTime;
+	float fPunchDistance;
+
+	// parse remainder of line to get length to move
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
 	if(pToken == NULL)
@@ -514,23 +518,66 @@ bool Autonomous::Punch(char *pCurrLinePos)
 
 	if(!strncmp(pToken, "LEFT", 4))
 	{
-		Message.command = COMMAND_PUNCH_LEFT;
+		Message.command = COMMAND_SPUNCH_LEFT;
 	}
 	else if(!strncmp(pToken, "RIGHT", 5))
 	{
-		Message.command = COMMAND_PUNCH_RIGHT;
-	}
-	else if(!strncmp(pToken, "RESET", 5))
-	{
-		Message.command = COMMAND_PUNCH_RESET;
+		Message.command = COMMAND_SPUNCH_RIGHT;
 	}
 	else
 	{
 		return(false);
 	}
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH");
+		return (false);
+	}
+
+	fPunchDistance = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fSpeed = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fDistance = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+
+	if(pToken == NULL)
+	{
+		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
+	Message.params.mmove.fPunchDistance = fPunchDistance;
+	Message.params.mmove.fSpeed = fSpeed;
+	Message.params.mmove.fDistance = fDistance;
+	Message.params.mmove.fTime = fTime;
+
 #ifndef TEST_SCRIPTS
-	return (CommandNoResponse(PUNCHER_QUEUE));
+	return (CommandResponse(DRIVETRAIN_QUEUE));
 #else
+	printf("COMMAND_DRIVETRAIN_SPUNCH %0.2f %0.2f %0.2f %0.2f\n", fSpeed, fDistance, fTime);
 	return(true);
 #endif
 }

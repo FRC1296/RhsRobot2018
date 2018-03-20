@@ -26,7 +26,6 @@ RhsRobot::RhsRobot() {
 	pElevator = NULL;
 	pArm = NULL;
 	pClimber = NULL;
-	pPuncher = NULL;
 
 	fHeightPercent = 0.0;
 	fDrivetrainSpeed = 1.0;
@@ -86,7 +85,6 @@ void RhsRobot::Init() {
 	pArm = new Arm();
 	pAuto = new Autonomous();
 	pClimber = new Climber();
-	pPuncher = new Puncher();
 
 
 	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -121,10 +119,6 @@ void RhsRobot::Init() {
 	if(pClimber)
 	{
 		nextComponent = ComponentSet.insert(nextComponent, pClimber);
-	}
-	if(pPuncher)
-	{
-		nextComponent = ComponentSet.insert(nextComponent, pPuncher);
 	}
 
 	// instantiate our other objects here

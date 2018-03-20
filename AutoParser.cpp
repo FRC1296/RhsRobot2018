@@ -35,7 +35,7 @@ const char *szTokens[] = {
 		"ELEVATOR",
 		"CLAW",
 		"ARM",
-		"PUNCH",
+		"SPUNCH",
 		"NOP" };
 
 bool Autonomous::Evaluate(std::string rStatement) {
@@ -276,17 +276,17 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		}
 		break;
 
-	case AUTO_TOKEN_PUNCH:
+	case AUTO_TOKEN_SPUNCH:
 		if(bModeFound)
 		{
 			printf("process AUTO_TOKEN_PUNCH\n");
-			if (!Punch(pCurrLinePos))
+			if (!SPunch(pCurrLinePos))
 			{
-				rStatus.append("punch error");
+				rStatus.append("spunch error");
 			}
 			else
 			{
-				rStatus.append("punch");
+				rStatus.append("spunch");
 			}
 		}
 		break;

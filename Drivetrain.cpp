@@ -103,6 +103,8 @@ Drivetrain::Drivetrain()
 	fTurnTime = 0;
 	fMMoveTime = 0;
 	fMoveAngle = 0;
+	fVMoveTime = 0;
+	fPunchPoint = 0;
 
 	dAvgArray1 = 0;
 	dAvgArray2 = 0;
@@ -121,6 +123,13 @@ Drivetrain::Drivetrain()
 	pPIDTimerMove = new Timer();
 	pSpeedTimer = new Timer();
 	pPIDTurnTimer = new Timer();
+	pPunchTimer = new Timer();
+
+	pPunchSolenoidLeft = new Solenoid(CAN_PCM,8);
+	pPunchSolenoidLeft->Set(false);
+
+	pPunchSolenoidRight = new Solenoid(CAN_PCM,7); // Change this ID when they actually mount the solenoid
+	pPunchSolenoidRight->Set(false);
 
 	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
 	iInitRightPos = pRightMotor->GetSelectedSensorPosition(0);
@@ -375,6 +384,14 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_AUTO_LONGMOVE:
 		AutoVelocityMove();
+		break;
+
+	case COMMAND_SPUNCH_LEFT:
+		AutoPunchWhileMovingStraight(false);
+		break;
+
+	case COMMAND_SPUNCH_RIGHT:
+		AutoPunchWhileMovingStraight(true);
 		break;
 
 	default:

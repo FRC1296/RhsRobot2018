@@ -64,6 +64,10 @@ private:
 	Timer* pPIDTimerMove;
 	Timer* pSpeedTimer;
 	Timer* pPIDTurnTimer;
+	Timer* pPunchTimer;
+
+	Solenoid* pPunchSolenoidLeft; // The solenoid that punches the cube left, NOT the left solenoid
+	Solenoid* pPunchSolenoidRight; // The solenoid that punches the cube right, NOT the right solenoid
 
 	void OnStateChange();
 	void Run();
@@ -75,6 +79,7 @@ private:
 	void AutoMeasuredTurn();
 	void RunCheesyDrive(bool, float, float, bool);
 	void AutoVelocityMove();
+	void AutoPunchWhileMovingStraight(bool dir); // Right is true
 
 	float fInitRotation;
 	float fPrevP;
@@ -99,6 +104,7 @@ private:
 	float fTurnTime;
 	float fTargetCalc;
 	float fMoveAngle;
+	float fPunchPoint;
 
 	double dfAccumGyroData[3];
 	double dfRawGyroData[3];

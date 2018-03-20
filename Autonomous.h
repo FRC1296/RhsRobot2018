@@ -69,7 +69,7 @@ private:
 	bool Elevator(char *);
 	bool Claw(char *);
 	bool Arm(char *);
-	bool Punch(char *);
+	bool SPunch(char *);
 
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);

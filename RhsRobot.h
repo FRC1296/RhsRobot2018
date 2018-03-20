@@ -15,7 +15,6 @@
 #include "Elevator.h"
 #include "Arm.h"
 #include "Climber.h"
-#include "Puncher.h"
 #include "ctre/Phoenix.h"
 
 class RhsRobot : public RhsRobotBase
@@ -41,7 +40,6 @@ private:
 	Elevator* pElevator;
 	Arm* pArm;
 	Climber* pClimber;
-	Puncher* pPuncher;
 	cs::UsbCamera camera;
 
 	string gameData = "XXX";

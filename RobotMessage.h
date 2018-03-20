@@ -102,9 +102,8 @@ enum MessageCommand {
 	COMMAND_CLIMB_UP,					//!< Move climb motors up
 	COMMAND_CLIMB_STOP,					//!< Stop climb motors
 
-	COMMAND_PUNCH_LEFT,					//!< Punches the cube left
-	COMMAND_PUNCH_RIGHT,				//!< Punches the cube right
-	COMMAND_PUNCH_RESET,				//!< Resets the puncher piston
+	COMMAND_SPUNCH_LEFT,				//!< Punches the cube left while moving straight
+	COMMAND_SPUNCH_RIGHT,				//!< Punches the cube right while moving straight
 
 	//add new component messages here
 
@@ -121,6 +120,7 @@ struct MeasuredMoveParams {
 	float fSpeed;
 	float fDistance;
 	float fTime;
+	float fPunchDistance;
 };
 
 struct ProximityMoveParams {
