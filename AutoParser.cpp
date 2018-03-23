@@ -83,7 +83,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	for(iCommand = AUTO_TOKEN_MODE; iCommand < AUTO_TOKEN_LAST; iCommand++)
 	{
-		if(bModeFound)
+		//if(bModeFound)
 			printf("Comparing %s to %s\n", pToken, szTokens[iCommand]);
 
 		if(!strncmp(pToken, szTokens[iCommand], strlen(szTokens[iCommand])))
@@ -277,9 +277,11 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		break;
 
 	case AUTO_TOKEN_SPUNCH:
+		printf("Hello Banana");
 		if(bModeFound)
 		{
 			printf("process AUTO_TOKEN_PUNCH\n");
+			SmartDashboard::PutString("Spunch Status","Auto Token Found");
 			if (!SPunch(pCurrLinePos))
 			{
 				rStatus.append("spunch error");

@@ -104,6 +104,7 @@ Drivetrain::Drivetrain()
 	fMMoveTime = 0;
 	fMoveAngle = 0;
 	fVMoveTime = 0;
+	fSPMoveTime = 0;
 	fPunchPoint = 0;
 
 	dAvgArray1 = 0;
@@ -125,10 +126,10 @@ Drivetrain::Drivetrain()
 	pPIDTurnTimer = new Timer();
 	pPunchTimer = new Timer();
 
-	pPunchSolenoidLeft = new Solenoid(CAN_PCM,8);
+	pPunchSolenoidLeft = new Solenoid(CAN_PCM,8); // Change this ID when they actually mount it
 	pPunchSolenoidLeft->Set(false);
 
-	pPunchSolenoidRight = new Solenoid(CAN_PCM,7); // Change this ID when they actually mount the solenoid
+	pPunchSolenoidRight = new Solenoid(CAN_PCM,7);
 	pPunchSolenoidRight->Set(false);
 
 	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
@@ -153,23 +154,23 @@ void Drivetrain::OnStateChange()
 
 	switch(localMessage.command)
 	{
-		case COMMAND_ROBOT_STATE_AUTONOMOUS:
-			bInAuto = true;
-			bUseCheesyDrive = false;
-			pLeftMotor->Set(ControlMode::PercentOutput, 0);
-			pRightMotor->Set(ControlMode::PercentOutput, 0);
-			break;
+	case COMMAND_ROBOT_STATE_AUTONOMOUS:
+		bInAuto = true;
+		bUseCheesyDrive = false;
+		pLeftMotor->Set(ControlMode::PercentOutput, 0);
+		pRightMotor->Set(ControlMode::PercentOutput, 0);
+		break;
 
-		case COMMAND_ROBOT_STATE_TEST:
-		case COMMAND_ROBOT_STATE_TELEOPERATED:
-		case COMMAND_ROBOT_STATE_DISABLED:
-		case COMMAND_ROBOT_STATE_UNKNOWN:
-		default:
-			bInAuto = false;
-			bUseCheesyDrive = true;
-			pLeftMotor->Set(ControlMode::PercentOutput, 0);
-			pRightMotor->Set(ControlMode::PercentOutput, 0);
-			break;
+	case COMMAND_ROBOT_STATE_TEST:
+	case COMMAND_ROBOT_STATE_TELEOPERATED:
+	case COMMAND_ROBOT_STATE_DISABLED:
+	case COMMAND_ROBOT_STATE_UNKNOWN:
+	default:
+		bInAuto = false;
+		bUseCheesyDrive = true;
+		pLeftMotor->Set(ControlMode::PercentOutput, 0);
+		pRightMotor->Set(ControlMode::PercentOutput, 0);
+		break;
 	}
 }
 
@@ -209,6 +210,20 @@ void Drivetrain::Run()
 		fMaxTurnY = std::abs(dps[1]);
 	if (std::abs(dps[2]) > fMaxTurnZ)
 		fMaxTurnZ = std::abs(dps[2]);
+
+	if (pPunchTimer->Get() > 1.5)
+	{
+		pPunchTimer->Stop();
+		pPunchTimer->Reset();
+		pPunchSolenoidLeft->Set(false);
+	}
+
+	if (pPunchTimer->Get() > 1.5)
+	{
+		pPunchTimer->Stop();
+		pPunchTimer->Reset();
+		pPunchSolenoidRight->Set(false);
+	}
 
 	/*if (iTurnState == -1){
 	fInitRotation = 0;
@@ -341,7 +356,7 @@ void Drivetrain::Run()
 
 			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
 			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
-		/*	pLeftMotor->ConfigPeakOutputForward(.75,0);
+			/*	pLeftMotor->ConfigPeakOutputForward(.75,0);
 			pLeftMotor->ConfigPeakOutputReverse(-.75,0);*/
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
@@ -387,11 +402,23 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_SPUNCH_LEFT:
+		SmartDashboard::PutString("Spunch Status","Spunch Left Command Reached");
 		AutoPunchWhileMovingStraight(false);
 		break;
 
 	case COMMAND_SPUNCH_RIGHT:
+		SmartDashboard::PutString("Spunch Status","Spunch Right Command Reached");
 		AutoPunchWhileMovingStraight(true);
+		break;
+
+	case COMMAND_PUNCH_LEFT:
+		pPunchSolenoidLeft->Set(true);
+		pPunchTimer->Start();
+		break;
+
+	case COMMAND_PUNCH_RIGHT:
+		pPunchSolenoidRight->Set(true);
+		pPunchTimer->Start();
 		break;
 
 	default:
@@ -517,7 +544,7 @@ void Drivetrain::GyroPIDTurn()
 		fInitRotation = 0;
 		return;
 
-		}
+	}
 	if ((dfAccumGyroData[2] <= (fTargetCalc + ACCEPT_RANGE_DEGR)) && (dfAccumGyroData[2] >= (fTargetCalc - ACCEPT_RANGE_DEGR)))
 	{
 		pPIDTimer->Start();
@@ -579,10 +606,10 @@ void Drivetrain::MeasuredTurn()
 
 void Drivetrain::RunCheesyDrive(bool bEnabled, float fWheel, float fThrottle, bool bQuickturn)
 {
-    struct DrivetrainGoal Goal;
-    struct DrivetrainPosition Position;
-    struct DrivetrainOutput Output;
-    struct DrivetrainStatus Status;
+	struct DrivetrainGoal Goal;
+	struct DrivetrainPosition Position;
+	struct DrivetrainOutput Output;
+	struct DrivetrainStatus Status;
 
 	if(bQuickturn)
 	{
@@ -593,38 +620,38 @@ void Drivetrain::RunCheesyDrive(bool bEnabled, float fWheel, float fThrottle, bo
 		Goal.steering = -fWheel;
 	}
 
-    Goal.throttle = fThrottle;
-    Goal.quickturn = bQuickturn;
-    Goal.control_loop_driving = false;
-    Goal.highgear = false;
-    Goal.left_velocity_goal = 0.0;
-    Goal.right_velocity_goal = 0.0;
-    Goal.left_goal = 0.0;
-    Goal.right_goal = 0.0;
+	Goal.throttle = fThrottle;
+	Goal.quickturn = bQuickturn;
+	Goal.control_loop_driving = false;
+	Goal.highgear = false;
+	Goal.left_velocity_goal = 0.0;
+	Goal.right_velocity_goal = 0.0;
+	Goal.left_goal = 0.0;
+	Goal.right_goal = 0.0;
 
-    Position.left_encoder = -pLeftMotor->GetSelectedSensorPosition(0) * METERS_PER_COUNT;
-    Position.right_encoder = pRightMotor->GetSelectedSensorPosition(0) * METERS_PER_COUNT;
-    Position.gyro_angle = dfAccumGyroData[2] * 3.141519 / 180.0;
-    Position.gyro_velocity = dfRawGyroData[2] * 3.141519 / 180.0;
+	Position.left_encoder = -pLeftMotor->GetSelectedSensorPosition(0) * METERS_PER_COUNT;
+	Position.right_encoder = pRightMotor->GetSelectedSensorPosition(0) * METERS_PER_COUNT;
+	Position.gyro_angle = dfAccumGyroData[2] * 3.141519 / 180.0;
+	Position.gyro_velocity = dfRawGyroData[2] * 3.141519 / 180.0;
 
-    Position.battery_voltage = fBatteryVoltage;
-    Position.left_shifter_position = true;
-    Position.right_shifter_position = false;
+	Position.battery_voltage = fBatteryVoltage;
+	Position.left_shifter_position = true;
+	Position.right_shifter_position = false;
 
-    if(bEnabled)
-    {
-    	// if enabled and normal operation
+	if(bEnabled)
+	{
+		// if enabled and normal operation
 
-    	pCheesy->Update(Goal, Position, Output, Status, true);
-        pLeftMotor->Set(ControlMode::PercentOutput, -Output.left_voltage / 12.0);
-        pRightMotor->Set(ControlMode::PercentOutput, -Output.right_voltage / 12.0);
-    }
-    else
-    {
-        // if the robot is not running
+		pCheesy->Update(Goal, Position, Output, Status, true);
+		pLeftMotor->Set(ControlMode::PercentOutput, -Output.left_voltage / 12.0);
+		pRightMotor->Set(ControlMode::PercentOutput, -Output.right_voltage / 12.0);
+	}
+	else
+	{
+		// if the robot is not running
 
-    	pCheesy->Update(Goal, Position, Output, Status, false);
-    }
+		pCheesy->Update(Goal, Position, Output, Status, false);
+	}
 }
 
 float AvgArrays(int* Array, int LengthArr)

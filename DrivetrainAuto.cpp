@@ -291,6 +291,8 @@ void Drivetrain::AutoVelocityMove()
 
 void Drivetrain::AutoPunchWhileMovingStraight(bool dir) // Right is true
 { // VERY VERY QUICK AND DIRTY FUNCTION; FEEL FREE TO IMPROVE
+	SmartDashboard::PutString("Spunch Status","AutoPunchWhileMovingStraight called");
+
 	static float fCurAngle;
 	static float fPGL;
 	static float fPGR;
@@ -302,37 +304,30 @@ void Drivetrain::AutoPunchWhileMovingStraight(bool dir) // Right is true
 	static const float kPPR = .61;
 	static const float kPGL = 700;
 	static const float kPGR = 700;
-	fVMoveTime = localMessage.params.mmove.fTime;
+
+	fSPMoveTime = localMessage.params.mmove.fTime;
 	iTargetDistance = localMessage.params.mmove.fDistance;
 	iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
 	iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
 	iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
 	fPunchPoint = localMessage.params.mmove.fPunchDistance;
+	fPunchPoint = (fPunchPoint*4096)/(PI*WHEEL_DIA);
 	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
 
 	if ((pLeftMotor->GetSelectedSensorPosition(0) - iInitLeftPos) > fPunchPoint)
 	{
+		SmartDashboard::PutString("Spunch Status","Punch Point Reached");
 		if (dir)
 		{
+			SmartDashboard::PutString("Spunch Status","Right Solenoid Fired");
 			pPunchSolenoidRight->Set(true);
 			pPunchTimer->Start();
-			if (pPunchTimer->Get() > 0.5)
-			{
-				pPunchTimer->Stop();
-				pPunchTimer->Reset();
-				pPunchSolenoidRight->Set(false);
-			}
 		}
 		else
 		{
+			SmartDashboard::PutString("Spunch Status","Left Solenoid Fired");
 			pPunchSolenoidLeft->Set(true);
 			pPunchTimer->Start();
-			if (pPunchTimer->Get() > 0.5)
-			{
-				pPunchTimer->Stop();
-				pPunchTimer->Reset();
-				pPunchSolenoidLeft->Set(false);
-			}
 		}
 	}
 
@@ -342,12 +337,13 @@ void Drivetrain::AutoPunchWhileMovingStraight(bool dir) // Right is true
 			fVMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight,fInitRotation);
 
 
-	SmartDashboard::PutNumber("Time out", fVMoveTime);
+	SmartDashboard::PutNumber("Time out", fSPMoveTime);
 	pPIDTimerMove->Reset();
 	pPIDTimerMove->Start();
 
 	while(true)
 	{
+		SmartDashboard::PutString("Spunch Status","Moving");
 		pIdgey->GetAccumGyro(dfAccumGyroData);
 		fCurAngle = dfAccumGyroData[2];
 		SmartDashboard::PutNumber("Current Auto Angle",fCurAngle);
@@ -360,7 +356,7 @@ void Drivetrain::AutoPunchWhileMovingStraight(bool dir) // Right is true
 			break;
 		}
 
-		if (pPIDTimerMove->Get() >= fVMoveTime)
+		if (pPIDTimerMove->Get() >= fSPMoveTime)
 		{
 			printf("VMOVE TIMED OUT:: dist = %d , timeout = %f , time = %f\n", iTargetDistance, fVMoveTime, pPIDTimerMove->Get());
 			break;
@@ -411,6 +407,8 @@ void Drivetrain::AutoPunchWhileMovingStraight(bool dir) // Right is true
 
 	pLeftMotor->Set(ControlMode::PercentOutput ,0.0);
 	pRightMotor->Set(ControlMode::PercentOutput, 0.0);
+
+	SmartDashboard::PutString("Spunch Status","Done");
 
 	pLeftMotor->ConfigPeakOutputForward(1.0, 0.0);
 	pLeftMotor->ConfigPeakOutputReverse(-1.0, 0.0);

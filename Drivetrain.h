@@ -101,6 +101,7 @@ private:
 	float dAvgArray2;
 	float fMMoveTime;
 	float fVMoveTime;
+	float fSPMoveTime;
 	float fTurnTime;
 	float fTargetCalc;
 	float fMoveAngle;

@@ -26,7 +26,7 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_ELEVATOR,			//!<R	elevator <INTAKE|SWITCH|SCALEHI|SCALELO|STOW> <timeout:float>
 	AUTO_TOKEN_CLAW,                //!<R	claw <IN|OUT|STOP>
 	AUTO_TOKEN_ARM,                 //!<R	arm <PINCH|RELEASE>
-	AUTO_TOKEN_SPUNCH,				//!<R   spunch <LEFT|RIGHT> <speed> <inches:float> <timeout:float>
+	AUTO_TOKEN_SPUNCH,				//!<R   spunch <LEFT|RIGHT> <punch_inches: float> <speed: float> <inches:float> <timeout:float>
 	AUTO_TOKEN_LAST
 } AUTO_COMMAND_TOKENS;
 

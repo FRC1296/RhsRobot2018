@@ -105,6 +105,9 @@ enum MessageCommand {
 	COMMAND_SPUNCH_LEFT,				//!< Punches the cube left while moving straight
 	COMMAND_SPUNCH_RIGHT,				//!< Punches the cube right while moving straight
 
+	COMMAND_PUNCH_LEFT,					//!< Punches the cube left
+	COMMAND_PUNCH_RIGHT,				//!< Punches the cube right
+
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST

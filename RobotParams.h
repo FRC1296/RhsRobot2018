@@ -237,6 +237,9 @@ const int POV_STILL = -1;
 #define ELEVATOR_SWITCH				(pControllerOperator->GetRawButton(L310_BUTTON_B))
 #define ELEVATOR_FLOOR				(pControllerOperator->GetRawButton(L310_BUTTON_A))
 
+#define PUNCH_LEFT					(pControllerDriver->GetRawButton(L310_BUTTON_X))
+#define PUNCH_RIGHT					(pControllerDriver->GetRawButton(L310_BUTTON_B))
+
 // TODO: Add Component Commands
 
 /********** Drive Train Constants:**********/

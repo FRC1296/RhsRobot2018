@@ -505,6 +505,8 @@ bool Autonomous::SPunch(char *pCurrLinePos) {
 	float fTime;
 	float fPunchDistance;
 
+	SmartDashboard::PutString("Spunch Status","Autonomous.cpp command called");
+
 	// parse remainder of line to get length to move
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 

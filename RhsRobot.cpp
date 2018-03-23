@@ -87,6 +87,7 @@ void RhsRobot::Init() {
 	pClimber = new Climber();
 
 
+
 	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
 	//camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 15);
 
@@ -286,6 +287,17 @@ void RhsRobot::Run() {
 		}
 		else
 		{*/
+
+		if (PUNCH_LEFT) {
+			robotMessage.command = COMMAND_PUNCH_LEFT;
+			pDrivetrain->SendMessage(&robotMessage);
+
+		}
+		else if (PUNCH_RIGHT) {
+			robotMessage.command = COMMAND_PUNCH_RIGHT;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+
 		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
 		robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
 		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;
