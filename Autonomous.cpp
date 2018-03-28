@@ -1,4 +1,4 @@
-/** \file
+/** \filef
  * Class for our autonomous behaviours
  *
  *  This file contains our autonomous algorithms.  It should detect if we are in
@@ -157,7 +157,7 @@ bool Autonomous::Begin(char *pCurrLinePos)
 
 bool Autonomous::End(char *pCurrLinePos)
 {
-	//tell all the components who may need to know that auto is beginning
+	//tell all the components who may need to know that auto is ending
 	Message.command = COMMAND_AUTONOMOUS_COMPLETE;
 	CommandNoResponse(DRIVETRAIN_QUEUE);
 	return (true);

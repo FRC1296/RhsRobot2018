@@ -124,9 +124,10 @@ Drivetrain::Drivetrain()
 	pPIDTimerMove = new Timer();
 	pSpeedTimer = new Timer();
 	pPIDTurnTimer = new Timer();
-	pPunchTimer = new Timer();
+	pPunchTimerLeft = new Timer();
+	pPunchTimerRight = new Timer();
 
-	pPunchSolenoidLeft = new Solenoid(CAN_PCM,8); // Change this ID when they actually mount it
+	pPunchSolenoidLeft = new Solenoid(CAN_PCM,0); // Change this ID when they actually mount it
 	pPunchSolenoidLeft->Set(false);
 
 	pPunchSolenoidRight = new Solenoid(CAN_PCM,7);
@@ -166,6 +167,7 @@ void Drivetrain::OnStateChange()
 	case COMMAND_ROBOT_STATE_DISABLED:
 	case COMMAND_ROBOT_STATE_UNKNOWN:
 	default:
+		printf("teleop state received - Drivetrain\n");
 		bInAuto = false;
 		bUseCheesyDrive = true;
 		pLeftMotor->Set(ControlMode::PercentOutput, 0);
@@ -211,17 +213,17 @@ void Drivetrain::Run()
 	if (std::abs(dps[2]) > fMaxTurnZ)
 		fMaxTurnZ = std::abs(dps[2]);
 
-	if (pPunchTimer->Get() > 1.5)
+	if (pPunchTimerLeft->Get() > 1.5)
 	{
-		pPunchTimer->Stop();
-		pPunchTimer->Reset();
+		pPunchTimerLeft->Stop();
+		pPunchTimerLeft->Reset();
 		pPunchSolenoidLeft->Set(false);
 	}
 
-	if (pPunchTimer->Get() > 1.5)
+	if (pPunchTimerRight->Get() > 1.5)
 	{
-		pPunchTimer->Stop();
-		pPunchTimer->Reset();
+		pPunchTimerRight->Stop();
+		pPunchTimerRight->Reset();
 		pPunchSolenoidRight->Set(false);
 	}
 
@@ -266,6 +268,7 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_AUTONOMOUS_COMPLETE:
+		printf("%s %d\n", __FILE__, __LINE__);
 		bInAuto = false;
 		bUseCheesyDrive = true;
 		pLeftMotor->Set(ControlMode::PercentOutput, 0);
@@ -273,6 +276,8 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_DRIVETRAIN_DRIVE_CHEESY:
+		SmartDashboard::PutString("After Auto Status","Received Cheesy drive command");
+		//printf("Received cheesy drive command");
 		RunCheesyDrive(bUseCheesyDrive, localMessage.params.cheesyDrive.wheel,
 				localMessage.params.cheesyDrive.throttle, localMessage.params.cheesyDrive.bQuickturn);
 		break;
@@ -413,12 +418,12 @@ void Drivetrain::Run()
 
 	case COMMAND_PUNCH_LEFT:
 		pPunchSolenoidLeft->Set(true);
-		pPunchTimer->Start();
+		pPunchTimerLeft->Start();
 		break;
 
 	case COMMAND_PUNCH_RIGHT:
 		pPunchSolenoidRight->Set(true);
-		pPunchTimer->Start();
+		pPunchTimerRight->Start();
 		break;
 
 	default:

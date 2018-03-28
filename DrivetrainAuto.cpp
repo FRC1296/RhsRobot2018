@@ -293,115 +293,119 @@ void Drivetrain::AutoPunchWhileMovingStraight(bool dir) // Right is true
 { // VERY VERY QUICK AND DIRTY FUNCTION; FEEL FREE TO IMPROVE
 	SmartDashboard::PutString("Spunch Status","AutoPunchWhileMovingStraight called");
 
-	static float fCurAngle;
-	static float fPGL;
-	static float fPGR;
-	static float fSpeedLeft;
-	static float fSpeedRight;
-	static int iPPL;
-	static int iPPR;
-	static const float kPPL = .61;
-	static const float kPPR = .61;
-	static const float kPGL = 700;
-	static const float kPGR = 700;
-
-	fSPMoveTime = localMessage.params.mmove.fTime;
-	iTargetDistance = localMessage.params.mmove.fDistance;
-	iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
-	iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
-	iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
-	fPunchPoint = localMessage.params.mmove.fPunchDistance;
-	fPunchPoint = (fPunchPoint*4096)/(PI*WHEEL_DIA);
-	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
-
-	if ((pLeftMotor->GetSelectedSensorPosition(0) - iInitLeftPos) > fPunchPoint)
-	{
-		SmartDashboard::PutString("Spunch Status","Punch Point Reached");
-		if (dir)
-		{
-			SmartDashboard::PutString("Spunch Status","Right Solenoid Fired");
-			pPunchSolenoidRight->Set(true);
-			pPunchTimer->Start();
-		}
-		else
-		{
-			SmartDashboard::PutString("Spunch Status","Left Solenoid Fired");
-			pPunchSolenoidLeft->Set(true);
-			pPunchTimer->Start();
-		}
-	}
-
-	fInitRotation = dfAccumGyroData[2];
-
-	printf("AutoVelocityMove time %0.3f distance %d ticks %d left %d right %d rotation %f\n",
-			fVMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight,fInitRotation);
-
+//	static float fCurAngle;
+//	static float fPGL;
+//	static float fPGR;
+//	static float fSpeedLeft;
+//	static float fSpeedRight;
+//	static int iPPL;
+//	static int iPPR;
+//	static const float kPPL = .61;
+//	static const float kPPR = .61;
+//	static const float kPGL = 700;
+//	static const float kPGR = 700;
+//
+//	fSPMoveTime = localMessage.params.mmove.fTime;
+//	iTargetDistance = localMessage.params.mmove.fDistance;
+//	iTicks = (iTargetDistance*4096.0)/(PI*WHEEL_DIA);
+//	iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
+//	iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
+//	fPunchPoint = localMessage.params.mmove.fPunchDistance;
+//	fPunchPoint = pLeftMotor->GetSelectedSensorPosition(0) - (fPunchPoint*4096)/(PI*WHEEL_DIA);
+//	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
+//
+//	fInitRotation = dfAccumGyroData[2];
+//
+//	printf("AutoVelocityMove time %0.3f distance %d ticks %d left %d right %d rotation %f\n",
+//			fVMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight,fInitRotation);
+//
 
 	SmartDashboard::PutNumber("Time out", fSPMoveTime);
 	pPIDTimerMove->Reset();
 	pPIDTimerMove->Start();
 
-	while(true)
+	SmartDashboard::PutString("Spunch Status","Punch Point Reached");
+	if (dir)
 	{
-		SmartDashboard::PutString("Spunch Status","Moving");
-		pIdgey->GetAccumGyro(dfAccumGyroData);
-		fCurAngle = dfAccumGyroData[2];
-		SmartDashboard::PutNumber("Current Auto Angle",fCurAngle);
-		SmartDashboard::PutNumber("The Angle Difference",fCurAngle - fInitRotation);
-		SmartDashboard::PutNumber("The Angle init",fInitRotation);
-
-		// have we timed out?
-		if (!bInAuto)
-		{
-			break;
-		}
-
-		if (pPIDTimerMove->Get() >= fSPMoveTime)
-		{
-			printf("VMOVE TIMED OUT:: dist = %d , timeout = %f , time = %f\n", iTargetDistance, fVMoveTime, pPIDTimerMove->Get());
-			break;
-		}
-
-		// check to see if we have arrived
-
-		if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) &&
-				(pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) &&
-				(pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) &&
-				(pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
-		{
-			iPPL = iPPR = 0;
-			break;
-		}
-
-		// check to see if we're off course
-
-		if (abs(fCurAngle - fInitRotation) > 0.5)
-		{
-			fPGL = /*fCurAngle - */fInitRotation - fCurAngle;
-			fPGR = /*fInitRotation - */fCurAngle - fInitRotation;
-		}
-		else
-		{
-			fPGL = fPGR = 0;
-		}
-
-		// movement + angle correction
-
-		iPPL = iFinalPosLeft - pLeftMotor->GetSelectedSensorPosition(0);
-		iPPR = iFinalPosRight - pRightMotor->GetSelectedSensorPosition(0);
-
-
-		fSpeedLeft = (iPPL * kPPL) + (fPGL * kPGL);
-		fSpeedRight = (iPPR * kPPR) + (fPGR * kPGR);
-
-		pLeftMotor->Set(ControlMode::Velocity,fSpeedLeft);
-		pRightMotor->Set(ControlMode::Velocity,fSpeedRight);
-
-
-		//SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
-		//SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
-		Wait(0.02);
+		SmartDashboard::PutString("Spunch Status","Right Solenoid Fired");
+		pPunchSolenoidRight->Set(true);
+		pPunchTimerRight->Start();
 	}
+	else
+	{
+		SmartDashboard::PutString("Spunch Status","Left Solenoid Fired");
+		pPunchSolenoidLeft->Set(true);
+		pPunchTimerLeft->Start();
+	}
+
+//	while(0)
+//	{
+//		SmartDashboard::PutString("Spunch Status","Moving");
+//		pIdgey->GetAccumGyro(dfAccumGyroData);
+//		fCurAngle = dfAccumGyroData[2];
+//		SmartDashboard::PutNumber("Current Auto Angle",fCurAngle);
+//		SmartDashboard::PutNumber("The Angle Difference",fCurAngle - fInitRotation);
+//		SmartDashboard::PutNumber("The Angle init",fInitRotation);
+//		SmartDashboard::PutNumber("Current Pos",pLeftMotor->GetSelectedSensorPosition(0));
+//		SmartDashboard::PutNumber("Final Pos",iFinalPosLeft);
+//
+//		if ((pLeftMotor->GetSelectedSensorPosition(0) - iInitLeftPos) > fPunchPoint)
+//		{
+//
+//		}
+//
+//		// have we timed out?
+//		if (!bInAuto)
+//		{
+//			break;
+//		}
+//
+//		if (pPIDTimerMove->Get() >= fSPMoveTime)
+//		{
+//			printf("VMOVE TIMED OUT:: dist = %d , timeout = %f , time = %f\n", iTargetDistance, fVMoveTime, pPIDTimerMove->Get());
+//			break;
+//		}
+//
+//		// check to see if we have arrived
+//
+//		if ((pLeftMotor->GetSelectedSensorPosition(0) <= iFinalPosLeft + ACCEPT_RANGE_MOVE) &&
+//				(pLeftMotor->GetSelectedSensorPosition(0) >= iFinalPosLeft - ACCEPT_RANGE_MOVE) &&
+//				(pRightMotor->GetSelectedSensorPosition(0) <= iFinalPosRight + ACCEPT_RANGE_MOVE) &&
+//				(pRightMotor->GetSelectedSensorPosition(0) >= iFinalPosRight - ACCEPT_RANGE_MOVE))
+//		{
+//			iPPL = iPPR = 0;
+//			break;
+//		}
+//
+//		// check to see if we're off course
+//
+//		if (abs(fCurAngle - fInitRotation) > 0.5)
+//		{
+//			fPGL = /*fCurAngle - */fInitRotation - fCurAngle;
+//			fPGR = /*fInitRotation - */fCurAngle - fInitRotation;
+//		}
+//		else
+//		{
+//			fPGL = fPGR = 0;
+//		}
+//
+//		// movement + angle correction
+//
+//		iPPL = iFinalPosLeft - pLeftMotor->GetSelectedSensorPosition(0);
+//		iPPR = iFinalPosRight - pRightMotor->GetSelectedSensorPosition(0);
+//
+//
+//		fSpeedLeft = (iPPL * kPPL) + (fPGL * kPGL);
+//		fSpeedRight = (iPPR * kPPR) + (fPGR * kPGR);
+//
+//		pLeftMotor->Set(ControlMode::Velocity,fSpeedLeft);
+//		pRightMotor->Set(ControlMode::Velocity,fSpeedRight);
+//
+//
+//		//SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
+//		//SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
+//		Wait(0.02);
+//	}
 
 	pPIDTimerMove->Stop();
 

@@ -35,7 +35,7 @@ Arm::Arm()
 	pArmMotor->ConfigContinuousCurrentLimit(30,1000);
 	pArmMotor->ConfigPeakCurrentDuration(0.0,10);
 	pArmMotor->EnableCurrentLimit(true);
-	pArmMotor->SetInverted(false);
+	pArmMotor->SetInverted(true);
 	pArmMotor->ConfigPeakOutputForward(0.65, 10);
 	pArmMotor->ConfigPeakOutputReverse(-0.65,10);
 
@@ -60,6 +60,7 @@ Arm::Arm()
 	fMotorSpeed = 0;
 	fMaxSpeed = 0;
 	iMoveDelta = 0;  // for now
+	bTogglePressed = false;
 
 	pArmTimeout = new Timer();
 

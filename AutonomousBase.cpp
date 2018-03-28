@@ -66,10 +66,15 @@ void Autonomous::OnStateChange()	//Handles state changes
 	else if(localMessage.command == COMMAND_ROBOT_STATE_TELEOPERATED)
 	{
 		bPauseAutoMode = true;
+		bInAutoMode = false;
+		printf("teleop state recieved - auto");
 	}
 	else if(localMessage.command == COMMAND_ROBOT_STATE_DISABLED)
 	{
 		bPauseAutoMode = true;
+		bInAutoMode = false;
+
+		printf("disabled state recieved - auto");
 	}
 }
 
@@ -194,7 +199,7 @@ void Autonomous::DoScript()
 		{
 			// wait a little and try again, really only useful if when practicing
 
-			SmartDashboard::PutBoolean("Script File Found", false);
+			SmartDashboard::PutBoolean("Script File Not Found", false);
 			Wait(1.0);
 		}
 		else
@@ -220,12 +225,16 @@ void Autonomous::DoScript()
 			{
 				// handle pausing in the Evaluate method
 
-				if (Evaluate(*nextLine))
+				if (Evaluate(*nextLine) == true)
 				{
 					// error executing this line or end of script
 					SmartDashboard::PutString("Script Line", "<NOT RUNNING>");
-					break;
+					bInAutoMode = false;
+					return;
+					//break;
 				}
+				if(!bInAutoMode)
+					break;
 			}
 		}
 	}

@@ -69,7 +69,7 @@ void RhsRobot::Init() {
 	pChooser->AddObject("Center",'C');
 	pChooser->AddObject("Right",'R');
 	pChooser->AddDefault("Simple", 'X');
-	SmartDashboard::PutData("Autonomous Mode Chooser", pChooser);
+
 
 	pSpeedTimer = new Timer();
 
@@ -84,8 +84,9 @@ void RhsRobot::Init() {
 	pElevator = new Elevator();
 	pArm = new Arm();
 	pAuto = new Autonomous();
-	pClimber = new Climber();
+//	pClimber = new Climber();
 
+	SmartDashboard::PutData("Auton Mode Chooser", pChooser);
 
 
 	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -548,10 +549,12 @@ void RhsRobot::UpdateGameData(void)
 
 	gameData = frc::DriverStation::GetInstance().GetGameSpecificMessage();
 
+	//printf("Getting Game Data \n");
 	if(gameData.length() == 0)
 	{
 		return;
 	}
+	//printf("Game Data > 0\n");
 
 	sStartLocation = (char) pChooser->GetSelected();
 
@@ -615,7 +618,6 @@ void RhsRobot::UpdateGameData(void)
 			SmartDashboard::PutBoolean("Opponent Left", true);
 			SmartDashboard::PutBoolean("Opponent Right", false);
 		}
-
 		if(sStartLocation == 'L')
 		{
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_LEFT;
@@ -641,8 +643,9 @@ void RhsRobot::UpdateGameData(void)
 		{
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_SIMPLE;
 		}
-
 		// the game data has changed so tell everyone who is interested
+
+		//printf("sending message! \n");
 
 		if(pAuto)
 		{
@@ -654,9 +657,11 @@ void RhsRobot::UpdateGameData(void)
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 
+		//printf("sent! \n");
+
 		gameDataPrev = gameData;
 		sStartLocationLast = sStartLocation;
-		SmartDashboard::PutData("Autonomous mode chooser", pChooser);
+		//SmartDashboard::PutData("Autonomous mode chooser", pChooser);
 	}
 }
 

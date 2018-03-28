@@ -68,9 +68,9 @@ Elevator::Elevator()
 	//pElevatorMotorLeft->ConfigAllowableClosedloopError(0, 200, 10);
 	pElevatorMotorLeft->Config_kF(1,0.0,10);
 	pElevatorMotorLeft->Config_kP(1,0.0,10);
-	pElevatorMotorLeft->Config_kI(1,0.2,10);
+	pElevatorMotorLeft->Config_kI(1,0.10,10);
 	pElevatorMotorLeft->ConfigMaxIntegralAccumulator(1, 8092, 10);
-	pElevatorMotorLeft->Config_kD(1,0.05,10);
+	pElevatorMotorLeft->Config_kD(1,0.1,10);
 	pElevatorMotorLeft->ConfigAllowableClosedloopError(1, 100, 10);
 
 	iCurrentPid = 0;
@@ -135,7 +135,8 @@ void Elevator::Run()
 
 		if(iCurrentPid == 1)
 		{
-			printf("going up\n");
+			//printf("going up\n");
+			;
 		}
 
 		iCurrentPid = 0;
@@ -146,7 +147,8 @@ void Elevator::Run()
 
 		if(iCurrentPid == 0)
 		{
-			printf("going up\n");
+			//printf("going up\n");
+			;
 		}
 
 		iCurrentPid = 1;
@@ -176,8 +178,8 @@ void Elevator::Run()
 	case COMMAND_ELEVATOR_NOBUTTON:
 		prevPressed = false;
 		iMoveDelta = 0;
-		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
-		pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
+		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorLeft->Set(ControlMode::Position, iStartPos + iMoveDelta);
 		pEleTimeout->Reset();
 		pEleTimeout->Start();
@@ -187,7 +189,7 @@ void Elevator::Run()
 		if(!prevPressed) iMoveDelta = 0;
 		prevPressed = true;
 
-		if(iPrevDelta== iMoveDelta)
+		if(iPrevDelta == iMoveDelta)
 		{
 			iMoveDelta = 0;
 			if(iHoldPos == 0)
@@ -199,8 +201,8 @@ void Elevator::Run()
 			iHoldPos = 0;
 		}
 
-		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
-		pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast);
+		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
 
 		if(( (iCurrPos + iMoveDelta) < (iStartPos + iFloorToMax)) &&( (iCurrPos + iMoveDelta) > iStartPos))
 		{

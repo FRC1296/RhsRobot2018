@@ -83,8 +83,12 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	for(iCommand = AUTO_TOKEN_MODE; iCommand < AUTO_TOKEN_LAST; iCommand++)
 	{
-		//if(bModeFound)
-			printf("Comparing %s to %s\n", pToken, szTokens[iCommand]);
+		if(bModeFound)
+		{
+			//printf("Comparing %s to %s\n", pToken, szTokens[iCommand]);
+			;
+		}
+
 
 		if(!strncmp(pToken, szTokens[iCommand], strlen(szTokens[iCommand])))
 		{
@@ -121,18 +125,19 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 		if(!strncmp(pToken, szModeString, 4))
 		{
+			printf("Mode found \n");
 			// this is our mode
 			bModeFound = true;
 		}
 		else
 		{
 			// this is not chosen mode
+			//printf("Mode not found %s %s \n", pToken, szModeString);
 			if (bModeFound)
 			{
 				// we were executing so time to exit
-
-				End(pCurrLinePos);
-				bReturn = true;
+				printf("bModeFound and stuff\n");
+				return(End(pCurrLinePos));
 			}
 		}
 		rStatus.append("mode");
@@ -277,7 +282,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		break;
 
 	case AUTO_TOKEN_SPUNCH:
-		printf("Hello Banana");
+		//printf("Hello Banana");
 		if(bModeFound)
 		{
 			printf("process AUTO_TOKEN_PUNCH\n");
@@ -300,7 +305,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	if(bReturn)
 	{
-		printf("%0.3lf %s\n", pDebugTimer->Get(), rStatement.c_str());
+		//printf("bReturn:: %0.3lf %s\n", pDebugTimer->Get(), rStatement.c_str());
 	}
 
 	return (bReturn);

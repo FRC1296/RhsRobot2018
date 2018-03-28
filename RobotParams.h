@@ -104,8 +104,8 @@ const int CAN_CLAW_VICTOR_LEFT = 13;
 const int CAN_CLAW_TALON_RIGHT = 14;
 const int CAN_ARM_TALON = 16;
 
-const int CAN_CLIMBER_TALON = 15;
-const int CAN_CLIMBER_VICTOR = 17;
+const int CAN_CLIMBER_TALON = 7;
+const int CAN_CLIMBER_VICTOR = 8;
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
@@ -246,9 +246,9 @@ const int POV_STILL = -1;
 #define WHEEL_DIA					4.0			//Wheel Diameter in inches
 #define PI							3.14159
 #define ROBOT_WIDTH					26.0		// Width of the drivetrain in inches
-#define DRIVETRAIN_CONST_KP			(1.0/50.0) // Constant P value for PID loops
+#define DRIVETRAIN_CONST_KP			(1.0/75.0) // Constant P value for PID loops
 #define DRIVETRAIN_CONST_KI			(1.0/1000.0) // Constant I value for PID loops
-#define DRIVETRAIN_CONST_KD			(1.0/60.0)  // Constant D value for PID loops
+#define DRIVETRAIN_CONST_KD			(1.0/50.0)  // Constant D value for PID loops
 #define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
 #define UPDATE_RATE					.02			// Update loop rate for drive train
 #define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second
@@ -256,7 +256,7 @@ const int POV_STILL = -1;
 #define STRAIGHT_TTM				0.4			// Time to maximum straight speed
 #define FILTER_ONE_LENGTH			20			// Length of first filter
 #define FILTER_TWO_LENGTH			10			// Length of second filter
-#define MAX_SPEED_PID				.75			// Max speed allowed in autonomous commands
+#define MAX_SPEED_PID				.60			// Max speed allowed in autonomous commands
 
 #define ACCEPT_RANGE_TICKS			2048		//Acceptable Range for "finished" PID loop in ticks
 #define ACCEPT_RANGE_DEGR			2			//Acceptable Range for "finished" PID loop in degrees

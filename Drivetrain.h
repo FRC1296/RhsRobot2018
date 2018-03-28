@@ -64,7 +64,8 @@ private:
 	Timer* pPIDTimerMove;
 	Timer* pSpeedTimer;
 	Timer* pPIDTurnTimer;
-	Timer* pPunchTimer;
+	Timer* pPunchTimerLeft;
+	Timer* pPunchTimerRight;
 
 	Solenoid* pPunchSolenoidLeft; // The solenoid that punches the cube left, NOT the left solenoid
 	Solenoid* pPunchSolenoidRight; // The solenoid that punches the cube right, NOT the right solenoid

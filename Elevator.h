@@ -61,13 +61,13 @@ private:
 	float fMotorSpeed;
 	float fMaxSpeed;
 
-	const int iFloorToSwitch = 10288;
+	const int iFloorToSwitch = 10844;
 	const int iFloorToSpeedLimit = 17788; // Needs measuring; right now it's a rough estimate
-	const int iFloorToScale = 25250;
+	const int iFloorToScale = 23613;
 	const int iFloorToClimb = 17500; // Needs updating
-	const int iFloorToMax = 27982;
+	const int iFloorToMax = 26908;
 	const int iSwitchToScale = iFloorToScale - iFloorToSwitch;
-	const int iMoveDeltaIncrement = 75;
+	const int iMoveDeltaIncrement = 40;
 };
 
 #endif			//COMPONENT_H
