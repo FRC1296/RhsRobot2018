@@ -56,7 +56,10 @@ private:
 	unsigned int uResponseCount;
 	MessageCommand ReceivedCommand;
 	Timer *pDebugTimer;
+	bool writingString;
 	char szModeString[8];
+
+	char szPrevModeString[8];
 	bool bModeFound;
 
 	bool Begin(char *);

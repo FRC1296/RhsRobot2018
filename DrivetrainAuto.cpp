@@ -193,10 +193,12 @@ void Drivetrain::AutoVelocityMove()
 	static float fSpeedRight;
 	static int iPPL;
 	static int iPPR;
-	static const float kPPL = .61;
-	static const float kPPR = .61;
-	static const float kPGL = 700;
-	static const float kPGR = 700;
+	static const float kPPL = .65;
+	static const float kPPR = .65;
+	static const float kPGL = 650;
+	static const float kPGR = 650;
+	static const float kDGL = 0.1;
+	static const float kDGR = 0.1;
 	fVMoveTime = localMessage.params.mmove.fTime;
 	iTargetDistance = localMessage.params.mmove.fDistance;
 	iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);
@@ -262,8 +264,8 @@ void Drivetrain::AutoVelocityMove()
 		iPPR = iFinalPosRight - pRightMotor->GetSelectedSensorPosition(0);
 
 
-		fSpeedLeft = (iPPL * kPPL) + (fPGL * kPGL);
-		fSpeedRight = (iPPR * kPPR) + (fPGR * kPGR);
+		fSpeedLeft = (iPPL * kPPL) + (fPGL * kPGL) - (fPGL * kDGL);
+		fSpeedRight = (iPPR * kPPR) + (fPGR * kPGR) - (fPGR * kDGR);
 
 		pLeftMotor->Set(ControlMode::Velocity,fSpeedLeft);
 		pRightMotor->Set(ControlMode::Velocity,fSpeedRight);

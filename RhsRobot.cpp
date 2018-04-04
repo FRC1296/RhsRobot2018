@@ -65,13 +65,14 @@ void RhsRobot::Init() {
 	 */
 
 	pChooser = new frc::SendableChooser<char>();
-	pChooser->AddObject("Left",'L');
-	pChooser->AddObject("Center",'C');
-	pChooser->AddObject("Right",'R');
-	pChooser->AddDefault("Simple", 'X');
+	pChooser->AddObject("Left - Cube in puncher; robot backwards",'L');
+	pChooser->AddObject("Center - Cube in claw; robot forwards",'C');
+	pChooser->AddObject("Right - Cube in puncher; robot backwards",'R');
+	pChooser->AddDefault("Simple - Cube anywhere; robot forwards", 'X');
 
 
 	pSpeedTimer = new Timer();
+
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
@@ -556,7 +557,11 @@ void RhsRobot::UpdateGameData(void)
 	}
 	//printf("Game Data > 0\n");
 
+	bool err = false;
+
 	sStartLocation = (char) pChooser->GetSelected();
+
+	sStartLocation = 'C';
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
 	{
@@ -576,8 +581,9 @@ void RhsRobot::UpdateGameData(void)
 		}
 		else
 		{
+			err = true;
 			robotMessage.params.gamedata.eSwitchSide = GAMEPIECESIDE_LEFT;
-			SmartDashboard::PutBoolean("Switch Left", true);
+			SmartDashboard::PutBoolean("Switch Left", false);
 			SmartDashboard::PutBoolean("Switch Right", false);
 		}
 
@@ -595,6 +601,7 @@ void RhsRobot::UpdateGameData(void)
 		}
 		else
 		{
+			err = true;
 			robotMessage.params.gamedata.eScaleSide = GAMEPIECESIDE_LEFT;
 			SmartDashboard::PutBoolean("Scale Left", true);
 			SmartDashboard::PutBoolean("Scale Right", false);
@@ -614,6 +621,7 @@ void RhsRobot::UpdateGameData(void)
 		}
 		else
 		{
+			err = true;
 			robotMessage.params.gamedata.eOpponentSwitchSide = GAMEPIECESIDE_LEFT;
 			SmartDashboard::PutBoolean("Opponent Left", true);
 			SmartDashboard::PutBoolean("Opponent Right", false);
@@ -641,12 +649,18 @@ void RhsRobot::UpdateGameData(void)
 		}
 		else
 		{
+			err = true;
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_SIMPLE;
 		}
 		// the game data has changed so tell everyone who is interested
 
 		//printf("sending message! \n");
 
+		if(err)
+			{
+			printf("game data error \n");
+				return;
+			}
 		if(pAuto)
 		{
 			pAuto->SendMessage(&robotMessage);

@@ -48,9 +48,9 @@ Elevator::Elevator()
 	pElevatorMotorLeft->SetInverted(false);
 	pElevatorMotorRight->SetInverted(false);
 	pElevatorMotorLeft->ConfigPeakOutputForward(0.82, 10);
-	pElevatorMotorLeft->ConfigPeakOutputReverse(-.2,10);
+	pElevatorMotorLeft->ConfigPeakOutputReverse(-.4,10);
 	pElevatorMotorRight->ConfigPeakOutputForward(0.82, 10);
-	pElevatorMotorRight->ConfigPeakOutputReverse(-.2,10);
+	pElevatorMotorRight->ConfigPeakOutputReverse(-.4,10);
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pElevatorMotorLeft->SetSensorPhase(true);
@@ -100,7 +100,7 @@ Elevator::Elevator()
 	SmartDashboard::PutNumber("Elevator Init Position",iStartPos);
 	SmartDashboard::PutNumber("Elevator Switch Position",iStartPos + iFloorToSwitch);
 	SmartDashboard::PutNumber("Elevator Scale Position",iStartPos + iFloorToScale);
-
+	SmartDashboard::PutString("Button Pressed", "no button pressed");
 	pTask = new std::thread(&Elevator::StartTask, this, ELEVATOR_TASKNAME, ELEVATOR_PRIORITY);
 	wpi_assert(pTask);
 };
@@ -164,6 +164,7 @@ void Elevator::Run()
 
 	case COMMAND_ELEVATOR_MOVE:
 		fMotorSpeed = localMessage.params.elevator.fSpeed;
+		SmartDashboard::PutString("Button Pressed", "fine adjust");
 
 		if (fMotorSpeed > 0.2 && iCurrPos > iStartPos)
 		{
@@ -177,6 +178,7 @@ void Elevator::Run()
 
 	case COMMAND_ELEVATOR_NOBUTTON:
 		prevPressed = false;
+		SmartDashboard::PutString("Button Pressed", "no button pressed");
 		iMoveDelta = 0;
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
@@ -186,6 +188,7 @@ void Elevator::Run()
 		break;
 
 	case COMMAND_ELEVATOR_FLOOR:
+		SmartDashboard::PutString("Button Pressed", "Floor Pressed");
 		if(!prevPressed) iMoveDelta = 0;
 		prevPressed = true;
 
@@ -228,6 +231,7 @@ void Elevator::Run()
 
 	case COMMAND_ELEVATOR_SWITCH:
 		prevPressed = false;
+		SmartDashboard::PutString("Button Pressed", "Switch Pressed");
 
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
@@ -251,6 +255,7 @@ void Elevator::Run()
 
 	case COMMAND_ELEVATOR_SCALE:
 		prevPressed = false;
+		SmartDashboard::PutString("Button Pressed", "Scale Pressed");
 
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
@@ -276,6 +281,7 @@ void Elevator::Run()
 	case COMMAND_ELEVATOR_CLIMB:
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
+		pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToMax - 1000);
 
 		prevPressed = false;
 		//	pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToClimb);

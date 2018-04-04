@@ -365,6 +365,10 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 	{
 		Message.command = COMMAND_ELEVATOR_FLOOR;
 	}
+	else if(!strncmp(pToken, "MAX", 3))
+	{
+		Message.command = COMMAND_ELEVATOR_CLIMB;
+	}
 	else
 	{
 		return(false);

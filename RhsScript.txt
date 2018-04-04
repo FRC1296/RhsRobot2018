@@ -42,6 +42,7 @@
 #drive the arm to the floor or shooting position
 #ARM FLOOR
 #ARM SHOOT
+
 #open and close claw
 #ARM PINCH
 #ARM RELEASE
@@ -54,49 +55,49 @@ DEBUG 0
 MODE CLRL
 #start in center and score in left switch
 	ARM FLOOR
-	DELAY 0.5
+	DELAY 0.5 
 	ELEVATOR SWITCH 5.0
-    VMOVE 0.5 42.0 5.0
-    TURN 80.0 5.0
-    VMOVE 0.5 72.0 5.0
-    TURN -80.0 5.0
-    VMOVE 0.5 60 5.0
-    CLAW OUT 0.8
+    VMOVE 0.5 42.0 3.0
+    TURN 80.0 3.0
+    VMOVE 0.5 68.0 5.0
+    TURN -80.0 3.0
+    VMOVE 0.5 60.0 3.5
+    CLAW OUT 0.6
     DELAY 2.0
     CLAW STOP
-    VMOVE 0.5 -36.0 5.0
+    VMOVE 0.5 -32.0 2.5
     ELEVATOR STOW 5.0
 
 MODE CRLR
 #start in center and score in right switch
 	ARM FLOOR
-	DELAY 0.5
+	DELAY 0.5 
 	ELEVATOR SWITCH 5.0
-    VMOVE 0.5 42.0 5.0
+    MMOVE 0.5 42.0 3.0
     TURN -80.0 5.0
     VMOVE 0.5 39.0 5.0
-    TURN 80.0 5.0
-    VMOVE 0.5 60.0 5.0
-    CLAW OUT 0.8
+    TURN 80.0 3.0
+    VMOVE 0.5 50.0 3.5
+    CLAW OUT 0.6
     DELAY 2.0
     CLAW STOP
-    VMOVE 0.5 -36.0 5.0
+    VMOVE 0.5 -32.0 2.5
     ELEVATOR STOW 5.0
     
 MODE CLLL
 #start in center and score in left switch
 	ARM FLOOR
-	DELAY 0.5
-	ELEVATOR SWITCH 3.0
-    VMOVE 0.5 42.0 4.0
-    TURN 80.0 3.0
-    VMOVE 0.5 72.0 4.0
-    TURN -80.0 3.0
-    VMOVE 0.5 60.0 4.0
-    CLAW OUT 0.8
+	DELAY 0.5 
+	ELEVATOR SWITCH 5.0
+    VMOVE 0.5 42.0 3.0
+    TURN 80.0 5.0
+    VMOVE 0.5 68.0 5.0
+    TURN -80.0 6.0
+    VMOVE 0.5 56.0 5.0
+    CLAW OUT 0.6
     DELAY 2.0
     CLAW STOP
-    VMOVE 0.5 -36.0 5.0
+    VMOVE 0.5 -32.0 2.5
     ELEVATOR STOW 5.0
     
 MODE CRRR
@@ -104,62 +105,46 @@ MODE CRRR
 	ARM FLOOR
 	DELAY 0.5
 	ELEVATOR SWITCH 5.0
-    VMOVE 0.5 42.0 5.0
-    TURN -80.0 5.0
-    VMOVE 0.5 39.0 5.0
-    TURN 80.0 5.0
-    VMOVE 0.5 60.0 5.0
-    CLAW OUT 0.8
-    DELAY 2.0
+    VMOVE 0.5 42.0 3.0
+    TURN -80.0 6.0
+    VMOVE 0.5 50.0 5.0
+    TURN 80.0 6.0
+    VMOVE 0.5 56.0 3.5
+    CLAW OUT 0.6
+    DELAY 1.5
     CLAW STOP
-    VMOVE 0.5 -36.0 5.0
+    VMOVE 0.5 -32.0 2.5
     ELEVATOR STOW 5.0
  
 #modes with robot starting just left of switch
 
 MODE LLLL
 #start on left and score in left scale
-    VMOVE 0.5 -140.0 15.0
-    SPUNCH LEFT 1.0 0.5 2.0 2.0
-    DELAY 0.5
-    VMOVE 0.5 -80.0 5.0
-    TURN 37.0 5.0
-    ARM FLOOR
-    DELAY 0.5
-    ARM RELEASE
-    DELAY 1.0
-    CLAW IN 0.9
-    MMOVE 0.5 23.0 5.0
-    DELAY 0.5
-    ARM PINCH
-    DELAY 0.5
-    CLAW IN 0.35
-    DELAY 0.2
-    MMOVE 0.5 -23.0 5.0
-    TURN 100.0 5.0
-#    VMOVE 0.5 90 5.0
-#    TURN -80.0 5.0
-#    VMOVE 0.5 -40 5.0
-#    ELEVATOR SCALE
-#    DELAY 1.0
-#    VMOVE 0.5 60 5.0
-#    CLAW OUT 0.8
-#    DELAY 2.0
-#    CLAW STOP
-#    MMOVE 0.25 -24 1.0
-#    ELEVATOR STOW 4.0
-
-MODE LRLR
-#start on left and score in left scale
     VMOVE 0.5 150.0 5.0
     VMOVE 0.5 150.0 5.0
-    TURN -80.0 5.0
+    TURN -90.0 5.0
     VMOVE 0.5 -50.0 3.0
     ARM FLOOR
     DELAY 0.5
     ELEVATOR SCALE 2.0
     DELAY 1.0
-    VMOVE 0.5 36.0 5.0
+    VMOVE 0.5 36.0 3.0
+    CLAW OUT 0.8
+    DELAY 2.0
+    CLAW STOP
+    MMOVE 0.25 -24.0 1.0
+
+MODE LRLR
+#start on left and score in left scale
+    VMOVE 0.5 150.0 5.0
+    VMOVE 0.5 150.0 5.0
+    TURN -90.0 5.0
+    VMOVE 0.5 -50.0 3.0
+    ARM FLOOR
+    DELAY 0.5
+    ELEVATOR SCALE 2.0
+    DELAY 1.0
+    VMOVE 0.5 36.0 3.0
     CLAW OUT 0.8
     DELAY 2.0
     CLAW STOP
@@ -167,17 +152,16 @@ MODE LRLR
 
 MODE LLRL
 #start on left and score in right scale
-   VMOVE 0.5 106.0 5.0
-   VMOVE 0.5 106.0 5.0
-   TURN -70.0 5.0
-   VMOVE 0.5 84.0 5.0
-   VMOVE 0.5 84.0 5.0
-   TURN 80.0 5.0
+   VMOVE 0.5 212.0 10.0
+   TURN -80.0 5.0
+   VMOVE 0.5 118.0 5.0
+   VMOVE 0.5 86.0 5.0
+   TURN 75.0 5.0
    ARM FLOOR
    DELAY 0.5
-   ELEVATOR SCALE 5.0
+   ELEVATOR MAX 5.0
    DELAY 1.0
-   VMOVE 0.5 40.0 5.0
+   VMOVE 0.5 40.0 3.0
    CLAW OUT 0.8
    DELAY 2.0
    CLAW STOP
@@ -185,17 +169,16 @@ MODE LLRL
 
 MODE LRRR
 #start on left and score in right scale
-   VMOVE 0.5 106.0 5.0
-   VMOVE 0.5 106.0 5.0
-   TURN -70.0 5.0
-   VMOVE 0.5 84.0 5.0
-   VMOVE 0.5 84.0 5.0
-   TURN 80.0 5.0
+   VMOVE 0.5 212.0 10.0
+   TURN -80.0 5.0
+   VMOVE 0.5 118.0 5.0
+   VMOVE 0.5 86.0 5.0
+   TURN 75.0 5.0
    ARM FLOOR
    DELAY 0.5
-   ELEVATOR SCALE 5.0
+   ELEVATOR MAX 5.0
    DELAY 1.0
-   VMOVE 0.5 40.0 5.0
+   VMOVE 0.5 40.0 3.0
    CLAW OUT 0.8
    DELAY 2.0
    CLAW STOP
@@ -205,101 +188,88 @@ MODE LRRR
 
 MODE RRRR
 #start on right and score in right scale
-    VMOVE 0.5 -140.0 5.0
-    SPUNCH RIGHT 1.0 0.5 2.0 2.0
-    DELAY 0.5
+    #VMOMVE 0.5 150.0 2.5
+    #VMOMVE 0.5 150.0 2.5
+    VMOVE 0.5 300.0 6.0
+    TURN  80.0 5.0
+    VMOVE 0.5 -50.0 1.0
     ARM FLOOR
-    VMOVE 0.5 -80.0 5.0
-    TURN -37.0 5.0
-    ARM RELEASE
-    DELAY 0.1
-    CLAW IN 0.9
-    MMOVE 0.8 23.0 5.0
     DELAY 0.5
-    ARM PINCH
-    DELAY 0.25
-    CLAW IN 0.5
-    DELAY 0.2
-    ELEVATOR SWITCH 5.0
-    MMOVE 0.8 -52.0 5.0
-    TURN -80.0 5.0
-    DELAY 0.25
-    ELEVATOR SCALE 5.0
-    MMOVE 0.8 15.0 5.0
-    DELAY 0.5
-    CLAW OUT 0.7
+    ELEVATOR MAX 2.0
     DELAY 1.0
+    VMOVE 0.5 36.0 3.0
+    CLAW OUT 0.5
+    DELAY 2.0
     CLAW STOP
-    MMOVE 0.5 -24.0 2.0
-   # ELEVATOR STOW 5.0
+    MMOVE 0.25 -24.0 2.0
+    ELEVATOR STOW 2.0
 
 MODE RLRL
 #start on right and score in right scale
-    VMOVE 0.5 150.0 5.0
-    VMOVE 0.5 150.0 5.0
+    #VMOMVE 0.5 150.0 2.5
+    #VMOMVE 0.5 150.0 2.5
+    VMOVE 0.5 300.0 6.0
     TURN  80.0 5.0
     VMOVE 0.5 -50.0 3.0
     ARM FLOOR
     DELAY 0.5
-    ELEVATOR SCALE 2.0
+    ELEVATOR MAX 2.0
     DELAY 1.0
-    VMOVE 0.5 36.0 5.0
+    VMOVE 0.5 36.0 3.0
     CLAW OUT 0.8
     DELAY 2.0
     CLAW STOP
-    MMOVE 0.25 -24.0 1.0
+    MMOVE 0.25 -24.0 5.0
 
 MODE RRLR
 #start on right and score in left scale
-   VMOVE 0.5 106.0 5.0
-   VMOVE 0.5 106.0 5.0
+   VMOVE 0.5 212.0 10.0
    TURN 80.0 5.0
    VMOVE 0.5 84.0 5.0
    VMOVE 0.5 84.0 5.0
    TURN -70.0 5.0
    ARM FLOOR
    DELAY 0.5
-   ELEVATOR SCALE 5.0
+   ELEVATOR MAX 5.0
    DELAY 1.0
-   VMOVE 0.5 40.0 5.0
+   VMOVE 0.5 40.0 3.0
    CLAW OUT 0.8
    DELAY 2.0
    CLAW STOP
-   VMOVE 0.5 -36.0 1.0
+   VMOVE 0.5 -36.0 5.0
 
 MODE RLLL
 #start on right and score in left scale
-   VMOVE 0.5 106.0 5.0
-   VMOVE 0.5 106.0 5.0
+   VMOVE 0.5 212.0 10.0
    TURN 80.0 5.0
    VMOVE 0.5 84.0 5.0
    VMOVE 0.5 84.0 5.0
    TURN -70.0 5.0
    ARM FLOOR
    DELAY 0.5
-   ELEVATOR SCALE 5.0
+   ELEVATOR MAX 5.0
    DELAY 1.0
-   VMOVE 0.5 40.0 5.0
+   VMOVE 0.5 40.0 3.0
    CLAW OUT 0.8
    DELAY 2.0
    CLAW STOP
-   VMOVE 0.5 -36.0 1.0
+   VMOVE 0.5 -36.0 5.0
 
 #modes where we just run forward
 
 MODE XLRL
-MMOVE 0.5 120.0 5.0
+VMOVE 0.5 120.0 5.0
 ARM FLOOR
 
 MODE XRLR
-MMOVE 0.5 120.0 5.0
+VMOVE 0.5 120.0 5.0
 ARM FLOOR
 
 MODE XLLL
-MMOVE 0.5 120.0 5.0
+VMOVE 0.5 120.0 5.0
 ARM FLOOR
 
 MODE XRRR
-MMOVE 0.5 120.0 50.0
+VMOVE 0.5 120.0 5.0
 ARM FLOOR
 END

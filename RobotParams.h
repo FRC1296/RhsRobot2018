@@ -99,7 +99,7 @@ const int CAN_DRIVETRAIN_TALON_LEFT = 4;
 const int CAN_DRIVETRAIN_VICTOR_LEFT1 = 5;
 const int CAN_DRIVETRAIN_TALON_LEFT2 = 6;
 const int CAN_ELEVATOR_TALON_LEFT = 11; // HAS THE ENCODER ON IT
-const int CAN_ELEVATOR_TALON_RIGHT = 12; // See above
+const int CAN_ELEVATOR_TALON_RIGHT = 12;
 const int CAN_CLAW_VICTOR_LEFT = 13;
 const int CAN_CLAW_TALON_RIGHT = 14;
 const int CAN_ARM_TALON = 16;
@@ -246,9 +246,9 @@ const int POV_STILL = -1;
 #define WHEEL_DIA					4.0			//Wheel Diameter in inches
 #define PI							3.14159
 #define ROBOT_WIDTH					26.0		// Width of the drivetrain in inches
-#define DRIVETRAIN_CONST_KP			(1.0/75.0) // Constant P value for PID loops
-#define DRIVETRAIN_CONST_KI			(1.0/1000.0) // Constant I value for PID loops
-#define DRIVETRAIN_CONST_KD			(1.0/50.0)  // Constant D value for PID loops
+#define DRIVETRAIN_CONST_KP			(1.0/65.0) // Constant P value for PID loops
+#define DRIVETRAIN_CONST_KI			(1.0/1200.0) // Constant I value for PID loops
+#define DRIVETRAIN_CONST_KD			(1.0/10.0)  // Constant D value for PID loops
 #define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds
 #define UPDATE_RATE					.02			// Update loop rate for drive train
 #define MAX_STRAIGHT_SPEED			5000.0		// Max Straight speed in Ticks per Second

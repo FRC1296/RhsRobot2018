@@ -52,10 +52,10 @@ private:
 	bool bClawOpen;
 	bool bTogglePressed;
 
-	const int iStartToOpen = 5387;
+	const int iStartToOpen = 5700;
 	const int iStartToStow = 1525;
 	const int iStartToShoot = 1525;
-	const int iStartToMax = 5387;
+	const int iStartToMax = 5800;
 };
 
 #endif			//ARM_H

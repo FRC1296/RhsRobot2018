@@ -43,10 +43,12 @@ Arm::Arm()
 	pArmMotor->SetSensorPhase(false);
 	pArmMotor->Config_kF(0,0.0,10);
 	pArmMotor->Config_kP(0,0.325,10);
-	pArmMotor->Config_kI(0,0.0,10);
+	pArmMotor->Config_kI(0,0.0001,10);
 	pArmMotor->Config_kD(0,0.0,10);
 	pArmMotor->SelectProfileSlot(0,0);
-	pArmMotor->ConfigAllowableClosedloopError(0, 50, 10);
+	pArmMotor->ConfigAllowableClosedloopError(0, 20, 10);
+	pArmMotor->ConfigMaxIntegralAccumulator(1, 1000, 10);
+
 
 	pArmMotor->ConfigReverseLimitSwitchSource(LimitSwitchSource::LimitSwitchSource_RemoteTalonSRX,LimitSwitchNormal::LimitSwitchNormal_Disabled,0);
 
