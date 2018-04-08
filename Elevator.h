@@ -66,7 +66,7 @@ private:
 	const int iFloorToScale = 22703;
 	const int iFloorToClimb = 17500; // Needs updating
 	const int iFloorToMax = 26908;
-	const int iSwitchToScale = iFloorToScale - iFloorToSwitch;
+	const int iSwitchToScale = (iFloorToScale - iFloorToSwitch);
 	const int iMoveDeltaIncrement = 100;
 };
 

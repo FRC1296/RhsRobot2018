@@ -127,7 +127,7 @@ Drivetrain::Drivetrain()
 	pPunchTimerLeft = new Timer();
 	pPunchTimerRight = new Timer();
 
-	pPunchSolenoidLeft = new Solenoid(CAN_PCM,0); // Change this ID when they actually mount it
+	pPunchSolenoidLeft = new Solenoid(CAN_PCM,6); // Change this ID when they actually mount it
 	pPunchSolenoidLeft->Set(false);
 
 	pPunchSolenoidRight = new Solenoid(CAN_PCM,7);

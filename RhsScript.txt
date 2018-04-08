@@ -52,21 +52,39 @@ DEBUG 0
 
 #modes with robot starting in the center
 
-MODE CLRL
-#start in center and score in left switch
+MODE CLRL 
+#start in center and score in left switch				#FileZilla this stuff - PSA
 	ARM FLOOR
 	DELAY 0.5 
 	ELEVATOR SWITCH 5.0
-    VMOVE 0.5 42.0 3.0
+    VMOVE 0.6 42.0 3.0
     TURN 80.0 3.0
-    VMOVE 0.5 68.0 5.0
+    VMOVE 0.6 68.0 5.0
     TURN -80.0 3.0
-    VMOVE 0.5 60.0 3.5
+    VMOVE 0.6 50.0 3.5
     CLAW OUT 0.6
-    DELAY 2.0
+    DELAY 0.5
     CLAW STOP
-    VMOVE 0.5 -32.0 2.5
-    ELEVATOR STOW 5.0
+    VMOVE 0.6 -55.0 3.5
+    ELEVATOR FLOOR 5.0
+    TURN 80.0 3.0
+    ARM RELEASE
+    VMOVE 0.6 -64.0 3.5
+    TURN -80.0 3.0
+    MMOVE 0.6 16.0 3.5
+    CLAW IN 0.6
+    ARM PINCH
+    ELEVATOR SWITCH 5.0
+    MMOVE 0.6 -16.0 3.0
+	TURN 80.0 3.0
+    VMOVE 0.6 64.0 5.0
+    TURN -80.0 3.0
+    VMOVE 0.6 55.0 3.5
+    CLAW OUT 0.6
+    DELAY 0.5
+    CLAW STOP
+    VMOVE 0.6 -50.0 3.5
+    ELEVATOR FLOOR 5.0
 
 MODE CRLR
 #start in center and score in right switch
@@ -81,6 +99,22 @@ MODE CRLR
     CLAW OUT 0.6
     DELAY 2.0
     CLAW STOP
+    
+    
+   VMOVE 0.5 -24.0 1.0
+   TURN 80.0 3.0
+   ELEVATOR STOW 5.0
+   ARM RELEASE
+   VMOVE 0.5 30.0 3.5
+   ARM PINCH
+   CLAW IN 0.6
+   VMOVE 0.5 -30.0 3.5
+   TURN -80.0 3.0
+   ELEVATOR SWITCH 5.0
+   VMOVE 0.5 24.0 1.0
+   CLAW OUT 0.6
+    
+    
     VMOVE 0.5 -32.0 2.5
     ELEVATOR STOW 5.0
     
@@ -95,6 +129,22 @@ MODE CLLL
     TURN -80.0 6.0
     VMOVE 0.5 56.0 5.0
     CLAW OUT 0.6
+    
+    
+    VMOVE 0.5 -24.0 1.0
+    TURN -80.0 3.0
+    ELEVATOR STOW 5.0
+    ARM RELEASE
+    VMOVE 0.5 30.0 3.5
+    ARM PINCH
+    CLAW IN 0.6
+    VMOVE 0.5 -30.0 3.5
+    TURN 80.0 3.0
+    ELEVATOR SWITCH 5.0
+    VMOVE 0.5 24.0 1.0
+    CLAW OUT 0.6
+    
+    
     DELAY 2.0
     CLAW STOP
     VMOVE 0.5 -32.0 2.5
@@ -111,6 +161,21 @@ MODE CRRR
     TURN 80.0 6.0
     VMOVE 0.5 56.0 3.5
     CLAW OUT 0.6
+    
+    VMOVE 0.5 -24.0 1.0
+   TURN 80.0 3.0
+   ELEVATOR STOW 5.0
+   ARM RELEASE
+   VMOVE 0.5 30.0 3.5
+   ARM PINCH
+   CLAW IN 0.6
+   VMOVE 0.5 -30.0 3.5
+   TURN -80.0 3.0
+   ELEVATOR SWITCH 5.0
+   VMOVE 0.5 24.0 1.0
+   CLAW OUT 0.6
+   
+   
     DELAY 1.5
     CLAW STOP
     VMOVE 0.5 -32.0 2.5

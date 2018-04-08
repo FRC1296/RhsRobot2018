@@ -69,7 +69,7 @@ void RhsRobot::Init() {
 	pChooser->AddObject("Center - Cube in claw; robot forwards",'C');
 	pChooser->AddObject("Right - Cube in puncher; robot backwards",'R');
 	pChooser->AddDefault("Simple - Cube anywhere; robot forwards", 'X');
-
+	SmartDashboard::PutData("Autonomous Mode Chooser", pChooser);						//Maybe works?
 
 	pSpeedTimer = new Timer();
 
@@ -87,7 +87,6 @@ void RhsRobot::Init() {
 	pAuto = new Autonomous();
 //	pClimber = new Climber();
 
-	SmartDashboard::PutData("Auton Mode Chooser", pChooser);
 
 
 	//camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -561,7 +560,7 @@ void RhsRobot::UpdateGameData(void)
 
 	sStartLocation = (char) pChooser->GetSelected();
 
-	sStartLocation = 'C';
+	sStartLocation = 'C';	// Let's fix this, yeah?
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
 	{
@@ -675,7 +674,7 @@ void RhsRobot::UpdateGameData(void)
 
 		gameDataPrev = gameData;
 		sStartLocationLast = sStartLocation;
-		//SmartDashboard::PutData("Autonomous mode chooser", pChooser);
+		SmartDashboard::PutData("Autonomous mode chooser", pChooser); //testing
 	}
 }
 

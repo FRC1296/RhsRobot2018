@@ -47,9 +47,9 @@ Elevator::Elevator()
 	pElevatorMotorRight->EnableCurrentLimit(true);
 	pElevatorMotorLeft->SetInverted(false);
 	pElevatorMotorRight->SetInverted(false);
-	pElevatorMotorLeft->ConfigPeakOutputForward(0.82, 10);
+	pElevatorMotorLeft->ConfigPeakOutputForward(0.9, 10);
 	pElevatorMotorLeft->ConfigPeakOutputReverse(-.4,10);
-	pElevatorMotorRight->ConfigPeakOutputForward(0.82, 10);
+	pElevatorMotorRight->ConfigPeakOutputForward(0.9, 10);
 	pElevatorMotorRight->ConfigPeakOutputReverse(-.4,10);
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
