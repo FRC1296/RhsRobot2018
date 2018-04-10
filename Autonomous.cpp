@@ -359,11 +359,15 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 	}
 	else if(!strncmp(pToken, "STOW", 4))
 	{
-		Message.command = COMMAND_ELEVATOR_FLOOR;
+		Message.command = COMMAND_ELEVATOR_NOBUTTON;
 	}
 	else if(!strncmp(pToken, "FLOOR", 5))
 	{
-		Message.command = COMMAND_ELEVATOR_FLOOR;
+		Message.command = COMMAND_ELEVATOR_NOBUTTON;
+	}
+	else if(!strncmp(pToken, "MAX", 3))
+	{
+		Message.command = COMMAND_ELEVATOR_CLIMB;
 	}
 	else
 	{

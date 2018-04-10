@@ -50,8 +50,12 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	rStatement.erase(0, rStatement.find_first_not_of(" \r\n\t"));
 
-	if(rStatement.empty()) {
+	if(rStatement.empty() || szModeString[0] == 0) {
 		//printf("statement is empty");
+		if(szModeString[0] == 0)
+		{
+			//printf("no game data!");
+		}
 		return (bReturn);
 	}
 
@@ -123,10 +127,20 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	case AUTO_TOKEN_MODE:
 		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
 
+		if(writingString)
+		{
+			printf("race condition\n");
+			while(writingString)
+			{
+				Wait(.01);
+			}
+		}
+
 		if(!strncmp(pToken, szModeString, 4))
 		{
 			printf("Mode found \n");
 			// this is our mode
+			printf("%s \n", pToken);
 			bModeFound = true;
 		}
 		else
@@ -137,6 +151,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 			{
 				// we were executing so time to exit
 				printf("bModeFound and stuff\n");
+				printf("%s \n", pToken);
 				return(End(pCurrLinePos));
 			}
 		}
@@ -150,6 +165,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	case AUTO_TOKEN_END:
 		End(pCurrLinePos);
+		printf("token end \n");
 		rStatus.append("done");
 		bReturn = true;
 		break;

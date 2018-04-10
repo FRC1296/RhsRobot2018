@@ -127,11 +127,16 @@ Drivetrain::Drivetrain()
 	pPunchTimerLeft = new Timer();
 	pPunchTimerRight = new Timer();
 
-	pPunchSolenoidLeft = new Solenoid(CAN_PCM,0); // Change this ID when they actually mount it
+	pPunchSolenoidLeft = new Solenoid(CAN_PCM,6); // Change this ID when they actually mount it
 	pPunchSolenoidLeft->Set(false);
 
 	pPunchSolenoidRight = new Solenoid(CAN_PCM,7);
 	pPunchSolenoidRight->Set(false);
+
+	pLeftServo = new Servo(0);
+	pRightServo = new Servo(1);
+	pLeftServo->SetAngle(0);
+	pRightServo->SetAngle(0);
 
 	iInitLeftPos = pLeftMotor->GetSelectedSensorPosition(0);
 	iInitRightPos = pRightMotor->GetSelectedSensorPosition(0);
@@ -218,6 +223,8 @@ void Drivetrain::Run()
 		pPunchTimerLeft->Stop();
 		pPunchTimerLeft->Reset();
 		pPunchSolenoidLeft->Set(false);
+		pLeftServo->SetAngle(0);
+		pRightServo->SetAngle(0);
 	}
 
 	if (pPunchTimerRight->Get() > 1.5)
@@ -225,6 +232,8 @@ void Drivetrain::Run()
 		pPunchTimerRight->Stop();
 		pPunchTimerRight->Reset();
 		pPunchSolenoidRight->Set(false);
+		pLeftServo->SetAngle(0);
+		pRightServo->SetAngle(0);
 	}
 
 	/*if (iTurnState == -1){
@@ -408,20 +417,28 @@ void Drivetrain::Run()
 
 	case COMMAND_SPUNCH_LEFT:
 		SmartDashboard::PutString("Spunch Status","Spunch Left Command Reached");
+		pLeftServo->SetAngle(90);
+		pRightServo->SetAngle(90);
 		AutoPunchWhileMovingStraight(false);
 		break;
 
 	case COMMAND_SPUNCH_RIGHT:
 		SmartDashboard::PutString("Spunch Status","Spunch Right Command Reached");
+		pLeftServo->SetAngle(90);
+		pRightServo->SetAngle(90);
 		AutoPunchWhileMovingStraight(true);
 		break;
 
 	case COMMAND_PUNCH_LEFT:
+		pLeftServo->SetAngle(90);
+		pRightServo->SetAngle(90);
 		pPunchSolenoidLeft->Set(true);
 		pPunchTimerLeft->Start();
 		break;
 
 	case COMMAND_PUNCH_RIGHT:
+		pLeftServo->SetAngle(90);
+		pRightServo->SetAngle(90);
 		pPunchSolenoidRight->Set(true);
 		pPunchTimerRight->Start();
 		break;

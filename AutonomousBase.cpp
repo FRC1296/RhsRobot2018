@@ -28,6 +28,7 @@ Autonomous::Autonomous()
 
 	bPauseAutoMode = false;
 	bScriptLoaded = false;
+	writingString = false;
 
 	pDebugTimer = new Timer();
 	pDebugTimer->Start();
@@ -82,76 +83,95 @@ void Autonomous::Run()
 {
 	switch(localMessage.command)
 	{
-		case COMMAND_AUTONOMOUS_RUN:
-			break;
+	case COMMAND_AUTONOMOUS_RUN:
+		break;
 
-		case COMMAND_CHECKLIST_RUN:
-			break;
+	case COMMAND_CHECKLIST_RUN:
+		break;
 
-		case COMMAND_AUTONOMOUS_RESPONSE_OK:
-			uResponseCount++;
-			bReceivedCommandResponse = true;
-			ReceivedCommand = COMMAND_AUTONOMOUS_RESPONSE_OK;
-			break;
+	case COMMAND_AUTONOMOUS_RESPONSE_OK:
+		uResponseCount++;
+		bReceivedCommandResponse = true;
+		ReceivedCommand = COMMAND_AUTONOMOUS_RESPONSE_OK;
+		break;
 
-		case COMMAND_AUTONOMOUS_RESPONSE_ERROR:
-			uResponseCount++;
-			bReceivedCommandResponse = true;
-			ReceivedCommand = COMMAND_AUTONOMOUS_RESPONSE_ERROR;
-			break;
+	case COMMAND_AUTONOMOUS_RESPONSE_ERROR:
+		uResponseCount++;
+		bReceivedCommandResponse = true;
+		ReceivedCommand = COMMAND_AUTONOMOUS_RESPONSE_ERROR;
+		break;
 
-		case COMMAND_SYSTEM_GAMEDATA:
-			if(localMessage.params.gamedata.eSwitchSide == GAMEPIECESIDE_LEFT)
-			{
-				szModeString[1] = 'L';
-			}
-			else
-			{
-				szModeString[1] = 'R';
-			}
+	case COMMAND_SYSTEM_GAMEDATA:
 
-			if(localMessage.params.gamedata.eScaleSide == GAMEPIECESIDE_LEFT)
-			{
-				szModeString[2] = 'L';
-			}
-			else
-			{
-				szModeString[2] = 'R';
-			}
+		writingString = true;
+		if(localMessage.params.gamedata.eSwitchSide == GAMEPIECESIDE_LEFT)
+		{
+			szModeString[1] = 'L';
+		}
+		else
+		{
+			szModeString[1] = 'R';
+		}
 
-			if(localMessage.params.gamedata.eOpponentSwitchSide == GAMEPIECESIDE_LEFT)
-			{
-				szModeString[3] = 'L';
-			}
-			else
-			{
-				szModeString[3] = 'R';
-			}
+		if(localMessage.params.gamedata.eScaleSide == GAMEPIECESIDE_LEFT)
+		{
+			szModeString[2] = 'L';
+		}
+		else
+		{
+			szModeString[2] = 'R';
+		}
 
-			if(localMessage.params.gamedata.eStartingPosition == GAMEPIECESTART_LEFT)
-			{
-				szModeString[0] = 'L';
-			}
-			else if(localMessage.params.gamedata.eStartingPosition == GAMEPIECESTART_CENTER)
-			{
-				szModeString[0] = 'C';
-			}
-			else if(localMessage.params.gamedata.eStartingPosition == GAMEPIECESTART_RIGHT)
-			{
-				szModeString[0] = 'R';
-			}
-			else
-			{
-				szModeString[0] = 'X';
-			}
+		if(localMessage.params.gamedata.eOpponentSwitchSide == GAMEPIECESIDE_LEFT)
+		{
+			szModeString[3] = 'L';
+		}
+		else
+		{
+			szModeString[3] = 'R';
+		}
 
-			szModeString[4] = 0;
+		if(localMessage.params.gamedata.eStartingPosition == GAMEPIECESTART_LEFT)
+		{
+			szModeString[0] = 'L';
+		}
+		else if(localMessage.params.gamedata.eStartingPosition == GAMEPIECESTART_CENTER)
+		{
+			szModeString[0] = 'C';
+		}
+		else if(localMessage.params.gamedata.eStartingPosition == GAMEPIECESTART_RIGHT)
+		{
+			szModeString[0] = 'R';
+		}
+		else
+		{
+			szModeString[0] = 'X';
+		}
 
+		szModeString[4] = 0;
+		writingString = false;
+
+		if(strncmp(szModeString,szPrevModeString, 4))
+		{
+			SmartDashboard::PutString("AutoModeStrng", szModeString);
 			printf("auto mode change %s\n", szModeString);
-			break;
 
-		default:
-			break;
+		}
+		else
+		{
+			SmartDashboard::PutString("AutoModeStrng", szModeString);
+			printf("auto mode same %s\n", szModeString);
+		}
+
+		szPrevModeString[0] = szModeString[0];
+		szPrevModeString[1] = szModeString[1];
+		szPrevModeString[2] = szModeString[2];
+		szPrevModeString[3] = szModeString[3];
+		szPrevModeString[4] = szModeString[4];
+		break;
+
+	default:
+		break;
 	}
 }
 

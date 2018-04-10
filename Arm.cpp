@@ -43,10 +43,12 @@ Arm::Arm()
 	pArmMotor->SetSensorPhase(false);
 	pArmMotor->Config_kF(0,0.0,10);
 	pArmMotor->Config_kP(0,0.325,10);
-	pArmMotor->Config_kI(0,0.0,10);
+	pArmMotor->Config_kI(0,0.0001,10);
 	pArmMotor->Config_kD(0,0.0,10);
 	pArmMotor->SelectProfileSlot(0,0);
-	pArmMotor->ConfigAllowableClosedloopError(0, 50, 10);
+	pArmMotor->ConfigAllowableClosedloopError(0, 20, 10);
+	pArmMotor->ConfigMaxIntegralAccumulator(1, 1000, 10);
+
 
 	pArmMotor->ConfigReverseLimitSwitchSource(LimitSwitchSource::LimitSwitchSource_RemoteTalonSRX,LimitSwitchNormal::LimitSwitchNormal_Disabled,0);
 
@@ -101,7 +103,7 @@ void Arm::Run()
 	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
-
+	iMoveDelta = 0;
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
 	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
@@ -123,7 +125,7 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_MOVE:
-		fMotorSpeed = localMessage.params.arm.fArmSpeed;
+/*		fMotorSpeed = localMessage.params.arm.fArmSpeed;
 
 		if (fMotorSpeed > 0.2)
 		{
@@ -132,60 +134,60 @@ void Arm::Run()
 		else if(fMotorSpeed < -0.2)
 		{
 			iMoveDelta += 10;
-		}
+		} */
 		break;
 
 	case COMMAND_ARM_OPEN:
-		if( (iStartPos + iStartToOpen + iMoveDelta) > iStartToMax)
+/*		if( (iStartPos + iStartToOpen + iMoveDelta) > iStartToMax)
 		{
 			pArmMotor->Set(ControlMode::Position, iStartPos - iStartToMax);
 		}
 		else
-		{
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen - iMoveDelta);
-		}
+		{ */
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen);// - iMoveDelta);
+//		}
 
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
 
 	case COMMAND_ARM_SHOOT:
-		if( (iStartPos - iStartToShoot - iMoveDelta) < iStartPos - iStartToMax)
+/*		if( (iStartPos - iStartToShoot - iMoveDelta) < iStartPos - iStartToMax)
 		{
 			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToMax);
 		}
 		else
-		{
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToShoot - iMoveDelta);
-		}
+		{ */
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToShoot);// - iMoveDelta);
+//		}
 
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
 
 	case COMMAND_ARM_STOW:
-		if( (iStartPos - iStartToStow - iMoveDelta) < iStartPos - iStartToMax)
+/*		if( (iStartPos - iStartToStow - iMoveDelta) < iStartPos - iStartToMax)
 		{
 			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToMax);
 		}
 		else
-		{
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToStow - iMoveDelta);
-		}
+		{ */
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToStow);// - iMoveDelta);
+//		}
 
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
 
 	case COMMAND_ARM_FLOOR:
-		if( (iStartPos - iStartToOpen - iMoveDelta) < iStartPos - iStartToMax)
+/*		if( (iStartPos - iStartToOpen - iMoveDelta) < iStartPos - iStartToOpen)
 		{
-			pArmMotor->Set(ControlMode::Position, iStartPos -iStartToMax);
+			pArmMotor->Set(ControlMode::Position, iStartPos -iStartToOpen);
 		}
 		else
-		{
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen - iMoveDelta);
-		}
+		{ */
+			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen);// - iMoveDelta);
+//		}
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
@@ -199,7 +201,7 @@ void Arm::Run()
 		break;
 
 	case COMMAND_CLAW_TOGGLE:
-		if (!bTogglePressed && !bClawOpen)
+	/*	if (!bTogglePressed && !bClawOpen)
 		{
 			bTogglePressed = true;
 			pClawSolenoid->Set(true);
@@ -210,7 +212,7 @@ void Arm::Run()
 			bTogglePressed = true;
 			pClawSolenoid->Set(false);
 			bClawOpen = false;
-		}
+		}*/
 		break;
 
 	default:
@@ -232,7 +234,7 @@ void Arm::Run()
 		if(pArmTimeout->Get() > 3)
 		{
 			// use the current position which should stop the servo
-			pArmMotor->Set(ControlMode::Position, iCurrPos);
+			pArmMotor->Set(ControlMode::Velocity, 0.0);
 		}
 	}
 
