@@ -72,7 +72,8 @@ void RhsRobot::Init() {
 	SmartDashboard::PutData("Autonomous Mode Chooser", pChooser);						//Maybe works?
 
 	pSpeedTimer = new Timer();
-
+	cs::UsbCamera pCamera = CameraServer::GetInstance()->StartAutomaticCapture();
+//	pCamera.SetVideoMode(cs::VideoMode::kMJPEG,320,240,15);
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
@@ -368,6 +369,7 @@ void RhsRobot::Run() {
 		if(CLAW_MOVE > .5)
 		{
 			robotMessage.command = COMMAND_ARM_FLOOR;
+			robotMessage.params.arm.bFloorPos = pElevator->AtFloorPos();
 			pArm->SendMessage(&robotMessage);
 		}
 		if(CLAW_MOVE <-.5)
@@ -560,7 +562,7 @@ void RhsRobot::UpdateGameData(void)
 
 	sStartLocation = (char) pChooser->GetSelected();
 
-	sStartLocation = 'C';	// Let's fix this, yeah?
+	sStartLocation = 'L';	// Let's fix this, yeah?
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
 	{

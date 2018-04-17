@@ -246,21 +246,23 @@ MODE LRLR
     ELEVATOR FLOOR 5.0
 
 MODE LLRL
-#start on left, score in left switch, grab cube?
-	VMOVE 1.0 206.0 3.5
-	TURN -112.0 3.0
-	ARM FLOOR
-	DELAY 0.5
-	ELEVATOR SWITCH 5.0
-	DELAY 0.3
-	VMOVE 1.0 52.0 2.0
-	ARM RELEASE
-	CLAW OUT 0.4
-	DELAY 0.5
-	CLAW STOP
-	VMOVE 1.0 -20.0 1.5
-	ELEVATOR FLOOR 5.0
-	
+#start on left and score in right scale
+   VMOVE 1.0 209.0 5.0
+   TURN -83.0 5.0
+   VMOVE 1.0 194.0 5.0
+   TURN 78.0 5.0
+   ARM FLOOR
+   DELAY 0.3
+   ELEVATOR MAX 5.0
+   DELAY 0.6
+   VMOVE 1.0 40.0 2.0
+   ARM RELEASE
+   CLAW OUT 0.4
+   DELAY 0.5
+   CLAW STOP
+   VMOVE 1.0 -42.0 1.0
+   ELEVATOR FLOOR 5.0
+
 MODE LRRR
 #start on left and score in right scale
    VMOVE 1.0 209.0 5.0

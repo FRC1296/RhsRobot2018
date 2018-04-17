@@ -31,6 +31,7 @@ public:
 
 
 private:
+	DigitalInput* pBumperSwitch;
 
 	TalonSRX* pArmMotor;
 	Timer* pArmTimeout;
@@ -39,12 +40,15 @@ private:
 
 	void OnStateChange();
 	void Run();
+	int ZeroArm();
 
 	float fCurVoltage;
 
 	int iCurrPos;
 	int iStartPos;
 	int iMoveDelta;
+	int iStowPos;
+	int iFloorPos;
 
 	float fMotorSpeed;
 	float fMaxSpeed;

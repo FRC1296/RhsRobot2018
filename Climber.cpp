@@ -20,7 +20,7 @@ Climber::Climber()
 : ComponentBase(CLIMBER_TASKNAME, CLIMBER_QUEUE, CLIMBER_PRIORITY)
 {
 	pUpMotor = new TalonSRX(CAN_CLIMBER_TALON);
-	pUpSlave = new VictorSPX(CAN_CLIMBER_VICTOR);
+	pUpSlave = new TalonSRX(CAN_CLIMBER_TALON_SLAVE);
 
 	fSpeed = 0.0;
 	//TODO: add member objects
@@ -30,6 +30,7 @@ Climber::Climber()
 	pUpMotor->Set(ControlMode::PercentOutput,0);
 	pUpSlave->Follow(*pUpMotor);
 	pUpMotor->EnableCurrentLimit(true);
+	pUpMotor->SetInverted(true);
 	pUpMotor->ConfigContinuousCurrentLimit(30,0);
 	pUpMotor->SetNeutralMode(NeutralMode::Brake);
 	pUpSlave->SetNeutralMode(NeutralMode::Brake);

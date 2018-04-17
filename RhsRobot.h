@@ -40,7 +40,6 @@ private:
 	Elevator* pElevator;
 	Arm* pArm;
 	Climber* pClimber;
-	cs::UsbCamera camera;
 
 	string gameData = "XXX";
 	string gameDataPrev = "XXX";

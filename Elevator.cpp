@@ -48,15 +48,15 @@ Elevator::Elevator()
 	pElevatorMotorLeft->SetInverted(false);
 	pElevatorMotorRight->SetInverted(false);
 	pElevatorMotorLeft->ConfigPeakOutputForward(0.9, 10);
-	pElevatorMotorLeft->ConfigPeakOutputReverse(-.4,10);
+	pElevatorMotorLeft->ConfigPeakOutputReverse(-.6,10);
 	pElevatorMotorRight->ConfigPeakOutputForward(0.9, 10);
-	pElevatorMotorRight->ConfigPeakOutputReverse(-.4,10);
+	pElevatorMotorRight->ConfigPeakOutputReverse(-.6,10);
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pElevatorMotorLeft->SetSensorPhase(true);
 
 	pElevatorMotorLeft->Config_kF(0,0.0,10);
-	pElevatorMotorLeft->Config_kP(0,0.2,10);
+	pElevatorMotorLeft->Config_kP(0,0.3,10);
 	pElevatorMotorLeft->Config_kI(0,0.0,10);
 	pElevatorMotorLeft->Config_kD(0,0.0,10);
 	pElevatorMotorLeft->ConfigAllowableClosedloopError(0, 200, 10);
@@ -81,6 +81,11 @@ Elevator::Elevator()
 	pElevatorMotorLeft->Set(ControlMode::Position, pElevatorMotorLeft->GetSelectedSensorPosition(0));
 	//pElevatorMotorLeft->Set(ControlMode::PercentOutput, 0.0);
 
+	pSlowHallEffect = new DigitalInput(SLOW_HALL_EFFECT_SLOT);
+	pStopHallEffect = new DigitalInput(STOP_HALL_EFFECT_SLOT);
+
+	bFloorPos = false;
+
 	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 	iStartPos = iCurrPos;
 	iCurrTgt = iCurrPos;
@@ -93,11 +98,13 @@ Elevator::Elevator()
 
 	pEleTimeout = new Timer();
 
+	prevPressed = false;
+
 	SmartDashboard::PutNumber("Elevator Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Elevator Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Elevator Position in Rotations",iCurrPos/4096.0);
 
-	SmartDashboard::PutNumber("Elevator Init Position",iStartPos);
+	SmartDashboard::PutNumber("FIRST Elevator Init Position",iStartPos);
 	SmartDashboard::PutNumber("Elevator Switch Position",iStartPos + iFloorToSwitch);
 	SmartDashboard::PutNumber("Elevator Scale Position",iStartPos + iFloorToScale);
 	SmartDashboard::PutString("Button Pressed", "no button pressed");
@@ -118,20 +125,28 @@ void Elevator::OnStateChange()
 
 void Elevator::Run()
 {
-	static bool prevPressed = false;
 	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
 
 	iCurrPos = pElevatorMotorLeft->GetSelectedSensorPosition(iCurrentPid);
 	iCurrTgt = pElevatorMotorLeft->GetClosedLoopTarget(iCurrentPid);
 
+	SmartDashboard::PutNumber("New Elevator Init Position",iStartPos);
+
 	SmartDashboard::PutNumber("Elevator Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Elevator Position in Rotations",iCurrPos/4096.0);
 	SmartDashboard::PutNumber("MoveDelta",iMoveDelta);
 
+	SmartDashboard::PutBoolean("Slowdown Hall Effect Sensor",!(pSlowHallEffect->Get()));
+	SmartDashboard::PutBoolean("Stop Hall Effect Sensor",!(pStopHallEffect->Get()));
+
+	if (!pStopHallEffect->Get()) {
+		iStartPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
+	}
+
 	if((iCurrTgt - iCurrPos) > 200)
 	{
 		// change the PIS cojnstants for upward motion
-	SmartDashboard::PutNumber("MoveDelta",iMoveDelta);
+		SmartDashboard::PutNumber("MoveDelta",iMoveDelta);
 
 		if(iCurrentPid == 1)
 		{
@@ -177,20 +192,23 @@ void Elevator::Run()
 		break;
 
 	case COMMAND_ELEVATOR_NOBUTTON:
-		prevPressed = false;
 		SmartDashboard::PutString("Button Pressed", "no button pressed");
 		iMoveDelta = 0;
+/*		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Coast);
+		pElevatorMotorRight->SetNeutralMode(NeutralMode::Coast); */
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorLeft->Set(ControlMode::Position, iStartPos + iMoveDelta);
 		pEleTimeout->Reset();
 		pEleTimeout->Start();
+//		Zero();
+		prevPressed = true;
 		break;
 
 	case COMMAND_ELEVATOR_FLOOR:
 		SmartDashboard::PutString("Button Pressed", "Floor Pressed");
 		if(!prevPressed) iMoveDelta = 0;
-		prevPressed = true;
+		prevPressed = false;
 
 		if(iPrevDelta == iMoveDelta)
 		{
@@ -235,6 +253,7 @@ void Elevator::Run()
 
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
+		SmartDashboard::PutNumber("move delta", iMoveDelta);
 
 		if( (iStartPos + iFloorToSwitch + iMoveDelta) > iFloorToMax)
 		{
@@ -281,7 +300,7 @@ void Elevator::Run()
 	case COMMAND_ELEVATOR_CLIMB:
 		pElevatorMotorLeft->SetNeutralMode(NeutralMode::Brake);
 		pElevatorMotorRight->SetNeutralMode(NeutralMode::Brake);
-		pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToMax - 1000);
+		pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToMax - 750);
 
 		prevPressed = false;
 		//	pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iFloorToClimb);
@@ -304,7 +323,7 @@ void Elevator::Run()
 	}
 	else
 	{
-		if(pEleTimeout->Get() > 3)
+		if(pEleTimeout->Get() > 2.75)
 		{
 			// use the current position which should stop the servo
 			pElevatorMotorLeft->Set(ControlMode::Position, iCurrPos);
@@ -337,4 +356,31 @@ float Elevator::PercentHeight() // Very quick and dirty function to get elevator
 		fPercent = 1.0;
 	}
 	return fPercent;
+}
+
+bool Elevator::AtFloorPos()
+{
+	return !(pStopHallEffect->Get());
+}
+
+int Elevator::Zero()
+{
+	pElevatorMotorLeft->Set(ControlMode::Position,iStartPos + iMoveDelta);
+	if (!prevPressed) {
+		pEleTimeout->Reset();
+		pEleTimeout->Start();
+	}
+	if (pElevatorMotorLeft->GetSelectedSensorPosition(0) > iStartPos + 1296) {
+		return iStartPos;
+	}
+   if (pEleTimeout->Get() < 1.0 && pStopHallEffect->Get()) {
+		pElevatorMotorLeft->Set(ControlMode::PercentOutput,-0.1);
+		return iStartPos;
+	}
+	else {
+		pElevatorMotorLeft->Set(ControlMode::Position,pElevatorMotorLeft->GetSelectedSensorPosition(0));
+		pEleTimeout->Stop();
+		pEleTimeout->Reset();
+		return pElevatorMotorLeft->GetSelectedSensorPosition(0);
+	}
 }

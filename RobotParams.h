@@ -91,6 +91,10 @@ Add more as needed.
 const int CAN_PCM = 0; // Both must be zero
 const int CAN_PDB = 0; // Both must be zero
 
+const int SLOW_HALL_EFFECT_SLOT = 0;
+const int STOP_HALL_EFFECT_SLOT = 1;
+const int ARM_BUMPER_SWITCH_SLOT = 9;
+
 // Had to change these, lowkey salty at mechanical ~ Jiff
 const int CAN_DRIVETRAIN_TALON_RIGHT = 1;
 const int CAN_DRIVETRAIN_VICTOR_RIGHT1 = 2;
@@ -102,10 +106,10 @@ const int CAN_ELEVATOR_TALON_LEFT = 11; // HAS THE ENCODER ON IT
 const int CAN_ELEVATOR_TALON_RIGHT = 12;
 const int CAN_CLAW_VICTOR_LEFT = 13;
 const int CAN_CLAW_TALON_RIGHT = 14;
-const int CAN_ARM_TALON = 16;
+const int CAN_ARM_TALON = 16; // Normally 16
 
-const int CAN_CLIMBER_TALON = 7;
-const int CAN_CLIMBER_VICTOR = 8;
+const int CAN_CLIMBER_TALON = 15;
+const int CAN_CLIMBER_TALON_SLAVE = 8;
 
 
 //Relay Channels - Assigns names to Relay ports 1-8 on the roboRio
@@ -256,7 +260,7 @@ const int POV_STILL = -1;
 #define STRAIGHT_TTM				0.4			// Time to maximum straight speed
 #define FILTER_ONE_LENGTH			20			// Length of first filter
 #define FILTER_TWO_LENGTH			10			// Length of second filter
-#define MAX_SPEED_PID				.60			// Max speed allowed in autonomous commands
+#define MAX_SPEED_PID				1.0			// Max speed allowed in autonomous commands
 
 #define ACCEPT_RANGE_TICKS			2048		//Acceptable Range for "finished" PID loop in ticks
 #define ACCEPT_RANGE_DEGR			2			//Acceptable Range for "finished" PID loop in degrees

@@ -161,6 +161,7 @@ struct ClawParams {
 
 struct ArmParams {
 	float fArmSpeed;
+	bool bFloorPos;
 };
 
 struct ElevatorParams {

@@ -38,15 +38,20 @@ public:
 
 	bool LimitSpeed();
 	float PercentHeight();
+	bool AtFloorPos();
 
 private:
 	TalonSRX* pElevatorMotorLeft;
 	TalonSRX* pElevatorMotorRight;
 
+	DigitalInput* pSlowHallEffect; // aka Kelvin
+	DigitalInput* pStopHallEffect; // aka Alex
+
 	Timer* pEleTimeout;
 
 	void OnStateChange();
 	void Run();
+	int Zero();
 
 	float fCurVoltage;
 
@@ -61,11 +66,14 @@ private:
 	float fMotorSpeed;
 	float fMaxSpeed;
 
+	bool bFloorPos;
+	bool prevPressed;
+
 	const int iFloorToSwitch = 11798;
 	const int iFloorToSpeedLimit = 17788; // Needs measuring; right now it's a rough estimate
 	const int iFloorToScale = 22703;
 	const int iFloorToClimb = 17500; // Needs updating
-	const int iFloorToMax = 26908;
+	const int iFloorToMax = 25250;
 	const int iSwitchToScale = (iFloorToScale - iFloorToSwitch);
 	const int iMoveDeltaIncrement = 100;
 };

@@ -40,7 +40,7 @@ private:
 	float fSpeed;
 
 	TalonSRX* pUpMotor;
-	VictorSPX* pUpSlave;
+	TalonSRX* pUpSlave;
 	void OnStateChange();
 	void Run();
 };

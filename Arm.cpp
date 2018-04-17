@@ -49,8 +49,7 @@ Arm::Arm()
 	pArmMotor->ConfigAllowableClosedloopError(0, 20, 10);
 	pArmMotor->ConfigMaxIntegralAccumulator(1, 1000, 10);
 
-
-	pArmMotor->ConfigReverseLimitSwitchSource(LimitSwitchSource::LimitSwitchSource_RemoteTalonSRX,LimitSwitchNormal::LimitSwitchNormal_Disabled,0);
+	pBumperSwitch = new DigitalInput(ARM_BUMPER_SWITCH_SLOT);
 
 	Wait(1.0);
 	//	pArmMotor->Set(ControlMode::Position, pArmMotor->GetSelectedSensorPosition(0));
@@ -58,6 +57,8 @@ Arm::Arm()
 
 	iCurrPos = pArmMotor->GetSelectedSensorPosition(0);
 	iStartPos = iCurrPos;
+	iFloorPos = iStartPos - iStartToOpen;
+	iStowPos = iStartPos - iStartToStow;
 	fCurVoltage = 0;
 	fMotorSpeed = 0;
 	fMaxSpeed = 0;
@@ -74,7 +75,7 @@ Arm::Arm()
 	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
 
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
-	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
+	SmartDashboard::PutNumber("First Arm Open Position",iStartPos - iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
 	//pArmMotor->Set(ControlMode::Position, iStartPos + iStartToShoot);
@@ -100,17 +101,22 @@ void Arm::Run()
 {
 	iCurrPos = pArmMotor->GetSelectedSensorPosition(0);
 
+	SmartDashboard::PutNumber("New Arm Floor Position",iFloorPos);
+
 	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
+	SmartDashboard::PutBoolean("Arm Bumper Switches",!(pBumperSwitch->Get()));
 	iMoveDelta = 0;
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
 	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
-	if (pArmMotor->GetSensorCollection().IsRevLimitSwitchClosed())
+	if (!(pBumperSwitch->Get()) && !(pArmMotor->GetSelectedSensorPosition(0) <= iFloorPos))
 	{
-		pClawSolenoid->Set(false);
+		// If the bumper switch is activated and the arm has not reached or passed its initial floor position
+		iFloorPos = pArmMotor->GetSelectedSensorPosition(0);
+		pArmMotor->Set(ControlMode::Position,iFloorPos);
 	}
 
 	if (!(localMessage.command == COMMAND_CLAW_TOGGLE))
@@ -118,6 +124,9 @@ void Arm::Run()
 		bTogglePressed = false;
 	}
 
+/*	if (pArmMotor->GetSelectedSensorPosition(0) < iFloorPos - 1024) {
+		pArmMotor->Set(ControlMode::Position,iStowPos);
+	} */
 
 	switch(localMessage.command)			//Reads the message command
 	{
@@ -125,7 +134,7 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_MOVE:
-/*		fMotorSpeed = localMessage.params.arm.fArmSpeed;
+		/*		fMotorSpeed = localMessage.params.arm.fArmSpeed;
 
 		if (fMotorSpeed > 0.2)
 		{
@@ -138,58 +147,74 @@ void Arm::Run()
 		break;
 
 	case COMMAND_ARM_OPEN:
-/*		if( (iStartPos + iStartToOpen + iMoveDelta) > iStartToMax)
+		/*		if( (iStartPos + iStartToOpen + iMoveDelta) > iStartToMax)
 		{
 			pArmMotor->Set(ControlMode::Position, iStartPos - iStartToMax);
 		}
 		else
 		{ */
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen);// - iMoveDelta);
-//		}
+		//pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen);// - iMoveDelta);
+		//		}
 
+/*		if (localMessage.params.arm.bFloorPos)
+		{
+			iFloorPos = ZeroArm();
+		}
+		else
+		{ */
+			pArmMotor->Set(ControlMode::Position,iFloorPos);
+	//	}
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
 
 	case COMMAND_ARM_SHOOT:
-/*		if( (iStartPos - iStartToShoot - iMoveDelta) < iStartPos - iStartToMax)
+		/*		if( (iStartPos - iStartToShoot - iMoveDelta) < iStartPos - iStartToMax)
 		{
 			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToMax);
 		}
 		else
 		{ */
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToShoot);// - iMoveDelta);
-//		}
+		pArmMotor->Set(ControlMode::Position,iStowPos);// - iMoveDelta);
+		//		}
 
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
 
 	case COMMAND_ARM_STOW:
-/*		if( (iStartPos - iStartToStow - iMoveDelta) < iStartPos - iStartToMax)
+		/*		if( (iStartPos - iStartToStow - iMoveDelta) < iStartPos - iStartToMax)
 		{
 			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToMax);
 		}
 		else
 		{ */
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToStow);// - iMoveDelta);
-//		}
+		pArmMotor->Set(ControlMode::Position,iStowPos);// - iMoveDelta);
+		//		}
 
 		pArmTimeout->Reset();
 		pArmTimeout->Start();
 		break;
 
 	case COMMAND_ARM_FLOOR:
-/*		if( (iStartPos - iStartToOpen - iMoveDelta) < iStartPos - iStartToOpen)
+		/*		if( (iStartPos - iStartToOpen - iMoveDelta) < iStartPos - iStartToOpen)
 		{
 			pArmMotor->Set(ControlMode::Position, iStartPos -iStartToOpen);
 		}
 		else
 		{ */
-			pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen);// - iMoveDelta);
+		//pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen);// - iMoveDelta);
+		//		}
+/*		if (localMessage.params.arm.bFloorPos)
+		{
+			iFloorPos = ZeroArm();
+		}
+		else
+		{ */
+			pArmMotor->Set(ControlMode::Position,iFloorPos);
 //		}
-		pArmTimeout->Reset();
-		pArmTimeout->Start();
+				pArmTimeout->Reset();
+				pArmTimeout->Start();
 		break;
 
 	case COMMAND_CLAW_PINCH:
@@ -201,7 +226,7 @@ void Arm::Run()
 		break;
 
 	case COMMAND_CLAW_TOGGLE:
-	/*	if (!bTogglePressed && !bClawOpen)
+		/*	if (!bTogglePressed && !bClawOpen)
 		{
 			bTogglePressed = true;
 			pClawSolenoid->Set(true);
@@ -240,7 +265,21 @@ void Arm::Run()
 
 };
 
-
+int Arm::ZeroArm() {
+	pArmMotor->Set(ControlMode::Position,iStartPos - iStartToOpen);
+	pArmTimeout->Reset();
+	pArmTimeout->Start();
+	while (pArmTimeout->Get() < 2.0 && pArmMotor->GetSelectedSensorPosition(0) < (iStartPos - iStartToOpen) + 512)
+	{
+		;
+	}
+	while (pArmTimeout->Get() < 2.0 && !pBumperSwitch->Get()) {
+		pArmMotor->Set(ControlMode::PercentOutput,0.1);
+	}
+	pArmTimeout->Stop();
+	pArmTimeout->Reset();
+	return pArmMotor->GetSelectedSensorPosition(0);
+}
 
 
 
