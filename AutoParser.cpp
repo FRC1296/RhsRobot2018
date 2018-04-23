@@ -45,6 +45,8 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	float fParam1;
 	bool bReturn = false; ///setting this to true WILL cause auto parsing to quit!
 	string rStatus;
+	bool begin = false;
+
 
 	// trim uninteresting stuff from front of string
 
@@ -160,15 +162,18 @@ bool Autonomous::Evaluate(std::string rStatement) {
 
 	case AUTO_TOKEN_BEGIN:
 		Begin(pCurrLinePos);
+		begin = true;
 		rStatus.append("begin");
+		printf("token begin \n");
 		break;
 
-	case AUTO_TOKEN_END:
+	/*case AUTO_TOKEN_END:
 		End(pCurrLinePos);
+		if(!begin) printf("got here somehow?!? \n");
 		printf("token end \n");
 		rStatus.append("done");
 		bReturn = true;
-		break;
+		break;*/
 
 	case AUTO_TOKEN_DEBUG:
 		pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);

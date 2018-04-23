@@ -68,6 +68,7 @@ private:
 
 	bool bFloorPos;
 	bool prevPressed;
+	bool prevActivated;
 
 	const int iFloorToSwitch = 11798;
 	const int iFloorToSpeedLimit = 17788; // Needs measuring; right now it's a rough estimate

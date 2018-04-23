@@ -193,12 +193,12 @@ void Drivetrain::AutoVelocityMove()
 	static float fSpeedRight;
 	static int iPPL;
 	static int iPPR;
-	static const float kPPL = .65;
-	static const float kPPR = .65;
-	static const float kPGL = 650;
-	static const float kPGR = 650;
-	static const float kDGL = 0.1;
-	static const float kDGR = 0.1;
+	static const float kPPL = .66;			//.65
+	static const float kPPR = .66;			//.65
+	static const float kPGL = 650;			//650
+	static const float kPGR = 650;			//650
+	static const float kDGL = 0.1;			//.1
+	static const float kDGR = 0.1;			//.1
 	fVMoveTime = localMessage.params.mmove.fTime;
 	iTargetDistance = localMessage.params.mmove.fDistance;
 	iTicks = (iTargetDistance*4096)/(PI*WHEEL_DIA);

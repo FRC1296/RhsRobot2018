@@ -86,7 +86,7 @@ void RhsRobot::Init() {
 	pElevator = new Elevator();
 	pArm = new Arm();
 	pAuto = new Autonomous();
-//	pClimber = new Climber();
+	pClimber = new Climber();
 
 
 

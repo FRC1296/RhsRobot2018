@@ -91,8 +91,8 @@ Add more as needed.
 const int CAN_PCM = 0; // Both must be zero
 const int CAN_PDB = 0; // Both must be zero
 
-const int SLOW_HALL_EFFECT_SLOT = 0;
-const int STOP_HALL_EFFECT_SLOT = 1;
+const int SLOW_HALL_EFFECT_SLOT = 1;
+const int STOP_HALL_EFFECT_SLOT = 0;
 const int ARM_BUMPER_SWITCH_SLOT = 9;
 
 // Had to change these, lowkey salty at mechanical ~ Jiff
@@ -108,7 +108,7 @@ const int CAN_CLAW_VICTOR_LEFT = 13;
 const int CAN_CLAW_TALON_RIGHT = 14;
 const int CAN_ARM_TALON = 16; // Normally 16
 
-const int CAN_CLIMBER_TALON = 15;
+const int CAN_CLIMBER_TALON = 7;
 const int CAN_CLIMBER_TALON_SLAVE = 8;
 
 

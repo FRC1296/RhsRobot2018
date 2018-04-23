@@ -30,7 +30,7 @@ Climber::Climber()
 	pUpMotor->Set(ControlMode::PercentOutput,0);
 	pUpSlave->Follow(*pUpMotor);
 	pUpMotor->EnableCurrentLimit(true);
-	pUpMotor->SetInverted(true);
+	pUpMotor->SetInverted(false);
 	pUpMotor->ConfigContinuousCurrentLimit(30,0);
 	pUpMotor->SetNeutralMode(NeutralMode::Brake);
 	pUpSlave->SetNeutralMode(NeutralMode::Brake);

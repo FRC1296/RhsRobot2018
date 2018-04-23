@@ -235,6 +235,9 @@ void Autonomous::DoScript()
 		Wait(0.1);
 	}
 
+
+	string prev_szModeString = szModeString;
+
 	while (bInAutoMode)
 	{
 		std::vector<std::string>::iterator nextLine;
@@ -243,6 +246,11 @@ void Autonomous::DoScript()
 		{
 			for(nextLine = script.begin(); nextLine != script.end(); ++nextLine)
 			{
+				if(prev_szModeString != szModeString)
+				{
+					nextLine = script.begin();
+					prev_szModeString = szModeString;
+				}
 				// handle pausing in the Evaluate method
 
 				if (Evaluate(*nextLine) == true)
@@ -255,6 +263,7 @@ void Autonomous::DoScript()
 				}
 				if(!bInAutoMode)
 					break;
+
 			}
 		}
 	}

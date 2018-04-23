@@ -58,7 +58,7 @@ Elevator::Elevator()
 	pElevatorMotorLeft->Config_kF(0,0.0,10);
 	pElevatorMotorLeft->Config_kP(0,0.3,10);
 	pElevatorMotorLeft->Config_kI(0,0.0,10);
-	pElevatorMotorLeft->Config_kD(0,0.0,10);
+	pElevatorMotorLeft->Config_kD(0,0.01,10);
 	pElevatorMotorLeft->ConfigAllowableClosedloopError(0, 200, 10);
 
 	//pElevatorMotorLeft->Config_kF(1,0.0,10);
@@ -100,6 +100,8 @@ Elevator::Elevator()
 
 	prevPressed = false;
 
+	prevActivated = false;
+
 	SmartDashboard::PutNumber("Elevator Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Elevator Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Elevator Position in Rotations",iCurrPos/4096.0);
@@ -139,8 +141,12 @@ void Elevator::Run()
 	SmartDashboard::PutBoolean("Slowdown Hall Effect Sensor",!(pSlowHallEffect->Get()));
 	SmartDashboard::PutBoolean("Stop Hall Effect Sensor",!(pStopHallEffect->Get()));
 
-	if (!pStopHallEffect->Get()) {
+	if (!prevActivated && !pStopHallEffect->Get()) {
 		iStartPos = pElevatorMotorLeft->GetSelectedSensorPosition(0);
+		prevActivated = true;
+	}
+	if (prevActivated && pStopHallEffect->Get()) {
+		prevActivated = false;
 	}
 
 	if((iCurrTgt - iCurrPos) > 200)

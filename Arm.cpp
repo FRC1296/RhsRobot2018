@@ -112,7 +112,7 @@ void Arm::Run()
 	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
-	if (!(pBumperSwitch->Get()) && !(pArmMotor->GetSelectedSensorPosition(0) <= iFloorPos))
+		if (!(pBumperSwitch->Get()) && pArmMotor->GetSelectedSensorPosition(0) < iStowPos - 1024)
 	{
 		// If the bumper switch is activated and the arm has not reached or passed its initial floor position
 		iFloorPos = pArmMotor->GetSelectedSensorPosition(0);
@@ -256,7 +256,7 @@ void Arm::Run()
 	}
 	else
 	{
-		if(pArmTimeout->Get() > 3)
+		if(pArmTimeout->Get() > 1.75)
 		{
 			// use the current position which should stop the servo
 			pArmMotor->Set(ControlMode::Velocity, 0.0);

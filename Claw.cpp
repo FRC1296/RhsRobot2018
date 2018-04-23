@@ -25,8 +25,8 @@ Claw::Claw()
 	pClawVictorRight = new TalonSRX(CAN_CLAW_TALON_RIGHT);
 	pClawVictorLeft->SetNeutralMode(NeutralMode::Brake);
 	pClawVictorRight->SetNeutralMode(NeutralMode::Brake);
-	pClawVictorLeft->SetInverted(true);
-	pClawVictorRight->SetInverted(true);
+	pClawVictorLeft->SetInverted(false);
+	pClawVictorRight->SetInverted(false);
 
 	motorsStopped = false;
 
