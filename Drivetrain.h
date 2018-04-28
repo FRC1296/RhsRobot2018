@@ -84,6 +84,7 @@ private:
 	void RunCheesyDrive(bool, float, float, bool);
 	void AutoVelocityMove();
 	void AutoPunchWhileMovingStraight(bool dir); // Right is true
+	void AutoArc(float deg, float radius, float time, bool stop);
 
 	float fInitRotation;
 	float fPrevP;
