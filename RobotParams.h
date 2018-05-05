@@ -93,7 +93,7 @@ const int CAN_PDB = 0; // Both must be zero
 
 const int SLOW_HALL_EFFECT_SLOT = 1;
 const int STOP_HALL_EFFECT_SLOT = 0;
-const int ARM_BUMPER_SWITCH_SLOT = 9;
+const int ARM_HALL_EFFECT_SLOT = 9;
 
 // Had to change these, lowkey salty at mechanical ~ Jiff
 const int CAN_DRIVETRAIN_TALON_RIGHT = 1;

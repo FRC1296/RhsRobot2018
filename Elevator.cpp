@@ -48,9 +48,9 @@ Elevator::Elevator()
 	pElevatorMotorLeft->SetInverted(false);
 	pElevatorMotorRight->SetInverted(false);
 	pElevatorMotorLeft->ConfigPeakOutputForward(0.9, 10);
-	pElevatorMotorLeft->ConfigPeakOutputReverse(-.6,10);
+	pElevatorMotorLeft->ConfigPeakOutputReverse(-.7,10);
 	pElevatorMotorRight->ConfigPeakOutputForward(0.9, 10);
-	pElevatorMotorRight->ConfigPeakOutputReverse(-.6,10);
+	pElevatorMotorRight->ConfigPeakOutputReverse(-.7,10);
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pElevatorMotorLeft->SetSensorPhase(true);

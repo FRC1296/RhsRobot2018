@@ -172,7 +172,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		if(!begin) printf("got here somehow?!? \n");
 		printf("token end \n");
 		rStatus.append("done");
-		bReturn = true;
+		bReturn = true;													Wat...
 		break;*/
 
 	case AUTO_TOKEN_DEBUG:

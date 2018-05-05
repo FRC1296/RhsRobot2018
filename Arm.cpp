@@ -49,7 +49,7 @@ Arm::Arm()
 	pArmMotor->ConfigAllowableClosedloopError(0, 20, 10);
 	pArmMotor->ConfigMaxIntegralAccumulator(1, 1000, 10);
 
-	pBumperSwitch = new DigitalInput(ARM_BUMPER_SWITCH_SLOT);
+	pArmHall = new DigitalInput(ARM_HALL_EFFECT_SLOT);
 
 	Wait(1.0);
 	//	pArmMotor->Set(ControlMode::Position, pArmMotor->GetSelectedSensorPosition(0));
@@ -106,15 +106,15 @@ void Arm::Run()
 	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
-	SmartDashboard::PutBoolean("Arm Bumper Switches",!(pBumperSwitch->Get()));
+	SmartDashboard::PutBoolean("Arm Bumper Switches",!(pArmHall->Get()));
 	iMoveDelta = 0;
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
 	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
-		if (!(pBumperSwitch->Get()) && pArmMotor->GetSelectedSensorPosition(0) < iStowPos - 1024)
+		if (!(pArmHall->Get()) && pArmMotor->GetSelectedSensorPosition(0) < iStowPos - 1024)
 	{
-		// If the bumper switch is activated and the arm has not reached or passed its initial floor position
+		// If the hall effect is activated and the arm has not reached or passed its initial floor position
 		iFloorPos = pArmMotor->GetSelectedSensorPosition(0);
 		pArmMotor->Set(ControlMode::Position,iFloorPos);
 	}
@@ -273,7 +273,7 @@ int Arm::ZeroArm() {
 	{
 		;
 	}
-	while (pArmTimeout->Get() < 2.0 && !pBumperSwitch->Get()) {
+	while (pArmTimeout->Get() < 2.0 && !pArmHall->Get()) {
 		pArmMotor->Set(ControlMode::PercentOutput,0.1);
 	}
 	pArmTimeout->Stop();

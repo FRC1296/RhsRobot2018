@@ -31,7 +31,7 @@ public:
 
 
 private:
-	DigitalInput* pBumperSwitch;
+	DigitalInput* pArmHall;
 
 	TalonSRX* pArmMotor;
 	Timer* pArmTimeout;
