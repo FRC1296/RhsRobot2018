@@ -244,13 +244,16 @@ const int POV_STILL = -1;
 #define PUNCH_LEFT					(pControllerDriver->GetRawButton(L310_BUTTON_X))
 #define PUNCH_RIGHT					(pControllerDriver->GetRawButton(L310_BUTTON_B))
 
+#define CLIMBER_DEPLOY				(pControllerDriver->GetRawButton(L310_BUTTON_B))
+#define CLIMBER_RETRACT				(pControllerDriver->GetRawButton(L310_BUTTON_X))
+
 // TODO: Add Component Commands
 
 /********** Drive Train Constants:**********/
 #define WHEEL_DIA					4.0			//Wheel Diameter in inches
 #define PI							3.14159
 #define ROBOT_WIDTH					26.0		// Width of the drivetrain in inches
-#define DRIVETRAIN_CONST_KP			(1.0/65.0) // Constant P value for PID loops
+#define DRIVETRAIN_CONST_KP			(1.0/75.0) // Constant P value for PID loops
 #define DRIVETRAIN_CONST_KI			(1.0/1200.0) // Constant I value for PID loops
 #define DRIVETRAIN_CONST_KD			(1.0/10.0)  // Constant D value for PID loops
 #define MAX_TURN_SPEED				32604		// Max Turning speed in ticks per 100 milliseconds

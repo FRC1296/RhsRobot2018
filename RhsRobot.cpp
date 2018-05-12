@@ -73,7 +73,7 @@ void RhsRobot::Init() {
 
 	pSpeedTimer = new Timer();
 	cs::UsbCamera pCamera = CameraServer::GetInstance()->StartAutomaticCapture();
-//	pCamera.SetVideoMode(cs::VideoMode::kMJPEG,320,240,15);
+	//	pCamera.SetVideoMode(cs::VideoMode::kMJPEG,320,240,15);
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
@@ -272,7 +272,7 @@ void RhsRobot::Run() {
 		} */
 
 		// Testing for new PID values
-/*		if(PIDGEY_ROTATE_GPTURN)
+		/*		if(PIDGEY_ROTATE_GPTURN)
 		{
 			robotMessage.params.turn.fAngle = 90;
 			robotMessage.command = COMMAND_DRIVETRAIN_GPTURN;
@@ -290,13 +290,22 @@ void RhsRobot::Run() {
 		else
 		{*/
 
-		if (PUNCH_LEFT) {
+		/*if (PUNCH_LEFT) {
 			robotMessage.command = COMMAND_PUNCH_LEFT;
 			pDrivetrain->SendMessage(&robotMessage);
 
 		}
 		else if (PUNCH_RIGHT) {
 			robotMessage.command = COMMAND_PUNCH_RIGHT;
+			pDrivetrain->SendMessage(&robotMessage);
+		}*/
+
+		if (CLIMBER_DEPLOY) {
+			robotMessage.command = COMMAND_CLIMBER_DEPLOY;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		else if (CLIMBER_RETRACT) {
+			robotMessage.command = COMMAND_CLIMBER_RETRACT;
 			pDrivetrain->SendMessage(&robotMessage);
 		}
 
@@ -361,7 +370,7 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_CLAW_RELEASE;
 			pArm->SendMessage(&robotMessage);
 		}
-/*		if(CLAW_TOGGLE)
+		/*		if(CLAW_TOGGLE)
 		{
 			robotMessage.command = COMMAND_CLAW_TOGGLE;
 			pArm->SendMessage(&robotMessage);
@@ -387,8 +396,8 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_ELEVATOR_SWITCH;
 			pElevator->SendMessage(&robotMessage);
-//			robotMessage.command = COMMAND_ARM_FLOOR;
-//			pArm->SendMessage(&robotMessage);
+			//			robotMessage.command = COMMAND_ARM_FLOOR;
+			//			pArm->SendMessage(&robotMessage);
 			bLimitSpeedWhileElevatorIsUp = false;
 			fExhaustLimit = .75;
 		}
@@ -396,8 +405,8 @@ void RhsRobot::Run() {
 		{
 			robotMessage.command = COMMAND_ELEVATOR_SCALE;
 			pElevator->SendMessage(&robotMessage);
-//			robotMessage.command = COMMAND_ARM_FLOOR;
-//			pArm->SendMessage(&robotMessage);
+			//			robotMessage.command = COMMAND_ARM_FLOOR;
+			//			pArm->SendMessage(&robotMessage);
 			bLimitSpeedWhileElevatorIsUp = true;
 			pSpeedTimer->Reset();
 			pSpeedTimer->Stop();
@@ -562,7 +571,7 @@ void RhsRobot::UpdateGameData(void)
 
 	sStartLocation = (char) pChooser->GetSelected();
 
-	sStartLocation = 'L';	// Let's fix this, yeah?
+	sStartLocation = 'C';	// Let's fix this, yeah?
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
 	{
@@ -648,6 +657,13 @@ void RhsRobot::UpdateGameData(void)
 			SmartDashboard::PutBoolean("Start Middle", false);
 			SmartDashboard::PutBoolean("Start Right", true);
 		}
+		else if(sStartLocation == 'X')
+		{
+			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_SIMPLE;
+			SmartDashboard::PutBoolean("Start Left", false);
+			SmartDashboard::PutBoolean("Start Middle", false);
+			SmartDashboard::PutBoolean("Start Right", false);
+		}
 		else
 		{
 			err = true;
@@ -658,10 +674,10 @@ void RhsRobot::UpdateGameData(void)
 		//printf("sending message! \n");
 
 		if(err)
-			{
+		{
 			printf("game data error \n");
-				return;
-			}
+			return;
+		}
 		if(pAuto)
 		{
 			pAuto->SendMessage(&robotMessage);

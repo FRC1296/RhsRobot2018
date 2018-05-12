@@ -108,6 +108,9 @@ enum MessageCommand {
 	COMMAND_PUNCH_LEFT,					//!< Punches the cube left
 	COMMAND_PUNCH_RIGHT,				//!< Punches the cube right
 
+	COMMAND_CLIMBER_DEPLOY,				//!< Deploys the climber
+	COMMAND_CLIMBER_RETRACT,			//!< Retracts the climber
+
 	//add new component messages here
 
 	COMMAND_COMPONENT_TEST,				//!< COMMAND_COMPONENT_TEST

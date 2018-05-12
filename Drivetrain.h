@@ -70,6 +70,8 @@ private:
 	Solenoid* pPunchSolenoidLeft; // The solenoid that punches the cube left, NOT the left solenoid
 	Solenoid* pPunchSolenoidRight; // The solenoid that punches the cube right, NOT the right solenoid
 
+	Solenoid* pClimberSolenoid;	// The solenoid used to deploy the climber (same as old punching right solenoid)
+
 	Servo* pLeftServo;	// The servo on the left side of the robot
 	Servo* pRightServo;	// The servo on the right side of the robot
 

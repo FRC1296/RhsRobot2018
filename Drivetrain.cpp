@@ -130,8 +130,11 @@ Drivetrain::Drivetrain()
 	pPunchSolenoidLeft = new Solenoid(CAN_PCM,6); // Change this ID when they actually mount it
 	pPunchSolenoidLeft->Set(false);
 
-	pPunchSolenoidRight = new Solenoid(CAN_PCM,7);
-	pPunchSolenoidRight->Set(false);
+/*	pPunchSolenoidRight = new Solenoid(CAN_PCM,7);
+	pPunchSolenoidRight->Set(false); */
+
+	pClimberSolenoid = new Solenoid(CAN_PCM,7);
+	pClimberSolenoid->Set(false);
 
 	pLeftServo = new Servo(0);
 	pRightServo = new Servo(1);
@@ -439,8 +442,16 @@ void Drivetrain::Run()
 	case COMMAND_PUNCH_RIGHT:
 		pLeftServo->SetAngle(90);
 		pRightServo->SetAngle(90);
-		pPunchSolenoidRight->Set(true);
+//		pPunchSolenoidRight->Set(true);
 		pPunchTimerRight->Start();
+		break;
+
+	case COMMAND_CLIMBER_DEPLOY:
+		pClimberSolenoid->Set(true);
+		break;
+
+	case COMMAND_CLIMBER_RETRACT:
+		pClimberSolenoid->Set(false);
 		break;
 
 	default:
