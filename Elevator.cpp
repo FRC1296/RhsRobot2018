@@ -48,17 +48,17 @@ Elevator::Elevator()
 	pElevatorMotorLeft->SetInverted(false);
 	pElevatorMotorRight->SetInverted(false);
 	pElevatorMotorLeft->ConfigPeakOutputForward(1.0, 10);
-	pElevatorMotorLeft->ConfigPeakOutputReverse(-1.0,10);
+	pElevatorMotorLeft->ConfigPeakOutputReverse(-.6,10);
 	pElevatorMotorRight->ConfigPeakOutputForward(1.0, 10);
-	pElevatorMotorRight->ConfigPeakOutputReverse(-1.0,10);
+	pElevatorMotorRight->ConfigPeakOutputReverse(-0.6,10);
 
 	pElevatorMotorLeft->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Absolute,0,10);
 	pElevatorMotorLeft->SetSensorPhase(true);
 
 	pElevatorMotorLeft->Config_kF(0,0.0,10);
-	pElevatorMotorLeft->Config_kP(0,0.3,10);
+	pElevatorMotorLeft->Config_kP(0,0.3,10); // .3
 	pElevatorMotorLeft->Config_kI(0,0.0,10);
-	pElevatorMotorLeft->Config_kD(0,0.01,10);
+	pElevatorMotorLeft->Config_kD(0,0.01,10); // .01
 	pElevatorMotorLeft->ConfigAllowableClosedloopError(0, 200, 10);
 
 	//pElevatorMotorLeft->Config_kF(1,0.0,10);

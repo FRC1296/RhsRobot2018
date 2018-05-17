@@ -571,7 +571,7 @@ void RhsRobot::UpdateGameData(void)
 
 	sStartLocation = (char) pChooser->GetSelected();
 
-	sStartLocation = 'C';	// Let's fix this, yeah?
+	sStartLocation = 'L';	// Let's fix this, yeah?
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
 	{

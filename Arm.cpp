@@ -112,12 +112,12 @@ void Arm::Run()
 	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
-		if (!(pArmHall->Get()) && pArmMotor->GetSelectedSensorPosition(0) < iStowPos - 1024)
+/*		if (!(pArmHall->Get()) && pArmMotor->GetSelectedSensorPosition(0) < iStowPos - 1024)
 	{
 		// If the hall effect is activated and the arm has not reached or passed its initial floor position
 		iFloorPos = pArmMotor->GetSelectedSensorPosition(0);
 		pArmMotor->Set(ControlMode::Position,iFloorPos);
-	}
+	} */
 
 	if (!(localMessage.command == COMMAND_CLAW_TOGGLE))
 	{
@@ -125,7 +125,8 @@ void Arm::Run()
 	}
 
 /*	if (pArmMotor->GetSelectedSensorPosition(0) < iFloorPos - 1024) {
-		pArmMotor->Set(ControlMode::Position,iStowPos);
+		pArmMotor->Set(
+		ControlMode::Position,iStowPos);
 	} */
 
 	switch(localMessage.command)			//Reads the message command
