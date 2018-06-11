@@ -69,11 +69,12 @@ void RhsRobot::Init() {
 	pChooser->AddObject("Center - Cube in claw; robot forwards",'C');
 	pChooser->AddObject("Right - Cube in puncher; robot backwards",'R');
 	pChooser->AddDefault("Simple - Cube anywhere; robot forwards", 'X');
-	SmartDashboard::PutData("Autonomous Mode Chooser", pChooser);						//Maybe works?
+//	SmartDashboard::PutData("Autonomous Mode Chooser", pChooser);						//Maybe works?
 
 	pSpeedTimer = new Timer();
 	cs::UsbCamera pCamera = CameraServer::GetInstance()->StartAutomaticCapture();
-	//	pCamera.SetVideoMode(cs::VideoMode::kMJPEG,320,240,15);
+	//pCamera.SetVideoMode(cs::VideoMode::kUnknown,320,240,5);
+	pCamera.SetFPS(5); // Bandwidth sucks
 
 	pControllerDriver = new Joystick(0);
 	pControllerOperator = new Joystick(1);
@@ -160,10 +161,10 @@ void RhsRobot::Run() {
 
 	fHeightPercent = pElevator->PercentHeight();
 	fDrivetrainSpeed = (float)(1.0 / ((2*fHeightPercent) + 1));
-	SmartDashboard::PutNumber("Elevator Switch2Scale Percent",fHeightPercent);
+//	SmartDashboard::PutNumber("Elevator Switch2Scale Percent",fHeightPercent);
 
-	SmartDashboard::PutNumber("Left Trigger",fLeftTrigger);
-	SmartDashboard::PutNumber("Right Trigger",fRightTrigger);
+//	SmartDashboard::PutNumber("Left Trigger",fLeftTrigger);
+//	SmartDashboard::PutNumber("Right Trigger",fRightTrigger);
 
 	if((iLoop % 50) == 0)   // once every second or so
 	{
@@ -390,7 +391,9 @@ void RhsRobot::Run() {
 
 	if(pElevator)
 	{
-		SmartDashboard::PutNumber("Raw Elevator Axis",ELEVATOR_DELTA);
+//		SmartDashboard::PutNumber("Raw Elevator Axis",ELEVATOR_DELTA);
+
+		int buttons = 0;
 
 		if (ELEVATOR_SWITCH)
 		{
@@ -400,6 +403,7 @@ void RhsRobot::Run() {
 			//			pArm->SendMessage(&robotMessage);
 			bLimitSpeedWhileElevatorIsUp = false;
 			fExhaustLimit = .75;
+			buttons ++;
 		}
 		else if (ELEVATOR_SCALE)
 		{
@@ -411,6 +415,7 @@ void RhsRobot::Run() {
 			pSpeedTimer->Reset();
 			pSpeedTimer->Stop();
 			fExhaustLimit = .6;
+			buttons ++;
 		}
 		else if(ELEVATOR_FLOOR)
 		{
@@ -419,6 +424,7 @@ void RhsRobot::Run() {
 			pSpeedTimer->Reset();
 			pSpeedTimer->Start();
 			fExhaustLimit = 1.0;
+			buttons ++;
 		}
 		else
 		{
@@ -435,11 +441,11 @@ void RhsRobot::Run() {
 			robotMessage.params.elevator.fSpeed = ELEVATOR_DELTA;
 			pElevator->SendMessage(&robotMessage);
 		}
-		else
+		else if (buttons > 0)
 		{
 			robotMessage.command = COMMAND_ELEVATOR_MOVE;
 			robotMessage.params.elevator.fSpeed = 0;
-			pElevator->SendMessage(&robotMessage);
+			//pElevator->SendMessage(&robotMessage);
 		}
 	}
 
@@ -543,6 +549,7 @@ void RhsRobot::MonitorPDB(void)
 		maxMessage.params.pdb.rdrive3 = lastMessage.params.pdb.rdrive3;
 	}
 
+#if DEBUG
 	SmartDashboard::PutNumber("Claw Motor Left Max Amps", maxMessage.params.pdb.lclaw);
 	SmartDashboard::PutNumber("Claw Motor Right Max Amps", maxMessage.params.pdb.rclaw);
 	SmartDashboard::PutNumber("Drive Motor Left #1 Max Amps", maxMessage.params.pdb.ldrive1);
@@ -551,6 +558,7 @@ void RhsRobot::MonitorPDB(void)
 	SmartDashboard::PutNumber("Drive Motor Right #1 Max Amps", maxMessage.params.pdb.rdrive1);
 	SmartDashboard::PutNumber("Drive Motor Right #2 Max Amps", maxMessage.params.pdb.rdrive2);
 	SmartDashboard::PutNumber("Drive Motor Right #3 Max Amps", maxMessage.params.pdb.rdrive3);
+#endif
 
 }
 
@@ -567,10 +575,15 @@ void RhsRobot::UpdateGameData(void)
 	}
 	//printf("Game Data > 0\n");
 
+
+#if DEBUG
+	//this code only runs if #define DEBUG 1
+#endif
 	bool err = false;
 
 	sStartLocation = (char) pChooser->GetSelected();
 
+	//TODO: Mark this location!
 	sStartLocation = 'L';	// Let's fix this, yeah?
 
 	if((gameData != gameDataPrev) || (sStartLocation != sStartLocationLast))
@@ -580,89 +593,97 @@ void RhsRobot::UpdateGameData(void)
 		if(gameData[0] == 'L')
 		{
 			robotMessage.params.gamedata.eSwitchSide = GAMEPIECESIDE_LEFT;
-			SmartDashboard::PutBoolean("Switch Left", true);
-			SmartDashboard::PutBoolean("Switch Right", false);
+//			SmartDashboard::PutBoolean("Switch Left", true);
+//			SmartDashboard::PutBoolean("Switch Right", false);
 		}
 		else if (gameData[0] == 'R')
 		{
 			robotMessage.params.gamedata.eSwitchSide = GAMEPIECESIDE_RIGHT;
-			SmartDashboard::PutBoolean("Switch Left", false);
-			SmartDashboard::PutBoolean("Switch Right", true);
+//			SmartDashboard::PutBoolean("Switch Left", false);
+//			SmartDashboard::PutBoolean("Switch Right", true);
 		}
 		else
 		{
 			err = true;
 			robotMessage.params.gamedata.eSwitchSide = GAMEPIECESIDE_LEFT;
-			SmartDashboard::PutBoolean("Switch Left", false);
-			SmartDashboard::PutBoolean("Switch Right", false);
+//			SmartDashboard::PutBoolean("Switch Left", false);
+//			SmartDashboard::PutBoolean("Switch Right", false);
 		}
 
 		if(gameData[1] == 'L')
 		{
 			robotMessage.params.gamedata.eScaleSide = GAMEPIECESIDE_LEFT;
-			SmartDashboard::PutBoolean("Scale Left", true);
-			SmartDashboard::PutBoolean("Scale Right", false);
+//			SmartDashboard::PutBoolean("Scale Left", true);
+//			SmartDashboard::PutBoolean("Scale Right", false);
 		}
 		else if(gameData[1] == 'R')
 		{
 			robotMessage.params.gamedata.eScaleSide = GAMEPIECESIDE_RIGHT;
-			SmartDashboard::PutBoolean("Scale Left", false);
-			SmartDashboard::PutBoolean("Scale Right", true);
+//			SmartDashboard::PutBoolean("Scale Left", false);
+//			SmartDashboard::PutBoolean("Scale Right", true);
 		}
 		else
 		{
 			err = true;
 			robotMessage.params.gamedata.eScaleSide = GAMEPIECESIDE_LEFT;
-			SmartDashboard::PutBoolean("Scale Left", true);
-			SmartDashboard::PutBoolean("Scale Right", false);
+//			SmartDashboard::PutBoolean("Scale Left", true);
+//			SmartDashboard::PutBoolean("Scale Right", false);
 		}
 
 		if(gameData[2] == 'L')
 		{
 			robotMessage.params.gamedata.eOpponentSwitchSide = GAMEPIECESIDE_LEFT;
-			SmartDashboard::PutBoolean("Opponent Left", true);
-			SmartDashboard::PutBoolean("Opponent Right", false);
+//			SmartDashboard::PutBoolean("Opponent Left", true);
+//			SmartDashboard::PutBoolean("Opponent Right", false);
 		}
 		else if(gameData[2] == 'R')
 		{
 			robotMessage.params.gamedata.eOpponentSwitchSide = GAMEPIECESIDE_RIGHT;
-			SmartDashboard::PutBoolean("Opponent Left", false);
-			SmartDashboard::PutBoolean("Opponent Right", true);
+//			SmartDashboard::PutBoolean("Opponent Left", false);
+//			SmartDashboard::PutBoolean("Opponent Right", true);
 		}
 		else
 		{
 			err = true;
 			robotMessage.params.gamedata.eOpponentSwitchSide = GAMEPIECESIDE_LEFT;
-			SmartDashboard::PutBoolean("Opponent Left", true);
-			SmartDashboard::PutBoolean("Opponent Right", false);
+//			SmartDashboard::PutBoolean("Opponent Left", true);
+//			SmartDashboard::PutBoolean("Opponent Right", false);
 		}
 		if(sStartLocation == 'L')
 		{
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_LEFT;
+#if DEBUG
 			SmartDashboard::PutBoolean("Start Left", true);
 			SmartDashboard::PutBoolean("Start Middle", false);
 			SmartDashboard::PutBoolean("Start Right", false);
+#endif
 		}
 		else if(sStartLocation == 'C')
 		{
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_CENTER;
+#if DEBUG
 			SmartDashboard::PutBoolean("Start Left", false);
 			SmartDashboard::PutBoolean("Start Middle", true);
 			SmartDashboard::PutBoolean("Start Right", false);
+#endif
 		}
 		else if(sStartLocation == 'R')
 		{
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_RIGHT;
+#if DEBUG
 			SmartDashboard::PutBoolean("Start Left", false);
 			SmartDashboard::PutBoolean("Start Middle", false);
 			SmartDashboard::PutBoolean("Start Right", true);
+#endif
 		}
 		else if(sStartLocation == 'X')
 		{
 			robotMessage.params.gamedata.eStartingPosition = GAMEPIECESTART_SIMPLE;
+#if DEBUG
 			SmartDashboard::PutBoolean("Start Left", false);
 			SmartDashboard::PutBoolean("Start Middle", false);
 			SmartDashboard::PutBoolean("Start Right", false);
+#endif
 		}
 		else
 		{
@@ -692,7 +713,10 @@ void RhsRobot::UpdateGameData(void)
 
 		gameDataPrev = gameData;
 		sStartLocationLast = sStartLocation;
+
+#if DEBUG
 		SmartDashboard::PutData("Autonomous mode chooser", pChooser); //testing
+#endif
 	}
 }
 
@@ -708,7 +732,10 @@ void RhsRobot::UpdateSystemData(void)
 		pDrivetrain->SendMessage(&robotMessage);
 	}
 
+#if DEBUG
+
 	SmartDashboard::PutNumber("Match Time", frc::DriverStation::GetInstance().GetMatchTime());
+#endif
 }
 
 

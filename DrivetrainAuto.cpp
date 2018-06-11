@@ -36,10 +36,11 @@ void Drivetrain::AutoMeasuredMove()
 	pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 	pRightMotor->Set(ControlMode::Position,iFinalPosRight);
 
+#if DEBUG
 	SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
 	SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
 	SmartDashboard::PutNumber("iTicks", iTicks);
-
+#endif
 	while(true)
 	{
 		// have we timed out?
@@ -211,7 +212,7 @@ void Drivetrain::AutoVelocityMove()
 			fVMoveTime, iTargetDistance, iTicks, iFinalPosLeft, iFinalPosRight,fInitRotation);
 
 
-	SmartDashboard::PutNumber("Time out", fVMoveTime);
+//	SmartDashboard::PutNumber("Time out", fVMoveTime);
 	pPIDTimerMove->Reset();
 	pPIDTimerMove->Start();
 
@@ -219,10 +220,11 @@ void Drivetrain::AutoVelocityMove()
 	{
 		pIdgey->GetAccumGyro(dfAccumGyroData);
 		fCurAngle = dfAccumGyroData[2];
+#if DEBUG
 		SmartDashboard::PutNumber("Current Auto Angle",fCurAngle);
 		SmartDashboard::PutNumber("The Angle Difference",fCurAngle - fInitRotation);
 		SmartDashboard::PutNumber("The Angle init",fInitRotation);
-
+#endif
 		// have we timed out?
 		if (!bInAuto)
 		{

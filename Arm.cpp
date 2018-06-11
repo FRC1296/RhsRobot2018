@@ -70,6 +70,7 @@ Arm::Arm()
 	pClawSolenoid = new Solenoid(CAN_PCM,1);
 	pClawSolenoid->Set(false);
 
+#if DEBUG
 	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
 	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
 	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
@@ -77,7 +78,7 @@ Arm::Arm()
 	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
 	SmartDashboard::PutNumber("First Arm Open Position",iStartPos - iStartToOpen);
 	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
-
+#endif
 	//pArmMotor->Set(ControlMode::Position, iStartPos + iStartToShoot);
 
 	bClawOpen = false;
@@ -101,16 +102,16 @@ void Arm::Run()
 {
 	iCurrPos = pArmMotor->GetSelectedSensorPosition(0);
 
-	SmartDashboard::PutNumber("New Arm Floor Position",iFloorPos);
+//	SmartDashboard::PutNumber("New Arm Floor Position",iFloorPos);
 
-	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
-	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
-	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
-	SmartDashboard::PutBoolean("Arm Bumper Switches",!(pArmHall->Get()));
+//	SmartDashboard::PutNumber("Arm Speed RPM",((fMaxSpeed*600)/4096.0));
+//	SmartDashboard::PutNumber("Arm Position in Ticks",iCurrPos);
+//	SmartDashboard::PutNumber("Arm Position in Rotations",iCurrPos/4096.0);
+//	SmartDashboard::PutBoolean("Arm Bumper Switches",!(pArmHall->Get()));
 	iMoveDelta = 0;
-	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
-	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
-	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
+//	SmartDashboard::PutNumber("Arm Init Position",iStartPos);
+//	SmartDashboard::PutNumber("Arm Open Position",iStartPos - iStartToOpen);
+//	SmartDashboard::PutNumber("Arm Shoot Position",iStartPos - iStartToShoot);
 
 /*		if (!(pArmHall->Get()) && pArmMotor->GetSelectedSensorPosition(0) < iStowPos - 1024)
 	{
@@ -247,7 +248,7 @@ void Arm::Run()
 
 	// implement timeout
 
-	SmartDashboard::PutNumber("Arm Closed Loop Error", pArmMotor->GetClosedLoopError(0));
+//	SmartDashboard::PutNumber("Arm Closed Loop Error", pArmMotor->GetClosedLoopError(0));
 
 	if((pArmMotor->GetClosedLoopError(0) < 50) && (pArmMotor->GetClosedLoopError(0) > -50))
 	{

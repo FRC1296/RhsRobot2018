@@ -201,6 +201,8 @@ void Drivetrain::Run()
 	pIdgey->GetFusedHeading(*stat);
 
 	SmartDashboard::PutString("Pigeon",stat->description);*/
+
+#if DEBUG
 	SmartDashboard::PutNumber("X Rotation",dfAccumGyroData[0]);
 	SmartDashboard::PutNumber("Y Rotation",dfAccumGyroData[1]);
 	SmartDashboard::PutNumber("Z Rotation",dfAccumGyroData[2]);
@@ -210,6 +212,7 @@ void Drivetrain::Run()
 
 	SmartDashboard::PutNumber("Left Encoder",pLeftMotor->GetSelectedSensorPosition(0));
 	SmartDashboard::PutNumber("Right Encoder",pRightMotor->GetSelectedSensorPosition(0));
+#endif
 
 	pIdgey->GetRawGyro(dps);
 	if (std::abs(dps[2]) > fMaxTurnSpeed)
@@ -242,10 +245,10 @@ void Drivetrain::Run()
 	/*if (iTurnState == -1){
 	fInitRotation = 0;
 	}*/
-
+#if DEBUG
 	SmartDashboard::PutNumber("Target Angle",fTargetCalc);
 	SmartDashboard::PutNumber("CurrAngle",dfAccumGyroData[2]);
-
+#endif
 #if 0
 	switch (iTurnState)
 	{
@@ -288,7 +291,7 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_DRIVETRAIN_DRIVE_CHEESY:
-		SmartDashboard::PutString("After Auto Status","Received Cheesy drive command");
+//		SmartDashboard::PutString("After Auto Status","Received Cheesy drive command");
 		//printf("Received cheesy drive command");
 		RunCheesyDrive(bUseCheesyDrive, localMessage.params.cheesyDrive.wheel,
 				localMessage.params.cheesyDrive.throttle, localMessage.params.cheesyDrive.bQuickturn);
@@ -296,7 +299,7 @@ void Drivetrain::Run()
 
 	case COMMAND_DRIVETRAIN_RUN_ARCADE:
 		if (iTurnState == TurnState_Init) {
-			SmartDashboard::PutString("Mode","ARCADEEEEEE");
+//			SmartDashboard::PutString("Mode","ARCADEEEEEE");
 			double left = pow(localMessage.params.adrive.left - localMessage.params.adrive.right,3);
 			double right = pow(localMessage.params.adrive.left + localMessage.params.adrive.right,3);
 			pLeftMotor->Set(ControlMode::PercentOutput,left);
@@ -324,7 +327,7 @@ void Drivetrain::Run()
 		break; */
 
 	case COMMAND_DRIVETRAIN_GPTURN:
-		SmartDashboard::PutString("Command","Gracious Professionalism Turn");
+//		SmartDashboard::PutString("Command","Gracious Professionalism Turn");
 		if (iTurnState == TurnState_Init)
 		{
 			fTarget = (localMessage.params.turn.fAngle);
@@ -371,13 +374,13 @@ void Drivetrain::Run()
 			pPIDTimerMove->Reset();
 			pPIDTimerMove->Start();
 
-			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
-			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
+//			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
+//			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
 			/*	pLeftMotor->ConfigPeakOutputForward(.75,0);
 			pLeftMotor->ConfigPeakOutputReverse(-.75,0);*/
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
-			SmartDashboard::PutNumber("iTicks", iTicks);
+//			SmartDashboard::PutNumber("iTicks", iTicks);
 		}
 		break;
 
@@ -388,7 +391,7 @@ void Drivetrain::Run()
 			iTicks = (512.0*ROBOT_WIDTH*fTarget)/(45.0*WHEEL_DIA);
 			/*fTimeToDest = ((1.0*iTicks)/(MAX_TURN_SPEED));
 			iNumPoints = (fTimeToDest/UPDATE_RATE);*/
-			SmartDashboard::PutNumber("iTicks",iTicks);
+//			SmartDashboard::PutNumber("iTicks",iTicks);
 			iTurnState = TurnState_mTurn;
 			if (fTarget < 0) {
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) - iTicks;
@@ -398,8 +401,8 @@ void Drivetrain::Run()
 				iFinalPosLeft = pLeftMotor->GetSelectedSensorPosition(0) + iTicks;
 				iFinalPosRight = pRightMotor->GetSelectedSensorPosition(0) - iTicks;
 			}
-			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
-			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
+//			SmartDashboard::PutNumber("iFinalPosLeft",iFinalPosLeft);
+//			SmartDashboard::PutNumber("iFinalPosRight",iFinalPosRight);
 			pLeftMotor->Set(ControlMode::Position,iFinalPosLeft);
 			pRightMotor->Set(ControlMode::Position,iFinalPosRight);
 		}
@@ -419,14 +422,14 @@ void Drivetrain::Run()
 		break;
 
 	case COMMAND_SPUNCH_LEFT:
-		SmartDashboard::PutString("Spunch Status","Spunch Left Command Reached");
+//		SmartDashboard::PutString("Spunch Status","Spunch Left Command Reached");
 		pLeftServo->SetAngle(90);
 		pRightServo->SetAngle(90);
 		AutoPunchWhileMovingStraight(false);
 		break;
 
 	case COMMAND_SPUNCH_RIGHT:
-		SmartDashboard::PutString("Spunch Status","Spunch Right Command Reached");
+//		SmartDashboard::PutString("Spunch Status","Spunch Right Command Reached");
 		pLeftServo->SetAngle(90);
 		pRightServo->SetAngle(90);
 		AutoPunchWhileMovingStraight(true);
@@ -462,8 +465,8 @@ void Drivetrain::Run()
 void Drivetrain::MeasuredMove()
 {
 	if (pPIDTimerMove->Get() >= fMMoveTime){
-		SmartDashboard::PutString("PID move","PID Done");
-		SmartDashboard::PutString("Complete","PID Completed");
+//		SmartDashboard::PutString("PID move","PID Done");
+//		SmartDashboard::PutString("Complete","PID Completed");
 		iTurnState = TurnState_Init;
 		fTarget = 0;
 		fInitRotation = 0;
@@ -478,8 +481,8 @@ void Drivetrain::MeasuredMove()
 	{
 		pPIDTimer->Start();
 		if (pPIDTimer->Get() >= .25) {
-			SmartDashboard::PutString("snowflake","PID Done");
-			SmartDashboard::PutString("Completed","PID Completed");
+//			SmartDashboard::PutString("snowflake","PID Done");
+//			SmartDashboard::PutString("Completed","PID Completed");
 			//	pLeftMotor->Set(ControlMode::PercentOutput,0);
 			//	pRightMotor->Set(ControlMode::PercentOutput,0);
 			//iTurnState = TurnState_Init;
@@ -501,8 +504,8 @@ void Drivetrain::MeasuredMove()
 		else if (fMoveAngle > fTargetCalc)
 			iFinalPosRight += (512*ROBOT_WIDTH*(fMoveAngle - fTargetCalc))/(45*WHEEL_DIA);
 	}
-	SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
-	SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
+//	SmartDashboard::PutNumber("Target Left Motor Position",iFinalPosLeft);
+//	SmartDashboard::PutNumber("Target Right Motor Position",iFinalPosRight);
 
 }
 

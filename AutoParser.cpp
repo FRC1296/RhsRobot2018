@@ -77,7 +77,7 @@ bool Autonomous::Evaluate(std::string rStatement) {
 	if(pToken == NULL)
 	{
 		printf("%s %s\n", pCurrLinePos, szDelimiters);
-		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		PRINTAUTOERROR;
 		rStatus.append("missing token");
 		printf("%0.3lf %s\n", pDebugTimer->Get(), rStatement.c_str());

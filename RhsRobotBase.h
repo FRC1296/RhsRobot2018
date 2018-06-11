@@ -14,6 +14,8 @@
 #include "WPILib.h"
 #include "RobotBase.h"
 
+#define DEBUG 0
+
 
 typedef enum eRobotOpMode
 {
