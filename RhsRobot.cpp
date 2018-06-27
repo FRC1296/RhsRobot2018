@@ -309,6 +309,10 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_CLIMBER_RETRACT;
 			pDrivetrain->SendMessage(&robotMessage);
 		}
+		else if (DRIVETRAIN_ARC) {
+			robotMessage.command = COMMAND_DRIVETRAIN_ARC;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
 
 		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
 		robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);

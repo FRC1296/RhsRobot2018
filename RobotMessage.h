@@ -78,6 +78,8 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_GPTURN,			//!< Drivetrain test for Gyro rotation with a PID loop
 	COMMAND_DRIVETRAIN_BOXFILTER,		//!< Drivetrain test for Boxfilter turning
 
+	COMMAND_DRIVETRAIN_ARC,				//!< Drivetrain test for Arc turn
+
 	COMMAND_ELEVATOR_MOVE,				//!< "Manual" elevator control
 	COMMAND_ELEVATOR_FLOOR,				//!< Elevator floor position
 	COMMAND_ELEVATOR_SWITCH,			//!< Elevator switch position

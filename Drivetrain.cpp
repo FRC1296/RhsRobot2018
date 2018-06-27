@@ -146,6 +146,8 @@ Drivetrain::Drivetrain()
 	pLeftMotor->SetSelectedSensorPosition(iInitLeftPos,0,0);
 	pRightMotor->SetSelectedSensorPosition(iInitRightPos,0,0);
 
+	iArcState = ArcState_Init;
+
 	pCheesy = new CheesyLoop();
 	pTask = new std::thread(&Drivetrain::StartTask, this, DRIVETRAIN_TASKNAME, DRIVETRAIN_PRIORITY);
 	wpi_assert(pTask);
@@ -457,10 +459,60 @@ void Drivetrain::Run()
 		pClimberSolenoid->Set(false);
 		break;
 
+	case COMMAND_DRIVETRAIN_ARC:
+		if (iArcState == ArcState_Init) {
+			iArcState = ArcState_Arc;
+			pPIDTimerMove->Start();
+		}
+		break;
+
 	default:
 		break;
 	}
+
+	switch (iArcState) {
+	case ArcState_Init:
+		break;
+	case ArcState_Arc:
+		ArcTest();
+		break;
+	}
 };
+
+void Drivetrain::ArcTest() {
+	/* Alright so here's my thought process:
+	 * Assuming one continuous motion (obviously impossible because acceleration / friction), then
+	 * The assumed path of travel is off by +- a radius of 13 inches to each side of the robot.
+	 * Thus, take the assumed path of travel's velocity and calculate two separate velocities based on
+	 * concentric circles exactly thirteen inches smaller and larger in order to get one "arc" motion.
+	 */
+
+	float fTime = 2.0; // assumed time
+	float fRadius = 45.0; // radius in inches
+	float fWOff = 13.0; // Wheel offset in inches
+	float fAngle = 90.0; // Desired angle in degrees, assuming right is positive for now
+
+	int iCenterArcLength = (int)(2*fRadius*fAngle*4096)/(360.0*WHEEL_DIA);
+
+	int iLeftArcLength = (int)(2*(fRadius+fWOff)*fAngle*4096)/(360.0*WHEEL_DIA);
+	int iRightArcLength = (int)(2*(fRadius-fWOff)*fAngle*4096)/(360.0*WHEEL_DIA);
+
+	float fLeftVelocity = (iLeftArcLength / fTime)*-1;
+	float fRightVelocity = (iRightArcLength / fTime)*-1;
+
+	if (pPIDTimerMove->Get() >= fTime) {
+		iArcState = ArcState_Init;
+		pPIDTimerMove->Stop();
+		pPIDTimerMove->Reset();
+		pLeftMotor->Set(ControlMode::PercentOutput,0.0);
+		pRightMotor->Set(ControlMode::PercentOutput,0.0);
+		return;
+	}
+
+	pLeftMotor->Set(ControlMode::Velocity,fLeftVelocity);
+	pRightMotor->Set(ControlMode::Velocity,fRightVelocity);
+
+}
 
 void Drivetrain::MeasuredMove()
 {
