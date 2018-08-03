@@ -22,6 +22,9 @@ typedef enum AUTO_COMMAND_TOKENS
 	AUTO_TOKEN_MOVE,				//!<N	move (left & right PWM - float)
 	AUTO_TOKEN_MMOVE,				//!<R	mmove <speed> <inches:float>  <timeout:float>
 	AUTO_TOKEN_VMOVE,
+	AUTO_TOKEN_ARC,					//!<R	arc <degrees:float> <radius:float> <time:float>
+	AUTO_TOKEN_STRAIGHT,			//!<R	straight <inches:float> <time:float>
+	AUTO_TOKEN_STOP,				//!<R	stop
 	AUTO_TOKEN_TURN,				//!<R	turn <degrees:float> <timeout:float>
 	AUTO_TOKEN_ELEVATOR,			//!<R	elevator <INTAKE|SWITCH|SCALEHI|SCALELO|STOW> <timeout:float>
 	AUTO_TOKEN_CLAW,                //!<R	claw <IN|OUT|STOP>

@@ -79,6 +79,8 @@ enum MessageCommand {
 	COMMAND_DRIVETRAIN_BOXFILTER,		//!< Drivetrain test for Boxfilter turning
 
 	COMMAND_DRIVETRAIN_ARC,				//!< Drivetrain test for Arc turn
+	COMMAND_DRIVETRAIN_STOP,			//!< Drivetrain test for "OH GOD STOP" ~Alex
+	COMMAND_DRIVETRAIN_STRAIGHT,		//!< Drivetrain test for basicc straight movement
 
 	COMMAND_ELEVATOR_MOVE,				//!< "Manual" elevator control
 	COMMAND_ELEVATOR_FLOOR,				//!< Elevator floor position
@@ -140,6 +142,11 @@ struct ProximityMoveParams {
 struct TurnParams {
 	float fAngle;
 	float fTimeout;
+
+	//Dropping these here for now
+	float driveTime;
+	float ArcAngle;
+	float ArcRadius;
 };
 
 ///Used to deliver joystick readings to Drivetrain
@@ -151,6 +158,8 @@ struct TankDriveParams {
 struct ArcadeDriveParams {
 	float left;
 	float right;
+
+
 };
 
 
@@ -229,6 +238,8 @@ struct AutonomousParams {
 	float driveDistance;
 	float turnAngle;
 	float driveTime;
+	float ArcAngle;
+	float ArcRadius;
 };
 
 struct ClimberParams {

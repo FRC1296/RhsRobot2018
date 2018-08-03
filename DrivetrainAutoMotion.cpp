@@ -103,3 +103,75 @@ void Drivetrain::AutoArc(float deg, float radius, float time, bool stop)
 
 	SendCommandResponse(COMMAND_AUTONOMOUS_RESPONSE_OK);
 }
+
+void Drivetrain::ArcTest() {
+	/* Alright so here's my thought process:
+	 * Assuming one continuous motion (obviously impossible because acceleration / friction), then
+	 * The assumed path of travel is off by +- a radius of 13 inches to each side of the robot.
+	 * Thus, take the assumed path of travel's velocity and calculate two separate velocities based on
+	 * concentric circles exactly thirteen inches smaller and larger in order to get one "arc" motion.
+	 */
+
+	float fTime = localMessage.params.turn.driveTime; // assumed time
+	float fRadius = localMessage.params.turn.ArcRadius; // radius in inches
+	float fWOff = 13.0; // Wheel offset in inches
+	float fAngle = localMessage.params.turn.ArcAngle; // Desired angle in degrees, assuming right is positive for now
+
+	int iCenterArcLength = (int)(2*fRadius*fAngle*4096)/(360.0*WHEEL_DIA);
+
+	int iLeftArcLength = (int)(2*(fRadius+fWOff)*fAngle*4096)/(360.0*WHEEL_DIA);
+	int iRightArcLength = (int)(2*(fRadius-fWOff)*fAngle*4096)/(360.0*WHEEL_DIA);
+
+	float fLeftVelocity = (iLeftArcLength / fTime)*-1;
+	float fRightVelocity = (iRightArcLength / fTime)*-1;
+
+	if (pPIDTimerMove->Get() >= fTime) {
+		iArcState = ArcState_Init;
+		pPIDTimerMove->Stop();
+		pPIDTimerMove->Reset();
+		pLeftMotor->Set(ControlMode::PercentOutput,0.0);
+		pRightMotor->Set(ControlMode::PercentOutput,0.0);
+		return;
+	}
+
+	pLeftMotor->Set(ControlMode::Velocity,fLeftVelocity);
+	pRightMotor->Set(ControlMode::Velocity,fRightVelocity);
+
+}
+
+void Drivetrain::StopTest() {
+	static const float fTime = 0.5;
+	if (pPIDTimerMove->Get() >= fTime) {
+		iArcState = ArcState_Init;
+		pPIDTimerMove->Stop();
+		pPIDTimerMove->Reset();
+		pLeftMotor->Set(ControlMode::PercentOutput,0.0);
+		pRightMotor->Set(ControlMode::PercentOutput,0.0);
+		return;
+	}
+	pLeftMotor->Set(ControlMode::PercentOutput,0.0);
+	pRightMotor->Set(ControlMode::PercentOutput,0.0);
+}
+
+void Drivetrain::StraightTest() {
+	SmartDashboard::PutString("New Auto Test","Going Straight");
+	float fTime = localMessage.params.mmove.fTime;
+	float fDistance = localMessage.params.mmove.fDistance;
+	float fTarget = (fDistance * 4096)/(PI*WHEEL_DIA);
+
+	float fVelocity = (fTarget / fTime)*-1;
+
+	if (pPIDTimerMove->Get() >= fTime) {
+		iArcState = ArcState_Init;
+		pPIDTimerMove->Stop();
+		pPIDTimerMove->Reset();
+		pLeftMotor->Set(ControlMode::PercentOutput,0.0);
+		pRightMotor->Set(ControlMode::PercentOutput,0.0);
+		SmartDashboard::PutString("New Auto Test","Completed");
+		return;
+	}
+
+	pLeftMotor->Set(ControlMode::Velocity,fVelocity);
+	pRightMotor->Set(ControlMode::Velocity,fVelocity);
+
+}

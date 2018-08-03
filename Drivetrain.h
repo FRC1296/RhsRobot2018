@@ -30,7 +30,7 @@ void dAddToArray(float* Array, int LengthArr, float val);
 float dAvgArrays(float* Array, int LengthArr);
 
 enum TurnState{ TurnState_Init = -1, TurnState_mTurn = 1, TurnState_gpTurn, TurnState_boxTurn, TurnState_mMove};
-enum ArcState { ArcState_Init = -1, ArcState_Arc = 1 };
+enum ArcState { ArcState_Init = -1, ArcState_Arc = 1, ArcState_Straight, ArcState_Stop };
 
 const double METERS_PER_INCH = 0.0254;
 const double METERS_PER_COUNT = (METERS_PER_INCH * 4096)/(PI*WHEEL_DIA);
@@ -90,6 +90,8 @@ private:
 	void AutoArc(float deg, float radius, float time, bool stop);
 
 	void ArcTest();
+	void StopTest();
+	void StraightTest();
 
 	float fInitRotation;
 	float fPrevP;

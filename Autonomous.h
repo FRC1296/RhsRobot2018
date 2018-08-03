@@ -74,6 +74,10 @@ private:
 	bool Arm(char *);
 	bool SPunch(char *);
 
+	bool Arc(char *);
+	bool Straight(char *);
+	bool Stop(char *);
+
 	bool CommandResponse(const char *szQueueName);
 	bool CommandNoResponse(const char *szQueueName);
 	bool MultiCommandResponse(vector<char*> szQueueNames, vector<MessageCommand> commands);

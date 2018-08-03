@@ -51,12 +51,12 @@ bool Autonomous::CommandResponse(const char *szQueueName) {
 
 	if (ReceivedCommand == COMMAND_AUTONOMOUS_RESPONSE_OK)
 	{
-//		SmartDashboard::PutString("Auto Status","auto ok");
+		//		SmartDashboard::PutString("Auto Status","auto ok");
 		bReturn = true;
 	}
 	else if (ReceivedCommand == COMMAND_AUTONOMOUS_RESPONSE_ERROR)
 	{
-//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 		PRINTAUTOERROR;
 		bReturn = false;
 	}
@@ -72,7 +72,7 @@ bool Autonomous::MultiCommandResponse(vector<char*> szQueueNames, vector<Message
 	//check that queue list is as long as command list
 	if(szQueueNames.size() != commands.size())
 	{
-//		SmartDashboard::PutString("Auto Status","MULTICOMMAND error!");
+		//		SmartDashboard::PutString("Auto Status","MULTICOMMAND error!");
 		return false;
 	}
 	bool bReturn = true;
@@ -108,12 +108,12 @@ bool Autonomous::MultiCommandResponse(vector<char*> szQueueNames, vector<Message
 
 		if (ReceivedCommand == COMMAND_AUTONOMOUS_RESPONSE_OK)
 		{
-//			SmartDashboard::PutString("Auto Status", "auto ok");
+			//			SmartDashboard::PutString("Auto Status", "auto ok");
 			bReturn = true;
 		}
 		else if (ReceivedCommand == COMMAND_AUTONOMOUS_RESPONSE_ERROR)
 		{
-//			SmartDashboard::PutString("Auto Status", "EARLY DEATH!");
+			//			SmartDashboard::PutString("Auto Status", "EARLY DEATH!");
 			bReturn = false;
 		}
 	}
@@ -196,7 +196,7 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 		return (false);
 	}
 
@@ -206,7 +206,7 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 		return (false);
 	}
 
@@ -216,7 +216,7 @@ bool Autonomous::MeasuredMove(char *pCurrLinePos) {
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 		return (false);
 	}
 
@@ -250,7 +250,7 @@ bool Autonomous::VelocityMove(char *pCurrLinePos) {
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 		return (false);
 	}
 
@@ -260,7 +260,7 @@ bool Autonomous::VelocityMove(char *pCurrLinePos) {
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 		return (false);
 	}
 
@@ -270,7 +270,7 @@ bool Autonomous::VelocityMove(char *pCurrLinePos) {
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+		//		SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 		return (false);
 	}
 
@@ -311,7 +311,7 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		return (false);
 	}
 
@@ -331,6 +331,90 @@ bool Autonomous::Turn(char *pCurrLinePos) {
 #endif
 }
 
+bool Autonomous::Arc(char *pCurrLinePos)
+{
+	char* pToken;
+	float fAngle;
+	float fRadius;
+	float fTime;
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+	if (pToken == NULL)
+	{
+		return (false);
+	}
+
+	fAngle = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+	if (pToken == NULL)
+	{
+		return (false);
+	}
+
+	fRadius = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+	if (pToken == NULL)
+	{
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
+	Message.command = COMMAND_DRIVETRAIN_ARC;
+	Message.params.turn.ArcAngle = fAngle;
+	Message.params.turn.ArcRadius = fRadius;
+	Message.params.turn.driveTime = fTime;
+#ifndef TEST_SCRIPTS
+	printf("Arc Message to Drivetrain\n");
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+#else
+	printf("COMMAND_DRIVETRAIN_MTURN %0.2f %0.2f\n", fAngle, fTimeout);
+	return(true);
+#endif
+}
+
+bool Autonomous::Straight(char *pCurrLinePos)
+{
+	char* pToken;
+	float fDistance;
+	float fTime;
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+	if (pToken == NULL)
+	{
+		return (false);
+	}
+
+	fDistance = atof(pToken);
+
+	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);
+	if (pToken == NULL)
+	{
+		return (false);
+	}
+
+	fTime = atof(pToken);
+
+	Message.command = COMMAND_DRIVETRAIN_STRAIGHT;
+	Message.params.mmove.fDistance = fDistance;
+	Message.params.mmove.fTime = fTime;
+#ifndef TEST_SCRIPTS
+	printf("Arc Message to Drivetrain\n");
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+#else
+	printf("COMMAND_DRIVETRAIN_MTURN %0.2f %0.2f\n", fAngle, fTimeout);
+	return(true);
+#endif
+}
+
+bool Autonomous::Stop(char *pCurrLinePos)
+{
+	Message.command = COMMAND_DRIVETRAIN_STOP;
+	return (CommandResponse(DRIVETRAIN_QUEUE));
+}
+
 bool Autonomous::Elevator(char *pCurrLinePos)
 {
 	char *pToken;
@@ -341,7 +425,7 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		return (false);
 	}
 
@@ -378,7 +462,7 @@ bool Autonomous::Elevator(char *pCurrLinePos)
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		return (false);
 	}
 
@@ -402,7 +486,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		return (false);
 	}
 
@@ -413,7 +497,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 
 		if(pToken == NULL)
 		{
-//			SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+			//			SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 			return (false);
 		}
 
@@ -427,7 +511,7 @@ bool Autonomous::Claw(char *pCurrLinePos)
 
 		if(pToken == NULL)
 		{
-//			SmartDashboard::PutString("Auto Status","EARLY DEATH!");
+			//			SmartDashboard::PutString("Auto Status","EARLY DEATH!");
 			return (false);
 		}
 
@@ -461,7 +545,7 @@ bool Autonomous::Arm(char *pCurrLinePos)
 
 	if(pToken == NULL)
 	{
-//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
+		//		SmartDashboard::PutString("Auto Status","DEATH BY PARAMS!");
 		return (false);
 	}
 
@@ -480,7 +564,7 @@ bool Autonomous::Arm(char *pCurrLinePos)
 	else if(!strncmp(pToken, "FLOOR", 5))
 	{
 		printf("COMMAND_ARM_FLOOR\n");
-//		SmartDashboard::PutString("Arm Status","Auto GoToFloor");
+		//		SmartDashboard::PutString("Arm Status","Auto GoToFloor");
 		Message.command = COMMAND_ARM_FLOOR;
 	}
 	else if(!strncmp(pToken, "SHOOT", 5))
@@ -509,7 +593,7 @@ bool Autonomous::SPunch(char *pCurrLinePos) {
 	float fTime;
 	float fPunchDistance;
 
-//	SmartDashboard::PutString("Spunch Status","Autonomous.cpp command called");
+	//	SmartDashboard::PutString("Spunch Status","Autonomous.cpp command called");
 
 	// parse remainder of line to get length to move
 	pToken = strtok_r(pCurrLinePos, szDelimiters, &pCurrLinePos);

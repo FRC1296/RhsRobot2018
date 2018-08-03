@@ -28,7 +28,7 @@ RhsRobot::RhsRobot() {
 	pClimber = NULL;
 
 	fHeightPercent = 0.0;
-	fDrivetrainSpeed = 1.0;
+	fDrivetrainSpeed = 0.5;
 	fExhaustLimit = 1.0;
 
 	bLimitSpeedWhileElevatorIsUp = false;
@@ -309,11 +309,21 @@ void RhsRobot::Run() {
 			robotMessage.command = COMMAND_CLIMBER_RETRACT;
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-		else if (DRIVETRAIN_ARC) {
+#if 0
+		if (DRIVETRAIN_ARC) {
 			robotMessage.command = COMMAND_DRIVETRAIN_ARC;
 			pDrivetrain->SendMessage(&robotMessage);
 		}
-
+		if (DRIVETRAIN_STRAIGHT) {
+			SmartDashboard::PutString("New Auto Test","Straight Command Received");
+			robotMessage.command = COMMAND_DRIVETRAIN_STRAIGHT;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+		if (DRIVETRAIN_STOP) {
+			robotMessage.command = COMMAND_DRIVETRAIN_STOP;
+			pDrivetrain->SendMessage(&robotMessage);
+		}
+#endif
 		robotMessage.params.cheesyDrive.wheel = CHEESY_DRIVE_WHEEL / 1.75;
 		robotMessage.params.cheesyDrive.throttle = (CHEESY_DRIVE_THROTTLE * fDrivetrainSpeed);
 		robotMessage.params.cheesyDrive.bQuickturn = CHEESY_DRIVE_QUICKTURN;

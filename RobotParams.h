@@ -222,6 +222,8 @@ const int POV_STILL = -1;
 #define PIDGEY_ROTATE_GPTURN		(pControllerDriver->GetRawButton(L310_BUTTON_B))
 #define DRIVETRAIN_MTURN			(pControllerDriver->GetRawButton(L310_BUTTON_A))
 #define DRIVETRAIN_ARC				(pControllerDriver->GetRawButton(L310_BUTTON_A))
+#define DRIVETRAIN_STRAIGHT			(pControllerDriver->GetRawButton(L310_BUTTON_X))
+#define DRIVETRAIN_STOP				(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 
 #define DRIVETRAIN_MMOVE			(pControllerDriver->GetRawButton(L310_BUTTON_Y))
 

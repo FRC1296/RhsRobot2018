@@ -259,6 +259,48 @@ bool Autonomous::Evaluate(std::string rStatement) {
 		}
 		break;
 
+	case AUTO_TOKEN_ARC:
+		if(bModeFound)
+		{
+			if (!Arc(pCurrLinePos))
+			{
+				rStatus.append("arc error");
+			}
+			else
+			{
+				rStatus.append("arc");
+			}
+		}
+		break;
+
+	case AUTO_TOKEN_STRAIGHT:
+		if(bModeFound)
+		{
+			if (!Straight(pCurrLinePos))
+			{
+				rStatus.append("straight error");
+			}
+			else
+			{
+				rStatus.append("straight");
+			}
+		}
+		break;
+
+	case AUTO_TOKEN_STOP:
+		if(bModeFound)
+		{
+			if(!Stop(pCurrLinePos))
+			{
+				rStatus.append("stop error");
+			}
+			else
+			{
+				rStatus.append("stop");
+			}
+		}
+		break;
+
 	case AUTO_TOKEN_ELEVATOR:
 		if(bModeFound)
 		{
